@@ -1,0 +1,55 @@
+#define GLES
+#ifndef GLES
+#include <GL/gl.h>
+#else
+#include <GLES2/gl2.h>
+#endif
+#include<stdlib.h>
+#include "texture.h"
+#include <stdio.h>
+unsigned int color_channels_lookup[5] = {0, GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_RGB, GL_RGBA};
+
+Texture make_texture(void * data, int width, int height, int colorChannels, int interp_param, int wrap_param){
+  Texture out;
+  out.ref_cnt = (int *) malloc(sizeof(int));
+  *(out.ref_cnt) = 1;
+  glGenTextures(1,&(out.gl_ref));
+  glBindTexture(GL_TEXTURE_2D,out.gl_ref);
+  
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, interp_param);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, interp_param);//)interp_param);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_param);//wrap_param);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_param);//wrap_param);
+    
+  glTexImage2D(GL_TEXTURE_2D, 0, color_channels_lookup[colorChannels],width,height,0,color_channels_lookup[colorChannels],GL_UNSIGNED_BYTE,data);
+  return out;
+}
+
+void bind_texture(Texture tex,int channel){
+  glActiveTexture(GL_TEXTURE0 + channel);
+  glBindTexture(GL_TEXTURE_2D, tex.gl_ref);
+}
+
+
+Texture cpy_tex(Texture tex){
+	Texture out = tex;
+	*(tex.ref_cnt) +=1;
+	return out;
+}
+void del_tex(Texture tex){
+  *(tex.ref_cnt) -=1;
+  if(*(tex.ref_cnt) <= 0){
+    glDeleteTextures(1,&tex.gl_ref);
+    free(tex.ref_cnt);
+  }
+}
+
+void texture_test(){
+	unsigned char data[8] = {1,2,3,4,5,6,7,8};
+	Texture tex = make_texture(data,4,2,1);	
+	Texture tex2 = cpy_tex(tex2);
+	del_tex(tex2);
+	del_tex(tex);
+}	
+
+
