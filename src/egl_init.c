@@ -1,7 +1,9 @@
-#include "egl_init.h"
 #include "bcm_host.h"
 
 #include "GLES2/gl2.h"
+#include "EGL/egl.h"
+#include "EGL/eglext.h"
+#include "egl_init.h"
 
 OpenGLContextInfo _state,* state=&_state;
 
