@@ -4,7 +4,7 @@ import subprocess as sp
 if os.path.exists("/opt/vc"):
     print "Building PI-build"
     blacklist = {"gl_init.c":True}
-    includes = "-I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads"
+    includes = "-DGLES -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads"
     link = "-L/opt/vc/lib/ -lEGL -lGLESv2 -lbcm_host -lvcos"
 else:
     print "BUILDING X86"
