@@ -1,9 +1,4 @@
-#define GLES
-#ifndef GLES
-#include <GL/gl.h>
-#else
-#include <GLES2/gl2.h>
-#endif
+#include "gl_inc.h"
 
 typedef struct BufferObject{
   unsigned int gl_ref;

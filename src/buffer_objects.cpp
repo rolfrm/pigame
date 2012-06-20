@@ -1,4 +1,5 @@
 #include "buffer_objects.h"
+#include "gl_inc.h"
 #include <stdlib.h>
 BufferObject make_buffer_object(void * data, int n_vertexes, int vertex_dim, int type, unsigned int gl_storetype, unsigned int gl_optimization){
   BufferObject out;

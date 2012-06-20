@@ -6,21 +6,23 @@
 #include <iostream>
 #include "CollisionDetection.h"
 
+#include "gl_inc.h"
+#ifdef GLES
 #include "GLES2/gl2.h"
-#include "EGL/egl.h"
-#include "EGL/eglext.h"
 #include "egl_init.h"
+#endif
+//#include "egl_init.h"
 #include "texture.h"
-
 
 
 #include "GLProgram.h"
 #include "buffer_objects.h"
 
 
-//build with the command  g++ -I/opt/vc/include/  main.cpp GLProgram.cpp buffer_objects.c  -L/opt/vc/lib/  -lGLESv2 -lEGL -lbcm_host  -o stuff.a
-static OpenGLContextInfo _state, *state=&_state;
+//static OpenGLContextInfo _state, *state=&_state;
 
+void init_ogl();
+void swapbuffers();
 
 float vertex[8] = {
 	1.0f,1.0f,

@@ -1,4 +1,4 @@
-#define GLES
+
 #ifndef GLES
 #include <GL/gl.h>
 #else

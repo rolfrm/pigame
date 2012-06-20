@@ -1,11 +1,21 @@
 import os
 import pickle
 import subprocess as sp
-blacklist = {"gl_init.c":True}
-endings = [".c",".cpp"]
-includes = "-I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads"
-link = "-L/opt/vc/lib/  -lEGL -lGLESv2 -lbcm_host -lvcos"
+if os.path.exists("/opt/vc"):
+    print "Building PI-build"
+    blacklist = {"gl_init.c":True}
+    includes = "-I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads"
+    link = "-L/opt/vc/lib/ -lEGL -lGLESv2 -lbcm_host -lvcos"
+else:
+    print "BUILDING X86"
+    blacklist = {"egl_init.c":True}
+    includes = "-g3"
+    link = "-lGL -lglfw -lGLEW -g3"
+    
+
 output = "start"
+endings = [".c",".cpp"]
+    
 try:
     with open("pycache","r") as fptr:
         pycache = pickle.load(fptr)
@@ -59,8 +69,9 @@ for i in ftc:
         print call
         #os.system(call)
         try:
-        	p = sp.check_call(call.split(" "))
-        	pycache[i] = os.path.getmtime("./src/"+i)
+            print call.split(" ")
+            p = sp.check_call(call.split(" "))
+            pycache[i] = os.path.getmtime("./src/"+i)
         except:
         	print "Error"
         
