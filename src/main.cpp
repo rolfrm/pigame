@@ -4,16 +4,20 @@
 #include <vector>
 #include <math.h>
 #include <iostream>
+#include "CollisionDetection.h"
 
 #include "GLES2/gl2.h"
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
+#include "egl_init.h"
+#include "texture.h"
+
+
 
 #include "GLProgram.h"
 #include "buffer_objects.h"
-#include "texture.h"
-#include "egl_init.h"
-#include "CollisionDetection.h"
+
+
 //build with the command  g++ -I/opt/vc/include/  main.cpp GLProgram.cpp buffer_objects.c  -L/opt/vc/lib/  -lGLESv2 -lEGL -lbcm_host  -o stuff.a
 static OpenGLContextInfo _state, *state=&_state;
 

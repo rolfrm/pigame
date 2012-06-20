@@ -6,7 +6,7 @@
 #endif
 #include<stdlib.h>
 #include "texture.h"
-#include <stdio.h>
+//#include <stdio.h>
 unsigned int color_channels_lookup[5] = {0, GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_RGB, GL_RGBA};
 
 Texture make_texture(void * data, int width, int height, int colorChannels, int interp_param, int wrap_param){

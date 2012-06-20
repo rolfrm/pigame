@@ -1,11 +1,6 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include "EGL/egl.h"
-#include "EGL/eglext.h"
 
 
-typedef struct
+typedef struct OpenGLContextInfo
 {
    uint32_t screen_width;
    uint32_t screen_height;

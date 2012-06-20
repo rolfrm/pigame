@@ -12,4 +12,3 @@ Texture make_texture(void * data, int width, int height, int colorChannels, int 
 void bind_texture(Texture tex, int channel);
 Texture cpy_tex(Texture tex);
 void del_tex(Texture tex);
-v
