@@ -81,7 +81,7 @@ for i in ftc:
 with open("pycache","w") as fptr:
     pickle.dump(pycache,fptr)
 
-acc_link = "g++ -o {0} -O3".format(output)
+acc_link = "g++ -o {0} -O3 ".format(output)
 print "WAT"
 for i in ftl:
     acc_link +=i + " "
