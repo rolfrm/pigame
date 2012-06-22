@@ -15,11 +15,11 @@
 #include "texture.h"
 #include "GLProgram.h"
 #include "buffer_objects.h"
-
+#include "frame_buffer.h"
 
 //static OpenGLContextInfo _state, *state=&_state;
 
-void init_ogl();
+void init_ogl(int width, int height);
 void swapbuffers();
 
 float vertex[8] = {
@@ -100,7 +100,7 @@ int main(){
   gos.push_back(a);
   gos.push_back(c);
   
-  init_ogl();
+  init_ogl(300,300);
   
   glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
   GLProgram ptest=make_program("test.vert","test.frag");
@@ -109,7 +109,10 @@ int main(){
   bind_buffer_object(bobj,0);
   BufferObject bobj2 = make_buffer_object((void *)uv,4,2,GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW);
   bind_buffer_object(bobj2,1);
-  
+
+  Texture fb_tex = make_texture((void *) "asdasdasdasd",2,2,3);
+
+  FrameBuffer fb(fb_tex);
   glUseProgram(ptest.gl_ref);
   glBindAttribLocation(ptest.gl_ref,0,"Pos");
   glBindAttribLocation(ptest.gl_ref,1,"UV_coord");
