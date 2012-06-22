@@ -5,12 +5,12 @@ if os.path.exists("/opt/vc"):
     print "Building PI-build"
     blacklist = {"gl_init.c":True}
     includes = "-DGLES -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads"
-    link = "-L/opt/vc/lib/ -lEGL -lGLESv2 -lbcm_host -lvcos"
+    link = "-L/opt/vc/lib/ -lIL -lEGL -lGLESv2 -lbcm_host -lvcos"
 else:
     print "BUILDING X86"
     blacklist = {"egl_init.c":True}
     includes = "-g3"
-    link = "-lGL -lglfw -lGLEW -g3"
+    link = "-lIL -lGL -lglfw -lGLEW -g3"
     
 
 output = "start"

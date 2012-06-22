@@ -1,4 +1,4 @@
-
+#define GLES
 #ifndef GLES
 #include <GL/gl.h>
 #else
@@ -6,7 +6,10 @@
 #endif
 #include<stdlib.h>
 #include "texture.h"
-//#include <stdio.h>
+#include <stdio.h>
+#include <IL/il.h>
+#include <iostream>
+
 unsigned int color_channels_lookup[5] = {0, GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_RGB, GL_RGBA};
 
 Texture make_texture(void * data, int width, int height, int colorChannels, int interp_param, int wrap_param){
@@ -23,6 +26,31 @@ Texture make_texture(void * data, int width, int height, int colorChannels, int 
     
   glTexImage2D(GL_TEXTURE_2D, 0, color_channels_lookup[colorChannels],width,height,0,color_channels_lookup[colorChannels],GL_UNSIGNED_BYTE,data);
   return out;
+}
+
+Texture make_texture(std::string path, int interp_param, int wrap_param){
+	ILuint ilid;
+	ilGenImages(1,&ilid);
+	ilBindImage(ilid);
+
+	if(ilLoadImage(path.c_str())){
+			std::cout<<"texture "<<path<<" loaded\n";
+			ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+
+	}else{
+		std::cout << "Problems converting image" <<path<<"\n";
+	}
+	
+	std::cout<<ilGetInteger(IL_IMAGE_WIDTH)<<" "<< ilGetInteger(IL_IMAGE_HEIGHT)
+<<" dimensions\n";	
+	Texture temp = make_texture((void *)ilGetData(),ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT),4,interp_param,wrap_param);
+	
+	std::cout<<glGetError()<<" with error\n";
+	
+	ilDeleteImage(ilid);
+	
+	return temp;
+	
 }
 
 void bind_texture(Texture tex,int channel){
