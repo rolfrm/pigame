@@ -11,4 +11,4 @@ class FrameBuffer{
 };
 
 void bind_framebuffer(FrameBuffer fb);
-void unbind_framebuffers();
+void unbind_framebuffer();

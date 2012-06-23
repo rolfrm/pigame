@@ -1,9 +1,5 @@
-#define GLES
-#ifndef GLES
-#include <GL/gl.h>
-#else
-#include <GLES2/gl2.h>
-#endif
+
+#include "gl_inc.h"
 #include<stdlib.h>
 #include "texture.h"
 #include <stdio.h>

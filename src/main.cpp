@@ -113,6 +113,8 @@ int main(){
   Texture fb_tex = make_texture((void *) "asdasdasdasd",2,2,3);
 
   FrameBuffer fb(fb_tex);
+  bind_framebuffer(fb);
+  unbind_framebuffer();
   glUseProgram(ptest.gl_ref);
   glBindAttribLocation(ptest.gl_ref,0,"Pos");
   glBindAttribLocation(ptest.gl_ref,1,"UV_coord");
@@ -128,7 +130,6 @@ int main(){
     player.x +=sin(t)*5;
     player.y +=cos(t)*5;
     
-    printf("%i \n",player.x);
     pos1[1]+=0.005;
 
 

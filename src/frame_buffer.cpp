@@ -21,6 +21,7 @@ void bind_framebuffer(FrameBuffer fb){
 
 extern unsigned int global_width;
 extern unsigned int global_height;
-void unbind_framebuffers(){
+void unbind_framebuffer(){
   glViewport(0,0,global_width,global_height);
+    glBindFramebuffer(GL_FRAMEBUFFER,0);
 }
