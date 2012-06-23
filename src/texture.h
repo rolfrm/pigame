@@ -15,3 +15,4 @@ void bind_texture(Texture tex, int channel);
 Texture cpy_tex(Texture tex);
 void del_tex(Texture tex);
 void texture_test();
+void unbind_texture(int channel);

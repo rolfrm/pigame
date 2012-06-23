@@ -43,7 +43,7 @@ float pos2[2]={0.0f,0.0f};
 
 class game_object{
 public:
-  int x,y;
+  float x,y;
   int wx,wy;
   game_object(){
     x = -100;
@@ -51,13 +51,11 @@ public:
     wx = 10;
     wy = 10;
   }
-  virtual void run(){
-    printf("r1");
-  }
   virtual game_object do_ai(game_object self){
     game_object out = self;
-    out.run();
-    out.x +=1;
+    if(out.x < 0 || out.x > 50){
+      out.x +=0.2;
+    }
     return out;
   }
 };
@@ -71,9 +69,6 @@ public:
     wx = 10;
     wy = 10;
     x2 = -1000;
-  }
-  virtual void run(){
-    printf("r2");
   }
 };
 
@@ -100,7 +95,7 @@ int main(){
   gos.push_back(a);
   gos.push_back(c);
   
-  init_ogl(300,300);
+  init_ogl(500,500);
   
   glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
   GLProgram ptest=make_program("test.vert","test.frag");
@@ -109,24 +104,32 @@ int main(){
   bind_buffer_object(bobj,0);
   BufferObject bobj2 = make_buffer_object((void *)uv,4,2,GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW);
   bind_buffer_object(bobj2,1);
-
-  Texture fb_tex = make_texture((void *) "asdasdasdasd",2,2,3);
+  int asd[512*512];
+  memset((void *) asd,0x0,512*512*4);
+  Texture fb_tex = make_texture((void *) asd,50,50,3);
 
   FrameBuffer fb(fb_tex);
-  bind_framebuffer(fb);
-  unbind_framebuffer();
+  
   glUseProgram(ptest.gl_ref);
   glBindAttribLocation(ptest.gl_ref,0,"Pos");
   glBindAttribLocation(ptest.gl_ref,1,"UV_coord");
   glLinkProgram(ptest.gl_ref);
  
   srand(time(NULL));
-
+  timespec ts;
   float t = 0;
   game_object player;
   while(true){
-    t += 0.1;
-    glClear( GL_COLOR_BUFFER_BIT );
+    bind_framebuffer(fb);
+
+
+    glUniform1f(glGetUniformLocation(ptest.gl_ref,"deg"),0.9);
+    glUniform1f(glGetUniformLocation(ptest.gl_ref,"scale"),0.5 + sin(t)*0.5);
+    unbind_texture(0);
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    t += 0.05;
+    printf("%i / %i %i\n",clock(),ts.tv_sec,ts.tv_nsec);
+    //glClear( GL_COLOR_BUFFER_BIT );
     player.x +=sin(t)*5;
     player.y +=cos(t)*5;
     
@@ -160,6 +163,13 @@ int main(){
       glDrawArrays(GL_TRIANGLE_FAN,0,4);
       glUniform2f(glGetUniformLocation(ptest.gl_ref,"off"),pos2[0],pos2[1]);
       glDrawArrays(GL_TRIANGLE_FAN,0,4);*/
+    glUniform1f(glGetUniformLocation(ptest.gl_ref,"deg"),0.0);
+    glUniform1f(glGetUniformLocation(ptest.gl_ref,"scale"),1);
+    bind_texture(fb.textures[0],0);
+    unbind_framebuffer();
+    glUniform2f(glGetUniformLocation(ptest.gl_ref,"off"),0.0,0.0);
+    glDrawArrays(GL_TRIANGLE_FAN,0,4);
+    
     swapbuffers();
   }
   
