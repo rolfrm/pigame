@@ -23,13 +23,20 @@ void init_ogl(int width, int height);
 void swapbuffers();
 
 float vertex[8] = {
-	1.0f,1.0f,
 	-1.0f,1.0f,
-	-1.0f,-1.0f,
+	1.0f,1.0f,
 	1.0f,-1.0f,
+	-1.0f,-1.0f,
 };
 
 float uv[8] = {
+	1.0f,1.0f,
+	0.0f,1.0f,
+	0.0f,0.0f,
+	1.0f,0.0f,
+};
+
+float uv2[8] = {
 	1.0f,0.0f,
 	0.0f,0.0f,
 	0.0f,1.0f,
@@ -43,19 +50,20 @@ float pos2[2]={0.0f,0.0f};
 
 class game_object{
 public:
-  float x,y;
+  float x,y,dx,dy;
   int wx,wy;
   game_object(){
-    x = -100;
-    y = 0;
+    x = 0;
+    y = 0.0;
+    dx = 0.15;
+    dy = 0.15;
     wx = 10;
     wy = 10;
   }
   virtual game_object do_ai(game_object self){
     game_object out = self;
-    if(out.x < 0 || out.x > 50){
-      out.x +=0.2;
-    }
+    
+   
     return out;
   }
 };
@@ -93,9 +101,9 @@ int main(){
   game_object2 b = game_object2();
   game_object c = b.do_ai(b);
   gos.push_back(a);
-  gos.push_back(c);
+  //gos.push_back(c);
   
-  init_ogl(500,500);
+  init_ogl(512,512);
   
   glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
   GLProgram ptest=make_program("test.vert","test.frag");
@@ -104,9 +112,12 @@ int main(){
   bind_buffer_object(bobj,0);
   BufferObject bobj2 = make_buffer_object((void *)uv,4,2,GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW);
   bind_buffer_object(bobj2,1);
+  BufferObject bobj3 = make_buffer_object((void *)uv2,4,2,GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW);
+  
   int asd[512*512];
   memset((void *) asd,0x0,512*512*4);
-  Texture fb_tex = make_texture((void *) asd,50,50,3);
+  Texture fb_tex = make_texture((void *) asd,64,64,3);
+  Texture tex2 = make_texture("tree123.png",GL_NEAREST,GL_REPEAT);
 
   FrameBuffer fb(fb_tex);
   
@@ -120,15 +131,15 @@ int main(){
   float t = 0;
   game_object player;
   while(true){
+    bind_buffer_object(bobj2,1);
+  
+    glUniform1f(glGetUniformLocation(ptest.gl_ref,"scale"),1.0);
     bind_framebuffer(fb);
-
-
-    glUniform1f(glGetUniformLocation(ptest.gl_ref,"deg"),0.9);
-    glUniform1f(glGetUniformLocation(ptest.gl_ref,"scale"),0.5 + sin(t)*0.5);
-    unbind_texture(0);
+    
+    bind_texture(tex2,0);
     clock_gettime(CLOCK_MONOTONIC, &ts);
     t += 0.05;
-    printf("%i / %i %i\n",clock(),ts.tv_sec,ts.tv_nsec);
+    //printf("%i / %i %i\n",clock(),ts.tv_sec,ts.tv_nsec);
     //glClear( GL_COLOR_BUFFER_BIT );
     player.x +=sin(t)*5;
     player.y +=cos(t)*5;
@@ -163,7 +174,9 @@ int main(){
       glDrawArrays(GL_TRIANGLE_FAN,0,4);
       glUniform2f(glGetUniformLocation(ptest.gl_ref,"off"),pos2[0],pos2[1]);
       glDrawArrays(GL_TRIANGLE_FAN,0,4);*/
-    glUniform1f(glGetUniformLocation(ptest.gl_ref,"deg"),0.0);
+    bind_buffer_object(bobj3,1);
+  
+   glUniform1f(glGetUniformLocation(ptest.gl_ref,"deg"),0.0);
     glUniform1f(glGetUniformLocation(ptest.gl_ref,"scale"),1);
     bind_texture(fb.textures[0],0);
     unbind_framebuffer();

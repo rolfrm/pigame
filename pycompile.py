@@ -1,7 +1,11 @@
 import os
 import pickle
 import subprocess as sp
-if os.path.exists("/opt/vc"):
+
+if os.path.exists("pycompile.local.py"):
+    execfile("pycompile.local.py")
+
+elif os.path.exists("/opt/vc"):
     print "Building PI-build"
     blacklist = {"gl_init.c":True}
     includes = "-DGLES -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads"
