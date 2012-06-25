@@ -1,3 +1,4 @@
+#pragma once
 #include "gl_inc.h"
 
 typedef struct BufferObject{

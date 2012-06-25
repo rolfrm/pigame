@@ -1,9 +1,5 @@
-#ifndef GLES
-#include <GL/gl.h>
-#else
-#include <GLES2/gl2.h>
-#endif
-
+#pragma once
+#include "gl_inc.h"
 struct GLProgram{
 	GLuint gl_ref,vertex_shader,fragment_shader,* ref_cnt;
 };

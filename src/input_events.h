@@ -1,3 +1,5 @@
+#pragma once
+#include "event_handling.h"
 class KeyEvent{
 public:
   int key;
