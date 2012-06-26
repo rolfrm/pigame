@@ -67,18 +67,13 @@ AudioSample & AudioSample::operator=(const AudioSample & other){
     }
   }
 
-
-  *this = other;
+  copy<AudioSample>(&other,this);
+  //*this = other;
   if(data != NULL){
     *ref_cnt +=1;
   }
   return *this;
 }
-  
-/*Music::Music(){
-    ref_cnt = NULL;
-    data = NULL;
-    }*/
 
 Music::Music(std::string path, bool do_loop){
   this->path = path;
@@ -109,8 +104,8 @@ Music & Music::operator=(const Music & other){
     }
   }
   copy<Music>(&other,this);
-  //*this = other;
   *ref_cnt++;
+  return *this;
 }
 
   Music::~Music(){
