@@ -55,8 +55,8 @@ player_object * make_player_obj(float x,float y,float sx, float sy, float off_x,
 
 int main(){
 
-  global_screen_width = 128;
-  global_screen_height = 128;
+  global_screen_width = 256;
+  global_screen_height = 256;
 
   init_audio(44100, 16, 2);
   init_ogl(512,512);
@@ -92,6 +92,7 @@ int main(){
   player_object * a = make_player_obj(10,20,30,15,0,5,true,false,treeTD);
   
   mouse_move_spawner.register_listener(a); 
+  mouse_click_handler.register_listener(a);
   object_handler.load_object(a);
   
   for(int i = 0; i < 5;i++){
@@ -103,7 +104,7 @@ int main(){
     i++;
     if(i%100 == 0){
       channel++;
-      play_audio_sample(&boom,channel%8);
+      //play_audio_sample(&boom,channel%8);
     }
     bind_framebuffer(fb);
     clear_bound_framebuffer();

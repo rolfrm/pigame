@@ -1,13 +1,36 @@
 #include "game_objects.h"
 #include "game_super.h"
 #include <iostream>
+
+AABB game_object::get_aabb(){
+  AABB out;
+  out.x = x;
+  out.y = y;
+  out.size_x = 1;
+  out.size_y = 1;
+}
+
 void player_object::handle_event(mouse_position mpos){
   mpos = screen_pos_to_world_pos(mpos);
   x = mpos.x;
   y = mpos.y;
 }
 
-void player_object::do_ai(){
+player_object::player_object(){
+  down = false;
+}
+void player_object::handle_event(MouseClick mc){
+  if(mc.pressed){
+    down = true;
+  }else{
+    down = false;
+  }
+}
+
+void player_object::do_ai( WorldObject wo){
+  if(down){
+    std::cout << wo.get_near_physical_objects(this,40.0).size() << "\n";
+  }
 }
 
 void physical_game_object::set_aabb_data(float size_x, float size_y, float co_x, float co_y, bool movable, bool ghost){

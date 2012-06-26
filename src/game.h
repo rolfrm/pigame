@@ -3,6 +3,7 @@
 #include "game_objects.h"
 #include "GLProgram.h"
 
+
 class ObjectHandler{
  public:
   std::list<game_object * > drawlist;
