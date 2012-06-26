@@ -1,0 +1,11 @@
+
+Best practices for coding:
+
+1. class names camelcase, everything else with _
+2. if a function modifies hidden state it should be a method belonging to the object it modifies. Elsewise it should be a function.
+3. Functions are not allowed to change hidden state of an object.
+4. Avoid pointers when convienience is equal.
+5. Use references or structs for extra return values
+6. Good function / variable names are better than comments.
+7. Operator overloading is evil but powerfull.
+8. Avoid includes in header files. This reduces dependencies and compile time. 
