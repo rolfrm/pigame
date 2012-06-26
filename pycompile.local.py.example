@@ -1,0 +1,4 @@
+blacklist = {"egl_init.c":True,"main.cpp":True}
+includes = "-g3"
+link = "-lIL -lGL -lglfw -lGLEW -g3 -lsfml-audio"
+    
