@@ -16,8 +16,10 @@
 #include "input_events.h"
 #include "game_objects.h"
 #include "game.h"
+#include "game_super.h"
 #include "audio.h"
 #include "gfx_basics.h"
+
 
 extern int global_screen_width;
 extern int global_screen_height;
@@ -52,23 +54,9 @@ player_object * make_player_obj(float x,float y,float sx, float sy, float off_x,
   return out;
 } 
 
-
 int main(){
-
-  global_screen_width = 256;
-  global_screen_height = 256;
-
-  init_audio(44100, 16, 2);
-  init_ogl(512,512);
-  
-  set_clearcolor(0.0f, 0.0f, 0.0f, 0.1f);
-
-  GLProgram ptest=make_program("test.vert","test.frag");
-  ptest.bind_attr(0,"Pos");
-  ptest.bind_attr(1,"UV_coord");
-  ptest.link();
-  bind_shader(ptest);  
-  ptest.uniformf("scale",(float)1.0/global_screen_width, 1.0/global_screen_height);
+  init_game(512,512,128,128);
+  GLProgram ptest = texture_shader;
   
   ObjectHandler object_handler;
   object_handler.current_shader = ptest;
@@ -76,10 +64,9 @@ int main(){
   Music m1("ko-ko.ogg");
   Music m2(m1);
   AudioSample boom("boom.ogg");
-  play_music(m2);
+  //play_music(m2);
   
-  int asd[512*512];
-  Texture fb_tex = make_texture((void *) asd,global_screen_width,global_screen_height,3);  
+  Texture fb_tex = make_texture((void *) NULL,global_screen_width,global_screen_height,3);  
   FrameBuffer fb(fb_tex);
   
   Texture treetex = make_texture("tree123.png");
@@ -115,7 +102,7 @@ int main(){
     unbind_framebuffer();
     bind_buffer_object(bobj3,1);
     bind_buffer_object(bobj,0);
-
+    ptest.uniformf("camera",0,0);
     ptest.uniformf("object_scale",global_screen_width,global_screen_height);
     ptest.uniformf("off",0.0,0.0);
     bind_texture(fb.textures[0],0);

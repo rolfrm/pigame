@@ -14,11 +14,11 @@ TextureDrawable::TextureDrawable(BufferObject verts, BufferObject uvs, Texture t
 }
 
 void TextureDrawable::draw(GLProgram ptest){
-  bind_shader(ptest);
+  bind_shader(texture_shader);
+  setup_shader_uniforms(texture_shader);
   bind_buffer_object(verts,0);
   bind_buffer_object(uvs,1);
   bind_texture(tex,0);
-  ptest.uniformf("scale",(float)1.0/global_screen_width,1.0/global_screen_height);
   ptest.uniformf("object_scale",tex.width,tex.height);
   ptest.uniformf("off",floor(x),floor(y));
   draw_buffers_triangle_fan(4);

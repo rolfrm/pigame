@@ -24,48 +24,69 @@ void GLProgram::bind_attr(int loc, const char * name){
 }
 
 void GLProgram::uniformf(const char * name, float f){
+  bind_shader(*this);
   glUniform1f(uform_loc(name),f);
 }
 void GLProgram::uniformf(const char * name, float f1,float f2){
+  bind_shader(*this);
   glUniform2f(uform_loc(name),f1,f2);
 }
 void GLProgram::uniformf(const char * name, float f1, float f2, float f3){
+  bind_shader(*this);
   glUniform3f(uform_loc(name),f1,f2,f3);
 }
 void GLProgram::uniformf(const char * name, float f1, float f2, float f3, float f4){
+  bind_shader(*this);
   glUniform4f(uform_loc(name),f1,f2,f3,f4);
 }
 
 void GLProgram::uniform(const char * name, int f){
+  bind_shader(*this);
   glUniform1i(uform_loc(name),f);
 }
 void GLProgram::uniform(const char * name, int f1,int f2){
+  bind_shader(*this);
   glUniform2i(uform_loc(name),f1,f2);
 }
 void GLProgram::uniform(const char * name, int f1, int f2, int f3){
+  bind_shader(*this);
   glUniform3i(uform_loc(name),f1,f2,f3);
 }
 void GLProgram::uniform(const char * name, int f1, int f2, int f3, int f4){
+  bind_shader(*this);
   glUniform4i(uform_loc(name),f1,f2,f3,f4);
 }
 
 void GLProgram::uniform(const char * name, unsigned int f){
+  bind_shader(*this);
   glUniform1ui(uform_loc(name),f);
 }
 void GLProgram::uniform(const char * name, unsigned int f1,unsigned int f2){
+  bind_shader(*this);
   glUniform2ui(uform_loc(name),f1,f2);
 }
 void GLProgram::uniform(const char * name, unsigned int f1, unsigned int f2, unsigned int f3){
+  bind_shader(*this);
   glUniform3ui(uform_loc(name),f1,f2,f3);
 }
 void GLProgram::uniform(const char * name, unsigned int f1, unsigned int f2, unsigned int f3, unsigned int f4){
+  bind_shader(*this);
   glUniform4ui(uform_loc(name),f1,f2,f3,f4);
 }
+
+GLProgram current_gl_program;
+unsigned int current_shader_ref = -1;
 
 void bind_shader(GLProgram s){
   if(!s.linked){
     std::cout << "WARNING: Binding unlinked shader program\n";
+    
   }
+  if(current_shader_ref == s.gl_ref){
+    return;
+  }
+  current_gl_program = s;
+  current_shader_ref = s.gl_ref;
   glUseProgram(s.gl_ref);
 }
 void unbind_shader(){

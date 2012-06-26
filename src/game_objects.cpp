@@ -29,6 +29,7 @@ void player_object::handle_event(MouseClick mc){
 
 void player_object::do_ai( WorldObject wo){
   if(down){
+    set_camera_position(x,y);
     std::cout << wo.get_near_physical_objects(this,40.0).size() << "\n";
   }
 }
