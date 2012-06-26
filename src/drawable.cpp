@@ -50,6 +50,7 @@ TextureDrawable(verts,uvs,tex)
 }
 
 void SpriteSheetDrawable::draw(GLProgram ptest){
+  update();
   bind_shader(ptest);
   bind_buffer_object(verts,0);
   bind_buffer_object(uvs,1);
@@ -58,7 +59,7 @@ void SpriteSheetDrawable::draw(GLProgram ptest){
   ptest.uniformf("scale",(float)1.0/global_screen_width,1.0/global_screen_height); //temporary world2view fix
   ptest.uniformf("object_scale",tempframe.scale[0],tempframe.scale[1]);
   ptest.uniformf("off",x,y);
-  ptest.uniformf("uv_offset",(float)tempframe.scale[0]/(float)tex.width,(float)tempframe.scale[1]/(float)tex.height);
+  ptest.uniformf("uv_scale",(float)tempframe.scale[0]/(float)tex.width,(float)tempframe.scale[1]/(float)tex.height);
   ptest.uniformf("uv_offset",(float)tempframe.offset[0]/(float)tex.width,(float)tempframe.offset[1]/(float)tex.height);
   draw_buffers_triangle_fan(4);
 }
