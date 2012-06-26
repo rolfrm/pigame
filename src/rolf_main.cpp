@@ -74,7 +74,9 @@ int main(){
   object_handler.current_shader = ptest;
 
   Music m1("ko-ko.ogg");
+  Music m2(m1);
   AudioSample boom("boom.ogg");
+  //play_music(m2);
   
   int asd[512*512];
   Texture fb_tex = make_texture((void *) asd,global_screen_width,global_screen_height,3);  
@@ -95,9 +97,14 @@ int main(){
   for(int i = 0; i < 5;i++){
     object_handler.load_object(make_player_obj(- (rand()% 128)*4 + 128, - (rand()% 128)*2 + 200, 30,15,0,5,true,false,treeTD));
   }
-  
+  int i = 0;
+  int channel = 0;
   while(true){
-    
+    i++;
+    if(i%100 == 0){
+      channel++;
+      play_audio_sample(&boom,channel%8);
+    }
     bind_framebuffer(fb);
     clear_bound_framebuffer();
 
