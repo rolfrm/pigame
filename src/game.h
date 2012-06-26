@@ -2,7 +2,6 @@
 #include <list>
 #include "game_objects.h"
 #include "GLProgram.h"
-#include <iostream>
 
 class ObjectHandler{
  public:

@@ -11,9 +11,12 @@ unsigned int GLProgram::uform_loc(const char * name){
   return glGetUniformLocation(gl_ref,name);
 }
 
-
+GLProgram::GLProgram(){
+  linked = false;
+}
 void GLProgram::link(){
   glLinkProgram(gl_ref);
+  linked = true;
 }
 
 void GLProgram::bind_attr(int loc, const char * name){
@@ -60,6 +63,9 @@ void GLProgram::uniform(const char * name, unsigned int f1, unsigned int f2, uns
 }
 
 void bind_shader(GLProgram s){
+  if(!s.linked){
+    std::cout << "WARNING: Binding unlinked shader program\n";
+  }
   glUseProgram(s.gl_ref);
 }
 void unbind_shader(){

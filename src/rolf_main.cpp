@@ -22,7 +22,6 @@
 extern int global_screen_width;
 extern int global_screen_height;
 
-
 float vertex[8] = {
 	-1.0f,1.0f,
 	1.0f,1.0f,

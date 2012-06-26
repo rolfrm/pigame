@@ -1,6 +1,8 @@
 #pragma once
 class GLProgram{
  public:
+  GLProgram();
+  bool linked;
 	unsigned int gl_ref,vertex_shader,fragment_shader,* ref_cnt;
 	unsigned int uform_loc(const char * name);
 	void uniformf(const char * name, float f);
@@ -24,7 +26,7 @@ class GLProgram{
 
 	void bind_attr(int loc, const char * name);
 	void link();
-              
+	
 };
 void bind_shader(GLProgram s);
 void unbind_shader();
