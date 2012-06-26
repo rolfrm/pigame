@@ -1,9 +1,61 @@
 #include "game.h"
+#include <iostream>
+#include <math.h>
+std::list <game_object *> WorldObject::get_near_gameobjects(game_object * origin, float distance){
+  //Not implemented
+  std::cout << "Warning: get_near_gameobjects not implemented\n";
+  std::list<game_object *> out;
+  /*AABB a = origin->get_aabb();
+  for(std::list<game_object *>::iterator it = object_handler->drawlist.begin();it++){
+    if(*it == origin){
+      continue;
+    }
+    AABB b = it->get_aabb();
+    }*/
+  return out;
+}
+float aabb_distance(AABB a, AABB b){
+  float dx = fabs(a.x - b.x) - a.size_x - b.size_x;
+  float dy = fabs(a.y - b.y) - a.size_y - b.size_y;
+  float out;
+  if(dx < dy){
+    out = dy;
+  }else{
+    out = dx;
+  }
+  if(out < 0){
+    return 0;
+  }
+  return out;
+}
+std::list <physical_game_object *> WorldObject::get_near_physical_objects(physical_game_object * origin, float distance){
+  std::list<physical_game_object *> out;
+  AABB a = origin->get_aabb();
+  for(std::list<physical_game_object *>::iterator it = object_handler->physical_sim.begin(); it != object_handler->physical_sim.end();it++){
+    if(*it == origin){
+      continue;
+    }
+    AABB b = (*it)->get_aabb();
+    float d = aabb_distance(a,b);
+    if(d < distance){
+      out.push_back(*it);
+    }
+  }
+  return out;
+}
+
+WorldObject::WorldObject(ObjectHandler * object_handler){
+  this->object_handler = object_handler;
+}
+
+
+
 
 void ObjectHandler::gameloop(){
+  WorldObject wo(this);
     for(std::list<game_object *>::iterator it = drawlist.begin(); it != drawlist.end() ;it++){
       game_object * gobj = *it;
-      gobj->do_ai();
+      gobj->do_ai(wo);
     }
     
     for(std::list<physical_game_object *>::iterator it = physical_sim.begin(); it !=physical_sim.end();it++){

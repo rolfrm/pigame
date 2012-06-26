@@ -4,25 +4,38 @@
 #include "input_events.h"
 #include "CollisionDetection.h"
 
+class ObjectHandler;
+class game_object;
+class physical_game_object;
+class WorldObject{
+ ObjectHandler * object_handler;
+ 
+ public:
+  WorldObject(ObjectHandler * object_handler);
+ 
+  std::list <game_object *> get_near_gameobjects(game_object * origin, float distance);
+  std::list <physical_game_object *> get_near_physical_objects(physical_game_object * origin, float distance);
+  
+};
+
 class game_object:public Drawer{
 public:
   float x,y,dx,dy;
-  int wx,wy;
   game_object(){
     x = 0;
     y = 0.0;
     dx = 0.15;
     dy = 0.15;
-    wx = 10;
-    wy = 10;
   }
-  
+   
   TextureDrawable tex_draw;
  
   Drawable * draw();
-  virtual void do_ai(){
+  virtual void do_ai(WorldObject wo){
 
   }
+
+  virtual AABB get_aabb();
 };
 
 class physical_game_object: public game_object{
@@ -43,7 +56,7 @@ class Creature: public physical_game_object{
 };
 
 class Person: public Creature{
-
+  
  public:
   Person();
 };
@@ -53,9 +66,12 @@ class Npc: public Person{
 };
 
 
-class player_object: public Person, public EventListener<mouse_position>{
+class player_object: public Person, public EventListener<mouse_position>, public EventListener<MouseClick>{
+  bool down;
 public:
   void handle_event(mouse_position mpos);
-  void do_ai();
+  void handle_event(MouseClick mc);
+  void do_ai(WorldObject wo);
+  player_object();
   
 };
