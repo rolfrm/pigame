@@ -2,7 +2,6 @@
 #include "gl_inc.h"
 #include<stdlib.h>
 #include "texture.h"
-#include <stdio.h>
 #include <IL/il.h>
 #include <iostream>
 
@@ -26,8 +25,9 @@ Texture make_texture(void * data, int width, int height, int colorChannels, int 
   return out;
 }
 
-Texture make_texture(std::string path, int interp_param, int wrap_param){
-	ILuint ilid;
+Texture make_texture(const char * _path, int interp_param, int wrap_param){
+  std::string path(_path);
+  ILuint ilid;
 	ilGenImages(1,&ilid);
 	ilBindImage(ilid);
 

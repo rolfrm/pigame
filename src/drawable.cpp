@@ -1,5 +1,4 @@
 #include "drawable.h"
-#include "gl_inc.h"
 #include "game_super.h"
 #include <math.h>
 
@@ -17,10 +16,10 @@ void TextureDrawable::draw(GLProgram ptest){
   bind_buffer_object(verts,0);
   bind_buffer_object(uvs,1);
   bind_texture(tex,0);
-  glUniform2f(glGetUniformLocation(ptest.gl_ref,"scale"),(float)1.0/global_screen_width,1.0/global_screen_height);
-  glUniform2f(glGetUniformLocation(ptest.gl_ref,"object_scale"),tex.width,tex.height);
-  glUniform2f(glGetUniformLocation(ptest.gl_ref,"off"),floor(x),floor(y));
-  glDrawArrays(GL_TRIANGLE_FAN,0,4);
+  ptest.uniformf("scale",(float)1.0/global_screen_width,1.0/global_screen_height);
+  ptest.uniformf("object_scale",tex.width,tex.height);
+  ptest.uniformf("off",floor(x),floor(y));
+  draw_buffers_triangle_fan(4);
     
 }
 

@@ -32,5 +32,9 @@ extern unsigned int global_width;
 extern unsigned int global_height;
 void unbind_framebuffer(){
   glViewport(0,0,global_width,global_height);
-    glBindFramebuffer(GL_FRAMEBUFFER,0);
+  glBindFramebuffer(GL_FRAMEBUFFER,0);
+}
+
+void clear_bound_framebuffer(){
+  glClear(GL_COLOR_BUFFER_BIT);
 }

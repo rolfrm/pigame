@@ -50,3 +50,7 @@ void buffer_object_test(){
   del_buf_obj(bobj2);
 
 }
+
+void draw_buffers_triangle_fan(int n_values){
+  glDrawArrays(GL_TRIANGLE_FAN,0,n_values);
+}
