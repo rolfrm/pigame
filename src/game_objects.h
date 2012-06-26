@@ -1,7 +1,9 @@
 #pragma once
 #include "drawable.h"
 #include "event_handling.h"
-#include "game.h"
+#include "input_events.h"
+#include "CollisionDetection.h"
+
 class game_object:public Drawer{
 public:
   float x,y,dx,dy;
@@ -15,31 +17,45 @@ public:
     wy = 10;
   }
   
+  TextureDrawable tex_draw;
+ 
+  Drawable * draw();
   virtual void do_ai(){
-   
-   }
+
+  }
 };
 
-class player_object: public game_object, public EventListener<mouse_position>{
-public:
-  TextureDrawable tdraw;
-  void handle_event(mouse_position mpos){
-    mpos = screen_pos_to_world_pos(mpos);
-    x = mpos.x;
-    y = mpos.y;
-  }
+class physical_game_object: public game_object{
+  float co_x, co_y;
+  AABB aabb;
+ public:
+  void set_aabb_data(float size_x, float size_y, float co_x, float co_y, bool collidable,bool ghost = false);
+  AABB get_aabb();
+  void set_aabb(AABB naabb);
+  void handle_collision(physical_game_object * other);
+};
 
-  void do_ai(){
-   
-    x += 1;
-    if(x > 180){
-      x = - 180;
-    }
-  }
-  Drawable * draw(){
-    tdraw.x = x;
-    tdraw.y = y;
-    tdraw.z = -y;
-    return &tdraw;
-  }
+class Creature: public physical_game_object{
+ public:
+  int level;
+  float max_speed;
+
+};
+
+class Person: public Creature{
+
+ public:
+  Person();
+};
+
+class Npc: public Person{
+
+};
+
+
+class player_object: public Person, public EventListener<mouse_position>{
+public:
+  void handle_event(mouse_position mpos);
+  void do_ai();
+  
 };

@@ -1,6 +1,7 @@
 #include "CollisionDetection.h"
 #include <math.h>
 
+
 bool AABB_collision_detection(float * aabb1,float * aabb2){ //here it is expected that aabb comes in the format {xmin,ymin,xmax,ymax}
 	if((aabb2[0]<aabb1[0] && aabb2[2]>aabb1[0]) ||  (aabb2[0]<aabb1[2] && aabb2[2]>aabb1[2])){
 		if((aabb2[1]<aabb1[1] && aabb2[3]>aabb1[1]) ||  (aabb2[1]<aabb1[3] && aabb2[3]>aabb1[3])){
@@ -8,6 +9,35 @@ bool AABB_collision_detection(float * aabb1,float * aabb2){ //here it is expecte
 		}
 	}
 	return false;
+}
+
+float sgn(float val) {
+  return ((0 < val) - (val < 0))*1.0;
+}
+
+float get_axis_aligned_overlap(float ax,float bx, float asx, float bsx,float & ol_sgn){
+  float dx = ax - bx;
+  float distance = fabs(dx);
+  
+  float overlap =  (asx + bsx) - distance;
+  ol_sgn = sgn(dx);
+  return overlap;
+}
+#include<iostream>
+int AABB_collision_detection2(AABB * a, AABB * b, float & overlap){
+  float olxsgn,olysgn;
+  float olx = get_axis_aligned_overlap(a->x,b->x,a->size_x,b->size_x,olxsgn);
+  float oly = get_axis_aligned_overlap(a->y,b->y,a->size_y,b->size_y,olysgn);
+  if(olx <= 0 || oly <= 0){
+    overlap = 0.0;
+    return -1;
+  }
+  if(oly > olx){
+    overlap = olx*olxsgn;
+    return 0;
+  }
+  overlap = oly*olysgn;
+  return 1;
 }
 
 collision_info AABB_seperating_axis_collision_detection(float * aabb1,float * aabb2){

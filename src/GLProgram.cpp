@@ -4,36 +4,62 @@
 #include <iostream>
 #include <sstream>
 
+#include "gl_inc.h"
 GLuint make_shader(std::string path,GLuint type);
+
+unsigned int GLProgram::uform_loc(const char * name){
+  return glGetUniformLocation(gl_ref,name);
+}
+
+
+void GLProgram::uniform(const char * name, float f){
+  glUniform1f(uform_loc(name),f);
+}
+void GLProgram::uniform(const char * name, float f1,float f2){
+  glUniform2f(uform_loc(name),f1,f2);
+}
+void GLProgram::uniform(const char * name, float f1, float f2, float f3){
+  glUniform3f(uform_loc(name),f1,f2,f3);
+}
+
+void GLProgram::uniform(const char * name, float f1, float f2, float f3, float f4){
+  glUniform4f(uform_loc(name),f1,f2,f3,f4);
+}
+
+
+
+
+
+
 
 GLProgram make_program(const char * _vshader_path,const char * _fshader_path){
   std::string vshader_path = std::string(_vshader_path);
   std::string fshader_path = std::string(_fshader_path);
   GLProgram sprogram;
 	
-	sprogram.vertex_shader=make_shader(vshader_path,GL_VERTEX_SHADER);
-	sprogram.fragment_shader=make_shader(fshader_path,GL_FRAGMENT_SHADER);
+  sprogram.vertex_shader=make_shader(vshader_path,GL_VERTEX_SHADER);
+  sprogram.fragment_shader=make_shader(fshader_path,GL_FRAGMENT_SHADER);
 
-	sprogram.gl_ref = glCreateProgram();
+  sprogram.gl_ref = glCreateProgram();
+  
+  glAttachShader(sprogram.gl_ref, sprogram.vertex_shader);
+  glAttachShader(sprogram.gl_ref, sprogram.fragment_shader);
 
- 	glAttachShader(sprogram.gl_ref, sprogram.vertex_shader);
- 	glAttachShader(sprogram.gl_ref, sprogram.fragment_shader);
-
-	glLinkProgram(sprogram.gl_ref);
-	GLint status;
-	glGetProgramiv (sprogram.gl_ref, GL_LINK_STATUS, &status);
-	if (status == GL_FALSE)
-	{
-		GLint infoLogLength;
-		glGetProgramiv(sprogram.gl_ref, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-		GLchar *strInfoLog = new GLchar[infoLogLength + 1];
-		glGetProgramInfoLog(sprogram.gl_ref, infoLogLength, NULL, strInfoLog);
-		fprintf(stderr, "Linker failure: %s\n", strInfoLog);
-		delete[] strInfoLog;
-	}		
-
-	return sprogram;
+  glLinkProgram(sprogram.gl_ref);
+  GLint status;
+  glGetProgramiv (sprogram.gl_ref, GL_LINK_STATUS, &status);
+  if (status == GL_FALSE)
+    {
+      GLint infoLogLength;
+      glGetProgramiv(sprogram.gl_ref, GL_INFO_LOG_LENGTH, &infoLogLength);
+      
+      GLchar *strInfoLog = new GLchar[infoLogLength + 1];
+      glGetProgramInfoLog(sprogram.gl_ref, infoLogLength, NULL, strInfoLog);
+      fprintf(stderr, "Linker failure: %s\n", strInfoLog);
+      delete[] strInfoLog;
+    }		
+  
+  return sprogram;
 }
 
 GLuint make_shader(std::string path,GLuint type){

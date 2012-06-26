@@ -1,6 +1,22 @@
 #pragma once
-#include "input_events.h"
-extern int global_screen_width;
-extern int global_screen_height;
-mouse_position screen_pos_to_world_pos(mouse_position mpos);
-	
+#include <list>
+#include "game_objects.h"
+#include "GLProgram.h"
+#include <iostream>
+
+class ObjectHandler{
+ public:
+  std::list<game_object * > drawlist;
+  std::list<physical_game_object *> physical_sim;
+  GLProgram current_shader;
+  void load_object(game_object * gobj){
+    drawlist.push_back(gobj);
+  }
+
+  void load_object(physical_game_object * pobj){
+    physical_sim.push_back(pobj);
+    drawlist.push_back(pobj);
+  }
+
+  void gameloop();
+};

@@ -14,7 +14,7 @@ else:
     print "BUILDING X86"
     blacklist = {"egl_init.c":True}
     includes = "-g3"
-    link = "-lIL -lGL -lglfw -lGLEW -g3"
+    link = "-lIL -lGL -lglfw -lGLEW -g3 -lsfml-audio"
     
 
 output = "start"
@@ -70,14 +70,25 @@ for i in ftc:
         else:
             cc = "g++"
         call = "{2} -c ./src/{0} {1} -O3 -o ./obj/{3}.o".format(i,includes,cc,i_stripped)
+        rmcall = "rm ./obj/{0}.o".format(i_stripped)
         print call
         #os.system(call)
+        def do_call(call):
+            call_split = call.split(" ")
+            p = sp.check_call(call_split)
+            return p
         try:
-            print call.split(" ")
-            p = sp.check_call(call.split(" "))
+            try:
+                do_call(rmcall)
+            except:
+                pass
+            do_call(call)
+            #print call.split(" ")
+            #p = sp.check_call(call.split(" "))
             pycache[i] = os.path.getmtime("./src/"+i)
         except:
         	print "Error"
+                quit()
         
     else:
         print "skipping",i

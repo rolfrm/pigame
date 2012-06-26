@@ -1,5 +1,9 @@
 #include "drawable.h"
 #include "gl_inc.h"
+#include "game_super.h"
+#include <math.h>
+
+Drawable _default;
 TextureDrawable::TextureDrawable(){
 }
 TextureDrawable::TextureDrawable(BufferObject verts, BufferObject uvs, Texture tex){
@@ -20,3 +24,7 @@ void TextureDrawable::draw(GLProgram ptest){
     
 }
 
+
+bool z_compare(Drawable * d1, Drawable * d2){
+  return d1->z > d2->z;
+}

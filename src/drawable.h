@@ -9,8 +9,9 @@ public:
   virtual void draw(GLProgram ptest){
     
   }
-}_default;
+};
 
+extern Drawable _default;
 /*Stuff that wants to draw implements this.*/
 class Drawer{
 public:
@@ -19,11 +20,6 @@ public:
     return &_default;
   }
 };
-
-
-
-
-
 
 class TextureDrawable: public Drawable{
 public:
@@ -38,3 +34,4 @@ public:
 };
 
 	
+bool z_compare(Drawable * d1, Drawable * d2);
