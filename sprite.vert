@@ -13,6 +13,8 @@ uniform vec2 object_scale;
 uniform vec2 uv_scale;
 uniform vec2 uv_offset;
 
+vec3 Light=vec3(0.0,1.0,-1.0);
+
 varying vec2 uv;
 
 void main(){

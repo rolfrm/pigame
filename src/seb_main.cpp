@@ -50,7 +50,7 @@ int main(){
   init_audio(44100, 16, 2);
   init_ogl(512,512);
   
-  set_clearcolor(0.0f, 0.0f, 1.0f, 1.0f);
+  set_clearcolor(0.0f, 1.0f, 0.0f, 1.0f);
 
   GLProgram ptest=make_program("test.vert","test.frag");
   ptest.bind_attr(0,"Pos");
@@ -59,11 +59,18 @@ int main(){
   bind_shader(ptest);  
   ptest.uniformf("scale",(float)1.0/global_screen_width, 1.0/global_screen_height);
   
+  
+  
  GLProgram psprite=make_program("sprite.vert","sprite.frag");
   psprite.bind_attr(0,"Pos");
   psprite.bind_attr(1,"UV_coord");
   psprite.link();
   bind_shader(psprite);  
+  
+   GLProgram pshade=make_program("shadow.vert","shadow.frag");
+  pshade.bind_attr(0,"Pos");
+  pshade.bind_attr(1,"UV_coord");
+  pshade.link();
   
   Texture dormir = make_texture("DormusSheet.png");
   
@@ -95,7 +102,7 @@ int main(){
         bind_framebuffer(fb);
   	  clear_bound_framebuffer();
   	  
-  	  
+  	  dorm.draw(pshade);
     	dorm.draw(psprite);
     	
         unbind_framebuffer();
