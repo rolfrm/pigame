@@ -47,5 +47,7 @@ mouse_position screen_pos_to_world_pos(mouse_position mpos){
   mpos.y = mpos.y * (int)global_screen_height*2;
   mpos.x /= (int)global_width;
   mpos.y /= (int)global_height;
+  mpos.x += camera_x;
+  mpos.y += camera_y;
   return mpos;
 }

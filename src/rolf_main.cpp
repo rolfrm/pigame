@@ -55,7 +55,7 @@ player_object * make_player_obj(float x,float y,float sx, float sy, float off_x,
 } 
 
 int main(){
-  init_game(512,512,128,128);
+  init_game(512,512,256,256);
   GLProgram ptest = texture_shader;
   
   ObjectHandler object_handler;

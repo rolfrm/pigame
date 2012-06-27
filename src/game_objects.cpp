@@ -12,8 +12,8 @@ AABB game_object::get_aabb(){
 
 void player_object::handle_event(mouse_position mpos){
   mpos = screen_pos_to_world_pos(mpos);
-  x = mpos.x;
-  y = mpos.y;
+  x = (x*4 + mpos.x)/5;
+  y = (y*4 + mpos.y)/5;
 }
 
 player_object::player_object(){
@@ -22,6 +22,11 @@ player_object::player_object(){
 void player_object::handle_event(MouseClick mc){
   if(mc.pressed){
     down = true;
+
+    mouse_position mpos = get_mouse_position();
+    mpos = screen_pos_to_world_pos(mpos);
+    //x = mpos.x;
+    //y = mpos.y;
   }else{
     down = false;
   }
@@ -30,7 +35,7 @@ void player_object::handle_event(MouseClick mc){
 void player_object::do_ai( WorldObject wo){
   if(down){
     set_camera_position(x,y);
-    std::cout << wo.get_near_physical_objects(this,40.0).size() << "\n";
+    std::cout << wo.get_near_physical_objects(this,180.0).size() << "\n";
   }
 }
 

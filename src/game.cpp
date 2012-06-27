@@ -23,9 +23,12 @@ float aabb_distance(AABB a, AABB b){
   }else{
     out = dx;
   }
+  //std::cout << "Distance " << dx << " " << dy <<" =" << out <<  "\n";
+  
   if(out < 0){
-    return 0;
+    out = 0;
   }
+  
   return out;
 }
 std::list <physical_game_object *> WorldObject::get_near_physical_objects(physical_game_object * origin, float distance){

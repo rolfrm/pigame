@@ -4,6 +4,9 @@
 extern int global_screen_width;
 extern int global_screen_height;
 
+extern float camera_x;
+extern float camera_y;
+
 extern GLProgram texture_shader;
 extern GLProgram color_shader;
 
