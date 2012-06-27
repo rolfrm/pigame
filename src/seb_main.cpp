@@ -93,12 +93,11 @@ int main(){
   SpriteSheetDrawable dorm(bobj,bobj2,dormir);
   
     std::vector<frame> testani;
-  testani.push_back(frame(48,31,0,0,0.2));
-  testani.push_back(frame(48,31,48,0,0.2));
-  
-  /*testani.push_back(frame(20,20,0,0,0.2));
+
+  testani.push_back(frame(20,20,20,0,0.2));  
+  testani.push_back(frame(20,20,0,0,0.2));
   testani.push_back(frame(20,20,40,0,0.2));
-  testani.push_back(frame(20,20,0,0,0.2));*/
+  testani.push_back(frame(20,20,0,0,0.2));
   
   dorm.load_animation("test",testani);
   dorm.set_animation("test");

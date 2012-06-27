@@ -12,13 +12,9 @@ uniform vec2 object_scale;
 
 uniform vec2 uv_scale;
 uniform vec2 uv_offset;
-<<<<<<< HEAD
 
-vec3 Light=vec3(0.0,1.0,-1.0);
-
-=======
 uniform vec2 camera;
->>>>>>> 46b744b44de3b579edb35fdf9568aab61993cb10
+
 varying vec2 uv;
 
 void main(){
