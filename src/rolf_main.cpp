@@ -28,7 +28,7 @@ float vertex[8] = {
 	-1.0f,1.0f,
 	1.0f,1.0f,
 	1.0f,-1.0f,
-	-1.0f,-1.0f,
+	-1.0f,-1.0f
 };
 
 float uv[8] = {
@@ -54,8 +54,20 @@ player_object * make_player_obj(float x,float y,float sx, float sy, float off_x,
   return out;
 } 
 
+class key_ev: public EventListener<KeyEvent>{
+  void handle_event(KeyEvent kev){
+    switch(kev.key){
+    case 283:set_camera_position(camera_x,camera_y - 1);break; //Up
+    case 285:set_camera_position(camera_x + 1,camera_y );break; //left
+    case 284:set_camera_position(camera_x,camera_y + 1 );break; //down
+    case 286:set_camera_position(camera_x - 1,camera_y );break; //right
+    }
+  }
+};
+
 int main(){
-  init_game(512,512,256,256);
+  init_game(512,512,128,128);
+  set_clearcolor(0.1,0.5,0.0,1.0);
   GLProgram ptest = texture_shader;
   
   ObjectHandler object_handler;
@@ -77,9 +89,10 @@ int main(){
   TextureDrawable treeTD= TextureDrawable(bobj,bobj2,treetex); 
   
   player_object * a = make_player_obj(10,20,30,15,0,5,true,false,treeTD);
-  
+  key_ev k1;
   mouse_move_spawner.register_listener(a); 
   mouse_click_handler.register_listener(a);
+  key_event_handler.register_listener(&k1);
   object_handler.load_object(a);
   
   for(int i = 0; i < 5;i++){
@@ -89,22 +102,28 @@ int main(){
   int channel = 0;
   while(true){
     i++;
+    bind_shader(texture_shader);
     if(i%100 == 0){
       channel++;
       //play_audio_sample(&boom,channel%8);
     }
+    std::cout << (int)a->x << " " << (int)a->y << "\n";
+      
     bind_framebuffer(fb);
     clear_bound_framebuffer();
 
     //** Go gameloop!
     object_handler.gameloop();
     //
+    
     unbind_framebuffer();
+    bind_shader(screen_drawer);
     bind_buffer_object(bobj3,1);
     bind_buffer_object(bobj,0);
-    ptest.uniformf("camera",0,0);
-    ptest.uniformf("object_scale",global_screen_width,global_screen_height);
-    ptest.uniformf("off",0.0,0.0);
+    screen_drawer.uniformf("camera",0,0);
+    screen_drawer.uniformf("scale",1.0,1.0);
+    screen_drawer.uniformf("object_scale",1.0,1.0);
+    screen_drawer.uniformf("off",0,0);
     bind_texture(fb.textures[0],0);
 
     draw_buffers_triangle_fan(4);

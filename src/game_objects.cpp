@@ -1,7 +1,7 @@
 #include "game_objects.h"
 #include "game_super.h"
 #include <iostream>
-
+#include <math.h>
 AABB game_object::get_aabb(){
   AABB out;
   out.x = x;
@@ -25,6 +25,7 @@ void player_object::handle_event(MouseClick mc){
 
     mouse_position mpos = get_mouse_position();
     mpos = screen_pos_to_world_pos(mpos);
+    std::cout << x << " " << y << "\n";
     //x = mpos.x;
     //y = mpos.y;
   }else{

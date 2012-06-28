@@ -11,7 +11,7 @@
 
 class Drawable{
 public:
-  int x,y,z;
+  float x,y,z;
   virtual void draw(GLProgram ptest){
   
   }
