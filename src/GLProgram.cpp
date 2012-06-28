@@ -83,6 +83,7 @@ void bind_shader(GLProgram s){
     
   }
   if(current_shader_ref == s.gl_ref){
+    
     return;
   }
   current_gl_program = s;

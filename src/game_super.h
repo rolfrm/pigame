@@ -9,8 +9,9 @@ extern float camera_y;
 
 extern GLProgram texture_shader;
 extern GLProgram color_shader;
-
+extern GLProgram screen_drawer;
 void set_camera_position(int x, int y);
+void move_camera(int dx, int dy);
 void set_world_to_view(float scale_x, float scale_y, int view_pixels_width, int view_pixels_height);
 
 mouse_position screen_pos_to_world_pos(mouse_position mpos);

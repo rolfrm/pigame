@@ -1,3 +1,4 @@
+
 #include "drawable.h"
 #include "game_super.h"
 #include <math.h>
@@ -19,8 +20,11 @@ void TextureDrawable::draw(GLProgram ptest){
   bind_buffer_object(verts,0);
   bind_buffer_object(uvs,1);
   bind_texture(tex,0);
-  ptest.uniformf("object_scale",tex.width,tex.height);
-  ptest.uniformf("off",floor(x),floor(y));
+  ptest.uniformf("object_scale",tex.width/2,tex.height/2);
+  ptest.uniformf("off",x,y);
+  ptest.uniformf("uv_scale",1.0,1.0);
+  ptest.uniformf("uv_offset",0.0,0.0);
+  
   draw_buffers_triangle_fan(4);
     
 }
