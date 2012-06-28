@@ -65,7 +65,7 @@ public:
 	void draw(GLProgram ptest);
 	
 	void set_animation(std::string new_animation);
-	void load_animation(std::string name,std::vector<frame> animation);
+	void load_animation_frame(std::string name,int scalex,int scaley,int offx,int offy,double duration);
 	
 	int current_frame;
 	timeval start_time;

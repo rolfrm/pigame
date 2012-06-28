@@ -20,6 +20,8 @@
 #include "gfx_basics.h"
 #include "game_super.h"
 
+#include <GL/glfw.h>
+
 float vertex[8] = {
 	-1.0f,1.0f,
 	1.0f,1.0f,
@@ -92,25 +94,57 @@ int main(){
   
   SpriteSheetDrawable dorm(bobj,bobj2,dormir);
   
-    std::vector<frame> testani;
-
-  testani.push_back(frame(20,20,20,0,0.2));  
-  testani.push_back(frame(20,20,0,0,0.2));
-  testani.push_back(frame(20,20,40,0,0.2));
-  testani.push_back(frame(20,20,0,0,0.2));
   
-  dorm.load_animation("test",testani);
-  dorm.set_animation("test");
+  dorm.load_animation_frame("walk",20,20,20,0,0.2);
+  dorm.load_animation_frame("walk",20,20,0,0,0.2);
+  dorm.load_animation_frame("walk",20,20,40,0,0.2);
+  dorm.load_animation_frame("walk",20,20,0,0,0.2);
+  
+  dorm.load_animation_frame("dwalk",20,20,20,20,0.2);
+    dorm.load_animation_frame("dwalk",20,20,40,20,0.2);
+  dorm.load_animation_frame("dwalk",20,20,0,20,0.2);
+    dorm.load_animation_frame("dwalk",20,20,40,20,0.2);
+  
+  dorm.load_animation_frame("uwalk",20,20,20,40,0.2);
+  dorm.load_animation_frame("uwalk",20,20,0,40,0.2);
+  
+  
+  dorm.set_animation("walk");
   
     Texture fb_tex = make_texture((void *) 0,global_screen_width,global_screen_height,3);  
   FrameBuffer fb(fb_tex);
   int i = 0;
+  
     while(true){
+    	if(glfwGetKey(GLFW_KEY_UP))
+    		dorm.set_animation("dwalk");
+         if(glfwGetKey(GLFW_KEY_RIGHT))
+    		dorm.set_animation("walk");
         bind_framebuffer(fb);
   	  clear_bound_framebuffer();
   	  
+  	/*  dorm.x=70;	
+    	  dorm.y=0;
+  	  
   	  dorm.draw(pshade);
 
+    	
+    	
+ 	dorm.x=40;
+    	  dorm.y=20;
+  	  
+  	
+  	  dorm.draw(pshade);
+  	  */
+  	  
+  	  dorm.x=70;
+    	  dorm.y=0;
+
+	dorm.draw(psprite);
+	dorm.x=40;
+    	  dorm.y=20;
+  	
+	
     	dorm.draw(psprite);
     	
         unbind_framebuffer();

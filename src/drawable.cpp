@@ -77,8 +77,14 @@ void SpriteSheetDrawable::update(){
 	}
 }
 
-void SpriteSheetDrawable::load_animation(std::string name,std::vector<frame> animation){
-	animations.insert(std::pair< std::string, std::vector<frame> >(name,animation));
+void SpriteSheetDrawable::load_animation_frame(std::string name,int scalex,int scaley,int offx,int offy,double duration){
+	std::map< std::string, std::vector<frame> >::iterator anim=animations.find(name);
+	if(anim==animations.end()){
+		std::vector<frame> temp;
+		animations.insert(std::pair<std::string,std::vector<frame> >(name,temp));
+		anim=animations.find(name);
+	}
+	anim->second.push_back(frame(scalex,scaley,offx,offy,duration));
 }
 
 void SpriteSheetDrawable::set_animation(std::string new_animation){	
