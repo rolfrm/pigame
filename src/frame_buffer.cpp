@@ -22,6 +22,10 @@ FrameBuffer::FrameBuffer(std::vector<Texture> texs){
   
 }
 
+Framebuffer::FrameBuffer(int width,int heigth,int colorChannels, int interp_param, int wrap_param){
+	texs.push_back(make_texture(0,width,height,colorChannels,interp_param, wrap_param));
+}
+
 
 void bind_framebuffer(FrameBuffer fb){
   glViewport(0,0,fb.textures[0].width,fb.textures[0].height);
