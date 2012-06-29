@@ -96,10 +96,26 @@ int main(){
   BufferObject bobj2 = make_buffer_object((void *)uv,4,2,FLOAT);
   BufferObject bobj3 = make_buffer_object((void *)uv2,4,2,FLOAT);
   SpriteSheetDrawable guyss = SpriteSheetDrawable(bobj,bobj2,guy_tex); 
-  guyss.load_animation_frame("test",20,20,0,0,0.2);
-  guyss.load_animation_frame("test",20,20,20,0,0.2);
-  guyss.load_animation_frame("test",20,20,40,0,0.2);
-  guyss.set_animation("test");
+  guyss.load_animation_frame("rwalk",20,20,0,0,0.2);
+  guyss.load_animation_frame("rwalk",20,20,20,0,0.2);
+  guyss.load_animation_frame("rwalk",20,20,0,0,0.2);
+  guyss.load_animation_frame("rwalk",20,20,40,0,0.2);
+
+  guyss.load_animation_frame("dwalk",20,20,0,20,0.2);
+  guyss.load_animation_frame("dwalk",20,20,40,20,0.2);
+  guyss.load_animation_frame("dwalk",20,20,20,20,0.2);
+  guyss.load_animation_frame("dwalk",20,20,40,20,0.2);
+
+  guyss.load_animation_frame("uwalk",20,20,0,40,0.2);
+  guyss.load_animation_frame("uwalk",20,20,40,40,0.2);
+  guyss.load_animation_frame("uwalk",20,20,20,40,0.2);
+  guyss.load_animation_frame("uwalk",20,20,40,40,0.2);
+
+  guyss.load_animation_frame("lwalk",20,20,0,60,0.2);
+  guyss.load_animation_frame("lwalk",20,20,20,60,0.2);
+  guyss.load_animation_frame("lwalk",20,20,0,60,0.2);
+  guyss.load_animation_frame("lwalk",20,20,40,60,0.2);
+  guyss.set_animation("lwalk");
 
   
   

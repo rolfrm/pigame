@@ -50,7 +50,24 @@ void player_object::do_ai( WorldObject wo){
   x += left*1 + right*-1;
   y += up*-1 + down;
   set_camera_position(x,y);
-  
+
+	if(right){
+		if(tex_draw.current_animation->first!="rwalk")
+			tex_draw.set_animation("rwalk");
+	} 
+	else if(left){
+		if(tex_draw.current_animation->first!="lwalk")
+			tex_draw.set_animation("lwalk");
+	}
+	else if(up){
+		if(tex_draw.current_animation->first!="uwalk")
+			tex_draw.set_animation("uwalk");
+	}
+	else if(down){
+		if(tex_draw.current_animation->first!="dwalk")
+			tex_draw.set_animation("dwalk");
+	}
+
   if(down){
     std::cout << wo.get_near_physical_objects(this,180.0).size() << "\n";
   }
