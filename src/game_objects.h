@@ -39,7 +39,7 @@ public:
 	Bullet(float size_x,float size_y,float co_x,float co_y,Texture tex);
 
 	void do_ai(WorldObject wo);
-	void handle_collision(physical_game_object * other)
+	void handle_collision(physical_game_object * other);
 
 	int vel[2];
 	bool dead;

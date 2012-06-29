@@ -178,3 +178,8 @@ void Bullet::do_ai(WorldObject wo){
 
 }
 
+void Bullet::handle_collision(physical_game_object * other){
+
+
+}
+
