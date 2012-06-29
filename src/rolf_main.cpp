@@ -74,7 +74,7 @@ int main(){
   BufferObject bobj = unit_rectangle_verts;
   BufferObject bobj2 = unit_rectangle_uvs;
   BufferObject bobj3 = unit_rectangle_inverse_uvs;
-  SpriteSheetDrawable guyss = SpriteSheetDrawable(bobj,bobj2,guy_tex); 
+ /* SpriteSheetDrawable guyss = SpriteSheetDrawable(guy_tex); 
   guyss.load_animation_frame("rwalk",20,20,0,0,0.2);
   guyss.load_animation_frame("rwalk",20,20,20,0,0.2);
   guyss.load_animation_frame("rwalk",20,20,0,0,0.2);
@@ -95,16 +95,17 @@ int main(){
   guyss.load_animation_frame("lwalk",20,20,0,60,0.2);
   guyss.load_animation_frame("lwalk",20,20,40,60,0.2);
   guyss.set_animation("lwalk");
-
+*/
   
   
-  SpriteSheetDrawable treeTD= SpriteSheetDrawable(bobj,bobj2,treetex); 
+  SpriteSheetDrawable treeTD= SpriteSheetDrawable(treetex); 
   treeTD.load_animation_frame("test",48,30,0,0,0.2);
   treeTD.load_animation_frame("test",48,30,48,0,0.2);
   treeTD.set_animation("test");
   
-  player_object * a = make_player_obj(10,5,5,5,0,5,true,false,treeTD);
-  a->tex_draw = guyss;
+  player_object dormus(10,5,5,5,0,5,true,false,guy_tex);
+  player_object * a=&dormus; //= make_player_obj(10,5,5,5,0,5,true,false,treeTD);
+  //a->tex_draw = guyss;
   key_ev k1;
   //mouse_move_spawner.register_listener(a); 
   //mouse_click_handler.register_listener(a);

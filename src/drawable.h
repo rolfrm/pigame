@@ -39,7 +39,7 @@ public:
   float x,y,z;
   Texture tex;
 
-  SpriteSheetDrawable(BufferObject verts, BufferObject uvs, Texture tex);
+  SpriteSheetDrawable(Texture tex);
   SpriteSheetDrawable(){}
   void update();
   DrawRequest MakeDrawRequest();

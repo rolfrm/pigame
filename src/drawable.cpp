@@ -16,7 +16,7 @@ frame::frame(int scalex,int scaley,int offx,int offy,double n_duration){
 	duration=n_duration;
 }
 
-SpriteSheetDrawable::SpriteSheetDrawable(BufferObject verts, BufferObject uvs, Texture tex)
+SpriteSheetDrawable::SpriteSheetDrawable(Texture tex)
 {
   x = 0;
   y = 0;
