@@ -36,7 +36,7 @@ class physical_game_object: public game_object{
 
 class Bullet:public physical_game_object{
 public:
-	Bullet(float size_x,float size_y,float co_x,float co_y,Texture tex);
+	Bullet(float co_x,float co_y,Texture tex);
 
 	void do_ai(WorldObject wo);
 	void handle_collision(physical_game_object * other);
