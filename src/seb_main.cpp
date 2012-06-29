@@ -102,7 +102,7 @@ int main(){
    Music m1("ko-ko.ogg");
   Music m2(m1);
   AudioSample boom("boom.ogg");
- // play_music(m2);
+  play_music(m2);
 
 
   BufferObject bobj = make_buffer_object((void *)vertex,4,2,FLOAT);
@@ -135,6 +135,10 @@ int main(){
  dorm2.x=40;
   dorm2.y=20;
   
+  Texture cow_tex = make_texture("cow.png");
+  
+  SpriteSheetDrawable cow(bobj,bobj2,cow_tex);
+  
   std::list<SpriteSheetDrawable *> sprites;
   sprites.push_back(&dorm);
   sprites.push_back(&dorm2);
@@ -146,14 +150,14 @@ int main(){
   
     while(true){
     	if(glfwGetKey(GLFW_KEY_UP))
-    		dorm.y-=1;
+    		dorm.y-=2;
          if(glfwGetKey(GLFW_KEY_RIGHT))
-    		dorm.x-=1;
+    		dorm.x-=2;
     		
     	 if(glfwGetKey(GLFW_KEY_DOWN))
-    		dorm.y+=1;
+    		dorm.y+=2;
          if(glfwGetKey(GLFW_KEY_LEFT))
-    		dorm.x+=1;
+    		dorm.x+=2;
         bind_framebuffer(rendertarget);
          set_clearcolor(0.0f, 0.0f, 0.0f, 0.0f);
           clear_bound_framebuffer();
@@ -180,10 +184,10 @@ int main(){
     	
     	
     	 bind_framebuffer(shadowbuffer);
-    	  set_clearcolor(1.0f, 1.0f, 1.0f, 1.0f);
+    	  set_clearcolor(0.0f, 1.0f, 0.0f, 1.0f);
          clear_bound_framebuffer();
   	
-  	axis[0]=-0.5;
+  	axis[0]=0.5;
   	axis[1]=-1.5;
   	sprites.sort(compare_sprite_axis); 	
     	pshade.uniformf("lDirection",axis[0],axis[1]);
