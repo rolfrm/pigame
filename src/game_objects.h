@@ -30,7 +30,7 @@ public:
    
   SpriteSheetDrawable tex_draw;
  
-  Drawable * draw();
+  SpriteSheetDrawable * draw();
   virtual void do_ai(WorldObject wo){
 
   }

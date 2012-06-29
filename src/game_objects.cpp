@@ -107,7 +107,7 @@ Person::Person(){
 }
 
 
-Drawable * game_object::draw(){
+SpriteSheetDrawable * game_object::draw(){
   tex_draw.x = x;
   tex_draw.y = y;
   tex_draw.z = -y;

@@ -17,38 +17,6 @@ struct DrawRequest{
 
 
 
-class Drawable{
-public:
-  float x,y,z;
-  virtual void draw(GLProgram ptest){
-  
-  }
-
-};
-
-extern Drawable _default;
-/*Stuff that wants to draw implements this.*/
-class Drawer{
-public:
-  /*Return pointer to what you want to draw*/
-  virtual Drawable * draw(){
-    return &_default;
-  }
-};
-
-class TextureDrawable: public Drawable{
-public:
-  TextureDrawable();
-  TextureDrawable(BufferObject verts, BufferObject uvs, Texture tex);
-
-  BufferObject verts, uvs;
-  Texture tex;
-  int uv_offset_x, uv_offeset_y;
-
-  virtual void draw(GLProgram ptest);
-};
-
-
 class frame{
 public:
 	frame(int scalex,int scaley,int offx,int offy,double n_duration);
@@ -66,21 +34,30 @@ public:
 };
 
 
-class SpriteSheetDrawable: public TextureDrawable{
+class SpriteSheetDrawable{
 public:
-	SpriteSheetDrawable(BufferObject verts, BufferObject uvs, Texture tex);
-	SpriteSheetDrawable(){}
-	void update();
-	void draw(GLProgram ptest);
-	DrawRequest MakeDrawRequest();
-	void set_animation(std::string new_animation);
-	void load_animation_frame(std::string name,int scalex,int scaley,int offx,int offy,double duration);
-	
-	int current_frame;
-	timeval start_time;
-	std::map< std::string, std::vector<frame> >::iterator current_animation;
-	std::map< std::string, std::vector<frame> > animations;
+  float x,y,z;
+  Texture tex;
+
+  SpriteSheetDrawable(BufferObject verts, BufferObject uvs, Texture tex);
+  SpriteSheetDrawable(){}
+  void update();
+  DrawRequest MakeDrawRequest();
+  void set_animation(std::string new_animation);
+  void load_animation_frame(std::string name,int scalex,int scaley,int offx,int offy,double duration);
+  
+  int current_frame;
+  timeval start_time;
+  std::map< std::string, std::vector<frame> >::iterator current_animation;
+  std::map< std::string, std::vector<frame> > animations;
 
 };
 	
-bool z_compare(Drawable * d1, Drawable * d2);
+bool z_compare(SpriteSheetDrawable * d1, SpriteSheetDrawable * d2);
+
+/*Stuff that wants to draw implements this.*/
+class Drawer{
+public:
+  /*Return pointer to what you want to draw*/
+  virtual SpriteSheetDrawable * draw() = 0;
+};

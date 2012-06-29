@@ -115,7 +115,7 @@ void ObjectHandler::UpdatePhysics(){
 }
 
 void ObjectHandler::DoRendering(){
-  std::list<Drawable*> render_list;
+  std::list< SpriteSheetDrawable *> render_list;
   for(std::list<game_object *>::iterator it = drawlist.begin(); it != drawlist.end(); it++){
     render_list.push_back((*it)->draw());
   }
@@ -126,8 +126,8 @@ void ObjectHandler::DoRendering(){
   bind_buffer_object(unit_rectangle_verts,0);
   bind_buffer_object(unit_rectangle_uvs,1);
   
-  for(std::list<Drawable *>::iterator it = render_list.begin();it != render_list.end(); it++){
-    DrawRequest dr = ((SpriteSheetDrawable *) (*it))->MakeDrawRequest();
+  for(std::list<SpriteSheetDrawable *>::iterator it = render_list.begin();it != render_list.end(); it++){
+    DrawRequest dr = (*it)->MakeDrawRequest();
     bind_texture(dr.tex,0);
     texture_shader.uniformf("object_scale",dr.vert_scale_x,dr.vert_scale_y);
     texture_shader.uniformf("off",dr.x,dr.y);

@@ -4,35 +4,7 @@
 #include <math.h>
 #include <iostream>
 
-Drawable _default;
-
-
-
-TextureDrawable::TextureDrawable(){
-}
-TextureDrawable::TextureDrawable(BufferObject verts, BufferObject uvs, Texture tex){
-  this->verts = verts;
-  this->uvs = uvs;
-  this->tex = tex;
-  x = 0; y = 0; z = 0;
-}
-void TextureDrawable::draw(GLProgram ptest){
-  bind_shader(texture_shader);
-  setup_shader_uniforms(texture_shader);
-  bind_buffer_object(verts,0);
-  bind_buffer_object(uvs,1);
-  bind_texture(tex,0);
-  ptest.uniformf("object_scale",tex.width/2,tex.height/2);
-  ptest.uniformf("off",x,y);
-  ptest.uniformf("uv_scale",1.0,1.0);
-  ptest.uniformf("uv_offset",0.0,0.0);
-  
-  draw_buffers_triangle_fan(4);
-    
-}
-
-
-bool z_compare(Drawable * d1, Drawable * d2){
+bool z_compare(SpriteSheetDrawable * d1, SpriteSheetDrawable  * d2){
   return d1->z > d2->z;
 }
 
@@ -44,33 +16,19 @@ frame::frame(int scalex,int scaley,int offx,int offy,double n_duration){
 	duration=n_duration;
 }
 
-SpriteSheetDrawable::SpriteSheetDrawable(BufferObject verts, BufferObject uvs, Texture tex):
-TextureDrawable(verts,uvs,tex)
+SpriteSheetDrawable::SpriteSheetDrawable(BufferObject verts, BufferObject uvs, Texture tex)
 {
-	gettimeofday(&start_time,NULL);
+  x = 0;
+  y = 0;
+  z = 0;
+  this->tex = tex;
+  gettimeofday(&start_time,NULL);
 	
-	current_frame=0;
+  current_frame=0;
 	
-	current_animation=animations.end();
+  current_animation=animations.end();
 
 }
-
-void SpriteSheetDrawable::draw(GLProgram ptest){
-  update();
-  setup_shader_uniforms(texture_shader);
-  bind_shader(ptest);
-  bind_buffer_object(verts,0);
-  bind_buffer_object(uvs,1);
-  bind_texture(tex,0);
-  frame tempframe=current_animation->second[current_frame];
-  ptest.uniformf("scale",(float)2.0/global_screen_width,2.0/global_screen_height); //temporary world2view fix
-  ptest.uniformf("object_scale",tempframe.scale[0]/2,tempframe.scale[1]/2);
-  ptest.uniformf("off",x,y);
-  ptest.uniformf("uv_scale",(float)tempframe.scale[0]/(float)tex.width,(float)tempframe.scale[1]/(float)tex.height);
-  ptest.uniformf("uv_offset",(float)tempframe.offset[0]/(float)tex.width,(float)tempframe.offset[1]/(float)tex.height);
-  draw_buffers_triangle_fan(4);
-}
-
 
 void SpriteSheetDrawable::update(){
 	if(current_animation!=animations.end()){
