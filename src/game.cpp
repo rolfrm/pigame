@@ -16,8 +16,13 @@ void ObjectHandler::UpdateAI(){
   
 }
 
+struct collision_pair{
+  physical_game_object * pgo1, * pgo2;
+};
+
 void ObjectHandler::UpdatePhysics(){
 
+  std::list<collision_pair> collision_pairs;
     for(std::list<physical_game_object *>::iterator it = physical_sim.begin(); it !=physical_sim.end();it++){
       physical_game_object * p1 = *it;
       AABB aabb1 = p1->get_aabb(); 
@@ -46,12 +51,10 @@ void ObjectHandler::UpdatePhysics(){
 	if(result == -1){
 	  continue;
 	}
+	collision_pair cp = {p1,p2};
+	collision_pairs.push_back(cp);
 	if(aabb1.ghost == true || aabb2.ghost == true){
 	  overlap = 0.0;
-	}
-	if(result >= 0){
-	  p1->handle_collision(p2);
-	  p2->handle_collision(p1);
 	}
 
 	if(result == 0){
@@ -66,7 +69,12 @@ void ObjectHandler::UpdatePhysics(){
       }
       p1->set_aabb(aabb1);
     }
-
+    //std::list<collision_pair> collision_pairs;
+    for(std::list<collision_pair>::iterator it = collision_pairs.begin(); it != collision_pairs.end(); it++){
+      (*it).pgo1->handle_collision((*it).pgo2);
+      (*it).pgo2->handle_collision((*it).pgo1);
+    
+    }
 }
 
 void ObjectHandler::DoRendering(){
