@@ -60,11 +60,11 @@ void WorldObject::remove_object(game_object * obj){
 }
 
 void WorldObject::insert_object(game_object * new_object){
-
+  object_handler->load_object(new_object);
 }
 
 void WorldObject::insert_object(physical_game_object * obj){
-    remove_list.push_back(obj);
+  object_handler->load_object(obj);
 
 }
 

@@ -7,7 +7,8 @@
 
 void ObjectHandler::UpdateAI(){
   WorldObject wo(this);
-  for(std::list<game_object *>::iterator it = drawlist.begin(); it != drawlist.end() ;it++){
+  std::list<game_object *> drawlist2 = drawlist;
+  for(std::list<game_object *>::iterator it = drawlist2.begin(); it != drawlist2.end() ;it++){
     game_object * gobj = *it;
     gobj->do_ai(wo);
   }
