@@ -160,11 +160,15 @@ SpriteSheetDrawable * game_object::draw(){
   return &tex_draw;
 }
 
-Bullet::Bullet(float size_x,float size_y,float co_x,float co_y,Texture tex){
-	set_aabb_data(size_x,size_y,co_x,co_y,true,false);
+Bullet::Bullet(float co_x,float co_y,Texture tex){
+	set_aabb_data(tex.width,tex.height,co_x,co_y,true,false);
 	x=co_x;
 	y=co_y;
 	dead=false;
+	tex_draw=SpriteSheetDrawable(tex);
+ 	tex_draw.load_animation_frame("static",tex.width,tex.height,0,0,200000);
+	tex_draw.set_animation("static");
+	
 }
 
 void Bullet::do_ai(WorldObject wo){
@@ -179,7 +183,7 @@ void Bullet::do_ai(WorldObject wo){
 }
 
 void Bullet::handle_collision(physical_game_object * other){
-
+	other->x+=vel[0]*10,other->y+=vel[1]*10;
 
 }
 
