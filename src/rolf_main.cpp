@@ -102,7 +102,11 @@ int main(){
   treeTD.load_animation_frame("test",48,30,0,0,0.2);
   treeTD.load_animation_frame("test",48,30,48,0,0.2);
   treeTD.set_animation("test");
-  
+
+  for(int i = 0; i < 15;i++){
+    object_handler.load_object(make_pgo(- (rand()% 128)*4 + 128, - (rand()% 128)*2 + 200, 20,5,0,5,true,false,treeTD));
+  }  
+
   player_object dormus(10,5,5,5,0,5,true,false,guy_tex);
   player_object * a=&dormus; //= make_player_obj(10,5,5,5,0,5,true,false,treeTD);
   //a->tex_draw = guyss;
@@ -112,9 +116,7 @@ int main(){
   key_event_handler.register_listener(a);
   object_handler.load_object(a);
   
-  for(int i = 0; i < 15;i++){
-    object_handler.load_object(make_pgo(- (rand()% 128)*4 + 128, - (rand()% 128)*2 + 200, 20,5,0,5,true,false,treeTD));
-  }
+
   int i = 0;
   int channel = 0;
   while(true){

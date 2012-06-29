@@ -36,9 +36,9 @@ class physical_game_object: public game_object{
 
 class Bullet:public physical_game_object{
 public:
-	Bullet(float co_x,float co_y,Texture tex);
+	Bullet(int x,int y,float co_x,float co_y,int vel_x,int vel_y,Texture tex);
 
-	void do_ai(WorldObject wo);
+	void do_ai(WorldObject & wo);
 	void handle_collision(physical_game_object * other);
 
 	int vel[2];
@@ -69,6 +69,8 @@ class player_object: public Person, public EventListener<mouse_position>, public
   int left;
   int right;
   game_object * collider;
+  bool spawn_bullet;
+  Texture bullet_tex;
 public:
   void handle_event(mouse_position mpos);
   void handle_event(MouseClick mc);

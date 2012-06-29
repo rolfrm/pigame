@@ -30,6 +30,8 @@ player_object::player_object(float x,float y,float sx, float sy, float off_x, fl
   left = 0;
   right = 0;	
 
+  bullet_tex=make_texture("bullet.png");
+
   tex_draw=SpriteSheetDrawable(sheet); 
   tex_draw.load_animation_frame("rwalk",20,20,0,0,0.2);
   tex_draw.load_animation_frame("rwalk",20,20,20,0,0.2);
@@ -56,6 +58,8 @@ player_object::player_object(float x,float y,float sx, float sy, float off_x, fl
   this->y=y;
   set_aabb_data(sx,sy,off_x,off_y,movable,ghost);
 
+  spawn_bullet=false;
+
 }
 
 
@@ -80,6 +84,7 @@ void player_object::handle_event(KeyEvent kev){
     case 285:left=active;break; //left
     case 284:down=active;break; //down
     case 286:right=active;break; //right
+    case 32:spawn_bullet=kev.pressed;break; //space
     }
 }
 
@@ -117,6 +122,14 @@ void player_object::do_ai( WorldObject & wo){
   if(down){
     std::cout << wo.get_near_physical_objects(this,180.0).size() << "\n";
   }
+
+  if(spawn_bullet){
+	spawn_bullet=false;
+	wo.insert_object(new Bullet(x+20,y,0,0,1,0,bullet_tex));
+	
+  }
+
+  
 }
 
 void physical_game_object::set_aabb_data(float size_x, float size_y, float co_x, float co_y, bool movable, bool ghost){
@@ -160,30 +173,34 @@ SpriteSheetDrawable * game_object::draw(){
   return &tex_draw;
 }
 
-Bullet::Bullet(float co_x,float co_y,Texture tex){
-	set_aabb_data(tex.width,tex.height,co_x,co_y,true,false);
-	x=co_x;
-	y=co_y;
+Bullet::Bullet(int x,int y,float co_x,float co_y,int vel_x,int vel_y,Texture tex){
+	set_aabb_data(tex.width/2,tex.height/2,co_x,co_y,true,true);
+	this->x=x;
+	this->y=y;
 	dead=false;
 	tex_draw=SpriteSheetDrawable(tex);
  	tex_draw.load_animation_frame("static",tex.width,tex.height,0,0,200000);
 	tex_draw.set_animation("static");
+	vel[0]=vel_x;
+	vel[1]=vel_y;
 	
 }
 
-void Bullet::do_ai(WorldObject wo){
+void Bullet::do_ai(WorldObject & wo){
 	if(dead){
 		wo.remove_object(this);
 	}
 	else{
-		x+=vel[0],y+=vel[1];
+		x+=vel[0];
+		y+=vel[1];
 	}
 
 
 }
 
 void Bullet::handle_collision(physical_game_object * other){
-	other->x+=vel[0]*10,other->y+=vel[1]*10;
+	//other->x+=vel[0]*10,other->y+=vel[1]*10;
+	dead=true;
 
 }
 
