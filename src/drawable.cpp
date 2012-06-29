@@ -5,6 +5,9 @@
 #include <iostream>
 
 Drawable _default;
+
+
+
 TextureDrawable::TextureDrawable(){
 }
 TextureDrawable::TextureDrawable(BufferObject verts, BufferObject uvs, Texture tex){
@@ -13,7 +16,6 @@ TextureDrawable::TextureDrawable(BufferObject verts, BufferObject uvs, Texture t
   this->tex = tex;
   x = 0; y = 0; z = 0;
 }
-
 void TextureDrawable::draw(GLProgram ptest){
   bind_shader(texture_shader);
   setup_shader_uniforms(texture_shader);
@@ -100,3 +102,23 @@ void SpriteSheetDrawable::set_animation(std::string new_animation){
 		std::cout<<"Warning Animation not found!";
 	}
 }
+
+DrawRequest SpriteSheetDrawable::MakeDrawRequest(){
+  update();
+  frame current_frame_i = current_animation->second[current_frame];
+  
+  DrawRequest out;
+  out.x = x;
+  out.y = y;
+  out.uv_off_x = (float)current_frame_i.offset[0]/(float)tex.width;
+  out.uv_off_y = (float)current_frame_i.offset[1]/(float)tex.height;
+  std::cout <<  out.uv_off_x << " " << out.uv_off_y << "\n";
+  out.uv_scale_x = (float)current_frame_i.scale[0]/(float)tex.width;
+  out.uv_scale_y = (float)current_frame_i.scale[1]/(float)tex.height;
+  out.vert_scale_x = current_frame_i.scale[0]/2;
+  out.vert_scale_y = current_frame_i.scale[1]/2;
+  out.tex = tex;
+  return out;
+  
+}
+	

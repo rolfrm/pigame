@@ -7,6 +7,14 @@
 #include <string>
 #include <sys/time.h>
 
+struct DrawRequest{
+  float x,y;
+  float uv_off_x,uv_off_y;
+  float uv_scale_x, uv_scale_y;
+  float vert_scale_x, vert_scale_y;
+  Texture tex;
+};
+
 
 
 class Drawable{
@@ -15,6 +23,7 @@ public:
   virtual void draw(GLProgram ptest){
   
   }
+
 };
 
 extern Drawable _default;
@@ -63,7 +72,7 @@ public:
 	SpriteSheetDrawable(){}
 	void update();
 	void draw(GLProgram ptest);
-	
+	DrawRequest MakeDrawRequest();
 	void set_animation(std::string new_animation);
 	void load_animation_frame(std::string name,int scalex,int scaley,int offx,int offy,double duration);
 	

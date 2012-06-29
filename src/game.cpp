@@ -1,4 +1,5 @@
 #include "game.h"
+#include "game_super.h"
 #include <iostream>
 #include <math.h>
 std::list <game_object *> WorldObject::get_near_gameobjects(game_object * origin, float distance){
@@ -52,15 +53,16 @@ WorldObject::WorldObject(ObjectHandler * object_handler){
 }
 
 
-
-
-void ObjectHandler::gameloop(){
+void ObjectHandler::UpdateAI(){
   WorldObject wo(this);
-    for(std::list<game_object *>::iterator it = drawlist.begin(); it != drawlist.end() ;it++){
-      game_object * gobj = *it;
-      gobj->do_ai(wo);
-    }
-    
+  for(std::list<game_object *>::iterator it = drawlist.begin(); it != drawlist.end() ;it++){
+    game_object * gobj = *it;
+    gobj->do_ai(wo);
+  }
+}
+
+void ObjectHandler::UpdatePhysics(){
+
     for(std::list<physical_game_object *>::iterator it = physical_sim.begin(); it !=physical_sim.end();it++){
       physical_game_object * p1 = *it;
       AABB aabb1 = p1->get_aabb(); 
@@ -110,15 +112,45 @@ void ObjectHandler::gameloop(){
       p1->set_aabb(aabb1);
     }
 
-    std::list<Drawable*> render_list;
-    for(std::list<game_object *>::iterator it = drawlist.begin(); it != drawlist.end(); it++){
-      render_list.push_back((*it)->draw());
-    }
-    render_list.sort(z_compare);
-    
-    for(std::list<Drawable *>::iterator it = render_list.begin();it != render_list.end(); it++){
-      (*it)->draw(current_shader);
-    }
+}
 
+void ObjectHandler::DoRendering(){
+  std::list<Drawable*> render_list;
+  for(std::list<game_object *>::iterator it = drawlist.begin(); it != drawlist.end(); it++){
+    render_list.push_back((*it)->draw());
+  }
+  render_list.sort(z_compare);
+  
+  bind_shader(texture_shader);
+  setup_shader_uniforms(texture_shader);
+  bind_buffer_object(unit_rectangle_verts,0);
+  bind_buffer_object(unit_rectangle_uvs,1);
+  
+  for(std::list<Drawable *>::iterator it = render_list.begin();it != render_list.end(); it++){
+    DrawRequest dr = ((SpriteSheetDrawable *) (*it))->MakeDrawRequest();
+    bind_texture(dr.tex,0);
+    texture_shader.uniformf("object_scale",dr.vert_scale_x,dr.vert_scale_y);
+    texture_shader.uniformf("off",dr.x,dr.y);
+    texture_shader.uniformf("uv_scale",dr.uv_scale_x,dr.uv_scale_y);
+    texture_shader.uniformf("uv_offset",dr.uv_off_x, dr.uv_off_y);
+    draw_buffers_triangle_fan(4);
+
+  }
+
+}
+
+
+void ObjectHandler::gameloop(){
+  UpdateAI();
+  UpdatePhysics();
+  DoRendering();
     
   }
+void ObjectHandler::load_object(physical_game_object * pobj){
+    physical_sim.push_back(pobj);
+    drawlist.push_back(pobj);
+  }
+
+void ObjectHandler::load_object(game_object * gobj){
+  drawlist.push_back(gobj);
+}

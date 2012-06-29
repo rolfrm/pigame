@@ -1,6 +1,7 @@
 #include "game_super.h"
 #include "audio.h"
 #include "gfx_basics.h"
+
 #include <iostream>
 int global_screen_width;
 int global_screen_height;
@@ -28,6 +29,33 @@ void setup_shader_uniforms(GLProgram s){
   s.uniformf("scale",(float)2.0/global_screen_width, 2.0/global_screen_height);
   s.uniformf("camera",camera_x,camera_y);
 }
+
+float vertex[8] = {
+	-1.0f,1.0f,
+	1.0f,1.0f,
+	1.0f,-1.0f,
+	-1.0f,-1.0f
+};
+
+float uv[8] = {
+	1.0f,1.0f,
+	0.0f,1.0f,
+	0.0f,0.0f,
+	1.0f,0.0f,
+};
+
+float uv2[8] = {
+	1.0f,0.0f,
+	0.0f,0.0f,
+	0.0f,1.0f,
+	1.0f,1.0f,
+};
+
+BufferObject unit_rectangle_verts;
+BufferObject unit_rectangle_uvs;
+BufferObject unit_rectangle_inverse_uvs;
+
+
 GLProgram screen_drawer;
 GLProgram texture_shader;
 void init_game(int window_width, int window_height, int width_pixels, int height_pixels){
@@ -50,7 +78,10 @@ void init_game(int window_width, int window_height, int width_pixels, int height
   screen_drawer.link();
   screen_drawer.uniformf("scale", (float)1.0/global_screen_width, (float) 1.0/global_screen_height);
   
-
+  unit_rectangle_verts= make_buffer_object((void *)vertex,4,2,FLOAT);
+  unit_rectangle_uvs = make_buffer_object((void *)uv,4,2,FLOAT);
+  unit_rectangle_inverse_uvs  = make_buffer_object((void *)uv2,4,2,FLOAT);
+ 
 }
 
 mouse_position screen_pos_to_world_pos(mouse_position mpos){
@@ -65,3 +96,4 @@ mouse_position screen_pos_to_world_pos(mouse_position mpos){
   mpos.y += camera_y;
   return mpos;
 }
+

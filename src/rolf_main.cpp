@@ -24,27 +24,6 @@
 extern int global_screen_width;
 extern int global_screen_height;
 
-float vertex[8] = {
-	-1.0f,1.0f,
-	1.0f,1.0f,
-	1.0f,-1.0f,
-	-1.0f,-1.0f
-};
-
-float uv[8] = {
-	1.0f,1.0f,
-	0.0f,1.0f,
-	0.0f,0.0f,
-	1.0f,0.0f,
-};
-
-float uv2[8] = {
-	1.0f,0.0f,
-	0.0f,0.0f,
-	0.0f,1.0f,
-	1.0f,1.0f,
-};
-
 player_object * make_player_obj(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost, SpriteSheetDrawable tex_draw ){
   player_object * out = new player_object();
   out->x = x;
@@ -92,9 +71,9 @@ int main(){
   
   Texture treetex = make_texture("cow.png");
   Texture guy_tex  = make_texture("DormusSheet.png");
-  BufferObject bobj = make_buffer_object((void *)vertex,4,2,FLOAT);
-  BufferObject bobj2 = make_buffer_object((void *)uv,4,2,FLOAT);
-  BufferObject bobj3 = make_buffer_object((void *)uv2,4,2,FLOAT);
+  BufferObject bobj = unit_rectangle_verts;
+  BufferObject bobj2 = unit_rectangle_uvs;
+  BufferObject bobj3 = unit_rectangle_inverse_uvs;
   SpriteSheetDrawable guyss = SpriteSheetDrawable(bobj,bobj2,guy_tex); 
   guyss.load_animation_frame("test",20,20,0,0,0.2);
   guyss.load_animation_frame("test",20,20,20,0,0.2);
