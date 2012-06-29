@@ -30,7 +30,7 @@ player_object::player_object(float x,float y,float sx, float sy, float off_x, fl
   left = 0;
   right = 0;	
 
-  bullet_tex=make_texture("bullet.png");
+ // bullet_tex=make_texture("bullet.png");
 
   tex_draw=SpriteSheetDrawable(sheet); 
   tex_draw.load_animation_frame("rwalk",20,20,0,0,0.2);
@@ -125,7 +125,7 @@ void player_object::do_ai( WorldObject & wo){
 
   if(spawn_bullet){
 	spawn_bullet=false;
-	wo.insert_object(new Bullet(x+20,y,0,0,1,0,bullet_tex));
+	wo.insert_object(new Bullet(x+20,y,0,0,1,0,get_texture("bullet.png")));
 	
   }
 
