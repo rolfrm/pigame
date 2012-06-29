@@ -34,6 +34,21 @@ float aabb_distance(AABB a, AABB b){
   
   return out;
 }
+
+std::list <physical_game_object *> get_pgo_from_aabb(AABB origin, std::list<physical_game_object *> * from, float distance){
+  std::list<physical_game_object *> out;
+  for(std::list<physical_game_object *>::iterator it = from->begin(); it != from->end(); it++){
+    AABB b = (*it)->get_aabb();
+    float d = aabb_distance(origin,b);
+    if(d < distance){
+      out.push_back(*it);
+    }
+  }
+  return out;
+  
+}
+
+
 std::list <physical_game_object *> WorldObject::get_near_physical_objects(physical_game_object * origin, float distance){
   std::list<physical_game_object *> out;
   AABB a = origin->get_aabb();
@@ -76,7 +91,13 @@ void WorldObject::finish_update(){
   remove_list.clear();
 }
 
-
-std::list <physical_game_object *>  get_objects_nearby_to_point(float x, float y, float distance){
-
+//std::list <physical_game_object *> get_pgo_from_aabb(AABB origin, std::list<physical_game_object *> * from, float distance)
+std::list <physical_game_object *>   WorldObject::get_objects_nearby_to_point(float x, float y, float distance){
+  AABB origin;
+  origin.x = x;
+  origin.y = y;
+  origin.size_x = 1;
+  origin.size_y = 1;
+  std::list<physical_game_object *> out = get_pgo_from_aabb(origin,&(object_handler->physical_sim),distance);
+  return out;
 }
