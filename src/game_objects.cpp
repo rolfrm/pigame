@@ -14,6 +14,7 @@ void player_object::handle_event(mouse_position mpos){
   mpos = screen_pos_to_world_pos(mpos);
   x = (x*4 + mpos.x)/5;
   y = (y*4 + mpos.y)/5;
+  collider = NULL;
 }
 
 player_object::player_object(){
@@ -46,7 +47,16 @@ void player_object::handle_event(KeyEvent kev){
     }
 }
 
-void player_object::do_ai( WorldObject wo){
+void player_object::handle_collision(physical_game_object * pgo){
+  collider = pgo;
+}
+
+void player_object::do_ai( WorldObject & wo){
+  if(collider != NULL){
+    wo.remove_object(collider);
+    collider = NULL;
+    
+  }
   x += left*1 + right*-1;
   y += up*-1 + down;
   set_camera_position(x,y);

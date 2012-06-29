@@ -6,7 +6,7 @@ class game_object;
 class physical_game_object;
 class WorldObject{
  ObjectHandler * object_handler;
- 
+ std::list<game_object *> remove_list;
  public:
   WorldObject(ObjectHandler * object_handler);
  
@@ -18,5 +18,5 @@ class WorldObject{
   void insert_object(physical_game_object *);
   
   std::list <physical_game_object *>  get_objects_nearby_to_point(float x, float y, float distance);
-  
+  void finish_update();
 };

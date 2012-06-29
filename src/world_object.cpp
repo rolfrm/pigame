@@ -55,16 +55,27 @@ WorldObject::WorldObject(ObjectHandler * object_handler){
 }
 
 void WorldObject::remove_object(game_object * obj){
-
+  remove_list.push_back(obj);
 }
 
 void WorldObject::insert_object(game_object * new_object){
 
 }
 
-void WorldObject::insert_object(physical_game_object * new_object){
+void WorldObject::insert_object(physical_game_object * obj){
+    remove_list.push_back(obj);
 
 }
+
+void WorldObject::finish_update(){
+  for(std::list<game_object *>::iterator it = remove_list.begin(); it != remove_list.end();it++){
+    std::cout << "Removing object .. \n";
+    object_handler->drawlist.remove((game_object *) *it);
+    object_handler->physical_sim.remove((physical_game_object *) *it);
+  }
+  remove_list.clear();
+}
+
 
 std::list <physical_game_object *>  get_objects_nearby_to_point(float x, float y, float distance){
 
