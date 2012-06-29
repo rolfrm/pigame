@@ -45,8 +45,17 @@ float uv2[8] = {
 	1.0f,1.0f,
 };
 
-player_object * make_player_obj(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost, TextureDrawable tex_draw ){
+player_object * make_player_obj(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost, SpriteSheetDrawable tex_draw ){
   player_object * out = new player_object();
+  out->x = x;
+  out->y = y;
+  out->set_aabb_data(sx,sy,off_x,off_y,movable,ghost);
+  out->tex_draw = tex_draw;
+  return out;
+} 
+
+physical_game_object * make_pgo(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost, SpriteSheetDrawable tex_draw ){
+  physical_game_object * out = new physical_game_object();
   out->x = x;
   out->y = y;
   out->set_aabb_data(sx,sy,off_x,off_y,movable,ghost);
@@ -76,27 +85,39 @@ int main(){
   Music m1("ko-ko.ogg");
   Music m2(m1);
   AudioSample boom("boom.ogg");
-  //play_music(m2);
+  play_music(m2);
   
   Texture fb_tex = make_texture((void *) NULL,global_screen_width,global_screen_height,3);  
   FrameBuffer fb(fb_tex);
   
-  Texture treetex = make_texture("tree123.png");
+  Texture treetex = make_texture("cow.png");
+  Texture guy_tex  = make_texture("DormusSheet.png");
   BufferObject bobj = make_buffer_object((void *)vertex,4,2,FLOAT);
   BufferObject bobj2 = make_buffer_object((void *)uv,4,2,FLOAT);
   BufferObject bobj3 = make_buffer_object((void *)uv2,4,2,FLOAT);
+  SpriteSheetDrawable guyss = SpriteSheetDrawable(bobj,bobj2,guy_tex); 
+  guyss.load_animation_frame("test",20,20,0,0,0.2);
+  guyss.load_animation_frame("test",20,20,20,0,0.2);
+  guyss.load_animation_frame("test",20,20,40,0,0.2);
+  guyss.set_animation("test");
+
   
-  TextureDrawable treeTD= TextureDrawable(bobj,bobj2,treetex); 
   
-  player_object * a = make_player_obj(10,20,30,15,0,5,true,false,treeTD);
+  SpriteSheetDrawable treeTD= SpriteSheetDrawable(bobj,bobj2,treetex); 
+  treeTD.load_animation_frame("test",48,30,0,0,0.2);
+  treeTD.load_animation_frame("test",48,30,48,0,0.2);
+  treeTD.set_animation("test");
+  
+  player_object * a = make_player_obj(10,5,5,5,0,5,true,false,treeTD);
+  a->tex_draw = guyss;
   key_ev k1;
-  mouse_move_spawner.register_listener(a); 
-  mouse_click_handler.register_listener(a);
-  key_event_handler.register_listener(&k1);
+  //mouse_move_spawner.register_listener(a); 
+  //mouse_click_handler.register_listener(a);
+  key_event_handler.register_listener(a);
   object_handler.load_object(a);
   
-  for(int i = 0; i < 5;i++){
-    object_handler.load_object(make_player_obj(- (rand()% 128)*4 + 128, - (rand()% 128)*2 + 200, 30,15,0,5,true,false,treeTD));
+  for(int i = 0; i < 15;i++){
+    object_handler.load_object(make_pgo(- (rand()% 128)*4 + 128, - (rand()% 128)*2 + 200, 20,5,0,5,true,false,treeTD));
   }
   int i = 0;
   int channel = 0;
@@ -107,7 +128,7 @@ int main(){
       channel++;
       //play_audio_sample(&boom,channel%8);
     }
-    std::cout << (int)a->x << " " << (int)a->y << "\n";
+    //std::cout << (int)a->x << " " << (int)a->y << "\n";
       
     bind_framebuffer(fb);
     clear_bound_framebuffer();

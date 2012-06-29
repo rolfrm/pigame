@@ -21,14 +21,14 @@ class WorldObject{
 class game_object:public Drawer{
 public:
   float x,y,dx,dy;
-  game_object(){
+ game_object(){
     x = 0;
     y = 0.0;
     dx = 0.15;
     dy = 0.15;
   }
    
-  TextureDrawable tex_draw;
+  SpriteSheetDrawable tex_draw;
  
   Drawable * draw();
   virtual void do_ai(WorldObject wo){
@@ -66,11 +66,16 @@ class Npc: public Person{
 };
 
 
-class player_object: public Person, public EventListener<mouse_position>, public EventListener<MouseClick>{
-  bool down;
+class player_object: public Person, public EventListener<mouse_position>, public EventListener<MouseClick>, public EventListener<KeyEvent>{
+  int down;
+  int up;
+  int left;
+  int right;
 public:
   void handle_event(mouse_position mpos);
   void handle_event(MouseClick mc);
+  void handle_event(KeyEvent ke);
+  
   void do_ai(WorldObject wo);
   player_object();
   

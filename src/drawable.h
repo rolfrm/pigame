@@ -60,7 +60,7 @@ public:
 class SpriteSheetDrawable: public TextureDrawable{
 public:
 	SpriteSheetDrawable(BufferObject verts, BufferObject uvs, Texture tex);
-	
+	SpriteSheetDrawable(){}
 	void update();
 	void draw(GLProgram ptest);
 	

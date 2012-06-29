@@ -17,7 +17,10 @@ void player_object::handle_event(mouse_position mpos){
 }
 
 player_object::player_object(){
-  down = false;
+  down = 0;
+  up = 0;
+  left = 0;
+  right = 0;
 }
 void player_object::handle_event(MouseClick mc){
   if(mc.pressed){
@@ -33,14 +36,30 @@ void player_object::handle_event(MouseClick mc){
   }
 }
 
+void player_object::handle_event(KeyEvent kev){
+  int active = kev.pressed;
+  switch(kev.key){
+  case 283:up=active;break; //Up
+    case 285:left=active;break; //left
+    case 284:down=active;break; //down
+    case 286:right=active;break; //right
+    }
+}
+
 void player_object::do_ai( WorldObject wo){
+  x += left*1 + right*-1;
+  y += up*-1 + down;
+  set_camera_position(x,y);
+  
   if(down){
-    set_camera_position(x,y);
     std::cout << wo.get_near_physical_objects(this,180.0).size() << "\n";
   }
 }
 
 void physical_game_object::set_aabb_data(float size_x, float size_y, float co_x, float co_y, bool movable, bool ghost){
+
+  
+
   aabb.size_x = size_x;
   aabb.size_y = size_y;
   aabb.movable = movable;
@@ -50,7 +69,7 @@ void physical_game_object::set_aabb_data(float size_x, float size_y, float co_x,
 }
 
 void physical_game_object::handle_collision(physical_game_object * other){
-  std::cout << "Collision happened\n";
+  //std::cout << "Collision happened\n";
 }
 
 AABB physical_game_object::get_aabb(){

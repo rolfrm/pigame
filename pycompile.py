@@ -1,7 +1,7 @@
 import os
 import pickle
 import subprocess as sp
-
+cc = "g++"
 if os.path.exists("pycompile.local.py"):
     execfile("pycompile.local.py")
 
@@ -65,10 +65,6 @@ for i in ftc:
     print chtime
     if i not in pycache.keys() or pycache[i] < chtime and not i in blacklist:
         
-        if False and i[-2:] == ".c":
-            cc = "clang"
-        else:
-            cc = "clang++"
         call = "{2} -c ./src/{0} {1} -O3 -o ./obj/{3}.o".format(i,includes,cc,i_stripped)
         rmcall = "rm ./obj/{0}.o".format(i_stripped)
         print call
@@ -96,7 +92,7 @@ for i in ftc:
 with open("pycache","w") as fptr:
     pickle.dump(pycache,fptr)
 
-acc_link = "clang++ -o {0} -O3 ".format(output)
+acc_link = cc +" -o {0} -O3 ".format(output)
 print "WAT"
 for i in ftl:
     acc_link +=i + " "

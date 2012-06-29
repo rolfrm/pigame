@@ -55,13 +55,14 @@ TextureDrawable(verts,uvs,tex)
 
 void SpriteSheetDrawable::draw(GLProgram ptest){
   update();
+  setup_shader_uniforms(texture_shader);
   bind_shader(ptest);
   bind_buffer_object(verts,0);
   bind_buffer_object(uvs,1);
   bind_texture(tex,0);
   frame tempframe=current_animation->second[current_frame];
-  ptest.uniformf("scale",(float)1.0/global_screen_width,1.0/global_screen_height); //temporary world2view fix
-  ptest.uniformf("object_scale",tempframe.scale[0],tempframe.scale[1]);
+  ptest.uniformf("scale",(float)2.0/global_screen_width,2.0/global_screen_height); //temporary world2view fix
+  ptest.uniformf("object_scale",tempframe.scale[0]/2,tempframe.scale[1]/2);
   ptest.uniformf("off",x,y);
   ptest.uniformf("uv_scale",(float)tempframe.scale[0]/(float)tex.width,(float)tempframe.scale[1]/(float)tex.height);
   ptest.uniformf("uv_offset",(float)tempframe.offset[0]/(float)tex.width,(float)tempframe.offset[1]/(float)tex.height);
