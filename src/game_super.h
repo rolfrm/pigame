@@ -23,4 +23,3 @@ mouse_position screen_pos_to_world_pos(mouse_position mpos);
 
 void init_game(int window_width, int window_height,int width_pixels, int height_pixels);
 void setup_shader_uniforms(GLProgram s);
-float get_time();

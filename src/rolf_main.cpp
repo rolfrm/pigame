@@ -19,6 +19,7 @@
 #include "game_super.h"
 #include "audio.h"
 #include "gfx_basics.h"
+#include "misc.h"
 
 
 extern int global_screen_width;
@@ -148,6 +149,8 @@ int main(){
     draw_buffers_triangle_fan(4);
     
     swapbuffers();
+
+    std::cout<<get_time()<<"\n";
   }
   
   return 0;
