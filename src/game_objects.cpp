@@ -150,3 +150,21 @@ SpriteSheetDrawable * game_object::draw(){
   return &tex_draw;
 }
 
+Bullet::Bullet(float size_x,float size_y,float co_x,float co_y,Texture tex){
+	set_aabb_data(size_x,size_y,co_x,co_y,true,false);
+	x=co_x;
+	y=co_y;
+	dead=false;
+}
+
+void Bullet::do_ai(WorldObject wo){
+	if(dead){
+		wo.remove_object(this);
+	}
+	else{
+		x+=vel[0],y+=vel[1];
+	}
+
+
+}
+
