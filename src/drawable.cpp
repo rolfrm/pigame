@@ -53,6 +53,20 @@ TextureDrawable(verts,uvs,tex)
 
 }
 
+SpriteSheetDrawable::SpriteSheetDrawable(SpriteSheetDrawable & other):
+TextureDrawable(other.verts,other.uvs,other.tex)
+{
+	gettimeofday(&start_time,NULL);
+	
+	animations=other.animations;
+	
+	current_frame=other.current_frame;
+	
+	current_animation=animations.find(other.current_animation->first);
+	
+
+}
+
 void SpriteSheetDrawable::draw(GLProgram ptest){
   update();
   bind_shader(ptest);

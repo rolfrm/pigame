@@ -13,23 +13,26 @@ uniform vec2 object_scale;
 uniform vec2 uv_scale;
 uniform vec2 uv_offset;
 
+varying vec2 uv;
+
 uniform vec2 lDirection;
 
 vec3 Light=vec3(lDirection,-1.0);
 
-varying vec2 uv;
-
 void main(){
-	uv=UV_coord*uv_scale+uv_offset;
+	
+	gl_Position = vec4((Pos*object_scale + off)*scale,0.0,1.0);
+	
 	if(Pos.y==1.0){
-		gl_Position = vec4((Pos*object_scale + off)*scale,0.0,1.0);
+		uv=gl_Position.xy;
 	}
 	else{
 		vec3 p=vec3(Pos.x,0.0,Pos.y);
 		float t=-2.0/Light.z;
 		vec3 inter=Light*t+p;
-		gl_Position = vec4((vec2(inter.x,inter.y+1.0)*object_scale + off)*scale,0.0,1.0);
+		uv = (vec2(inter.x,inter.y+1.0)*object_scale + off)*scale;
 	}
-	//gl_Position = vec4((Pos*object_scale + off)*scale,0.0,1.0);
+	uv=uv*0.5+vec2(0.5);
+	
 }
 

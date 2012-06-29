@@ -14,7 +14,7 @@ varying vec2 uv;
 
 void main(){
 	uv=UV_coord;
-	gl_Position = vec4((Pos*object_scale + off - camera)*scale,0.0,1.0);
+	gl_Position = vec4(Pos,0.0,1.0);
 
 }
 

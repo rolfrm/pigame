@@ -12,7 +12,7 @@ float camera_x, camera_y, scale_x, scale_y;
 void set_camera_position(int x, int y){
   camera_x = x;
   camera_y = y;
-  std::cout << camera_x << "c" << camera_y << "\n";
+  //std::cout << camera_x << "c" << camera_y << "\n";
 }
 
 void move_camera(int dx, int dy){

@@ -60,6 +60,7 @@ public:
 class SpriteSheetDrawable: public TextureDrawable{
 public:
 	SpriteSheetDrawable(BufferObject verts, BufferObject uvs, Texture tex);
+	SpriteSheetDrawable(SpriteSheetDrawable & other);
 	
 	void update();
 	void draw(GLProgram ptest);
@@ -67,7 +68,7 @@ public:
 	void set_animation(std::string new_animation);
 	void load_animation_frame(std::string name,int scalex,int scaley,int offx,int offy,double duration);
 	
-	int current_frame;
+	int current_frame,ID;
 	timeval start_time;
 	std::map< std::string, std::vector<frame> >::iterator current_animation;
 	std::map< std::string, std::vector<frame> > animations;

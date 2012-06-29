@@ -22,8 +22,22 @@ FrameBuffer::FrameBuffer(std::vector<Texture> texs){
   
 }
 
-Framebuffer::FrameBuffer(int width,int heigth,int colorChannels, int interp_param, int wrap_param){
-	texs.push_back(make_texture(0,width,height,colorChannels,interp_param, wrap_param));
+FrameBuffer::FrameBuffer(int width,int height,int colorChannels, int interp_param, int wrap_param){
+	textures.push_back(make_texture(0,width,height,colorChannels,interp_param, wrap_param));
+	glGenFramebuffers(1,&gl_ref);
+	bind_framebuffer(*this);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,textures[0].gl_ref,0);
+	
+	glGenRenderbuffers(1,&stencil_buffer);
+	
+	glBindRenderbuffer(GL_RENDERBUFFER, stencil_buffer);
+	glRenderbufferStorage(GL_RENDERBUFFER,GL_STENCIL_INDEX, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER,GL_STENCIL_ATTACHMENT,GL_RENDERBUFFER, stencil_buffer);
+	 
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+ 	if(status != GL_FRAMEBUFFER_COMPLETE){
+   		printf("Error making framebuffer\n");
+ 	}
 }
 
 

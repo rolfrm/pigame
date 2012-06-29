@@ -84,7 +84,7 @@ for i in ftc:
                 pass
             do_call(call)
             #print call.split(" ")
-            #p = sp.check_call(call.split(" "))
+            #p = sp.check_call(call.splitls(" "))
             pycache[i] = os.path.getmtime("./src/"+i)
         except:
         	print "Error"
