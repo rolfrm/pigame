@@ -17,7 +17,7 @@ public:
   SpriteSheetDrawable tex_draw;
  
   SpriteSheetDrawable * draw();
-  virtual void do_ai(WorldObject wo){
+  virtual void do_ai(WorldObject& wo){
 
   }
 
@@ -43,7 +43,6 @@ public:
 
 	int vel[2];
 	bool dead;
-
 };
 
 class Creature: public physical_game_object{
@@ -69,12 +68,13 @@ class player_object: public Person, public EventListener<mouse_position>, public
   int up;
   int left;
   int right;
+  game_object * collider;
 public:
   void handle_event(mouse_position mpos);
   void handle_event(MouseClick mc);
   void handle_event(KeyEvent ke);
-  
-  void do_ai(WorldObject wo);
+  void handle_collision(physical_game_object * other);
+  void do_ai(WorldObject & wo);
   player_object();
   player_object(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost,Texture sheet);
   
