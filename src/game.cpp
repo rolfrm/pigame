@@ -11,7 +11,6 @@ void ObjectHandler::UpdateAI(){
     game_object * gobj = *it;
     gobj->do_ai(wo);
   }
-  std::cout << "Finished ai\n";
   wo.finish_update();
   
 }
