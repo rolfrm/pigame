@@ -75,10 +75,26 @@ int main(){
   BufferObject bobj2 = unit_rectangle_uvs;
   BufferObject bobj3 = unit_rectangle_inverse_uvs;
   SpriteSheetDrawable guyss = SpriteSheetDrawable(bobj,bobj2,guy_tex); 
-  guyss.load_animation_frame("test",20,20,0,0,0.2);
-  guyss.load_animation_frame("test",20,20,20,0,0.2);
-  guyss.load_animation_frame("test",20,20,40,0,0.2);
-  guyss.set_animation("test");
+  guyss.load_animation_frame("rwalk",20,20,0,0,0.2);
+  guyss.load_animation_frame("rwalk",20,20,20,0,0.2);
+  guyss.load_animation_frame("rwalk",20,20,0,0,0.2);
+  guyss.load_animation_frame("rwalk",20,20,40,0,0.2);
+
+  guyss.load_animation_frame("dwalk",20,20,0,20,0.2);
+  guyss.load_animation_frame("dwalk",20,20,40,20,0.2);
+  guyss.load_animation_frame("dwalk",20,20,20,20,0.2);
+  guyss.load_animation_frame("dwalk",20,20,40,20,0.2);
+
+  guyss.load_animation_frame("uwalk",20,20,0,40,0.2);
+  guyss.load_animation_frame("uwalk",20,20,40,40,0.2);
+  guyss.load_animation_frame("uwalk",20,20,20,40,0.2);
+  guyss.load_animation_frame("uwalk",20,20,40,40,0.2);
+
+  guyss.load_animation_frame("lwalk",20,20,0,60,0.2);
+  guyss.load_animation_frame("lwalk",20,20,20,60,0.2);
+  guyss.load_animation_frame("lwalk",20,20,0,60,0.2);
+  guyss.load_animation_frame("lwalk",20,20,40,60,0.2);
+  guyss.set_animation("lwalk");
 
   
   
