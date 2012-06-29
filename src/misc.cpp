@@ -1,5 +1,6 @@
 #include "misc.h"
 #include <sys/time.h>
+#include <stdlib.h>
 
 double get_time(){
 	timeval current_time;

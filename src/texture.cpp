@@ -82,4 +82,17 @@ void texture_test(){
 	del_tex(tex);
 }	
 
+Texture get_texture(std::string path){
+	std::map<std::string,Texture>::iterator it=TextureMap.find(path);
+	if(it==TextureMap.end()){
+		Texture temptex=make_texture(path.c_str());
+		TextureMap.insert(std::pair<std::string,Texture>(path,temptex));
+		it=TextureMap.find(path);
+	}
+
+	return it->second;
+	
+}
+
+std::map<std::string,Texture> TextureMap;
 
