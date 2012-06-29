@@ -70,7 +70,6 @@ DrawRequest SpriteSheetDrawable::MakeDrawRequest(){
   out.y = y;
   out.uv_off_x = (float)current_frame_i.offset[0]/(float)tex.width;
   out.uv_off_y = (float)current_frame_i.offset[1]/(float)tex.height;
-  std::cout <<  out.uv_off_x << " " << out.uv_off_y << "\n";
   out.uv_scale_x = (float)current_frame_i.scale[0]/(float)tex.width;
   out.uv_scale_y = (float)current_frame_i.scale[1]/(float)tex.height;
   out.vert_scale_x = current_frame_i.scale[0]/2;

@@ -3,21 +3,7 @@
 #include "event_handling.h"
 #include "input_events.h"
 #include "CollisionDetection.h"
-
-class ObjectHandler;
-class game_object;
-class physical_game_object;
-class WorldObject{
- ObjectHandler * object_handler;
- 
- public:
-  WorldObject(ObjectHandler * object_handler);
- 
-  std::list <game_object *> get_near_gameobjects(game_object * origin, float distance);
-  std::list <physical_game_object *> get_near_physical_objects(physical_game_object * origin, float distance);
-  
-};
-
+#include "world_object.h"
 class game_object:public Drawer{
 public:
   float x,y,dx,dy;
