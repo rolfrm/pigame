@@ -4,6 +4,8 @@
 #include "GLProgram.h"
 #include "world_object.h"
 #include "tilemap.h"
+#include "frame_buffer.h"
+#include "game_super.h"
 
 class Tile{
  public:
@@ -17,6 +19,7 @@ class Tile{
 class ObjectHandler{
   friend class WorldObject;
   tilemap <Tile> tile_map;
+  FrameBuffer * sprite_rendering_buffer;
  public:
   ObjectHandler();
   std::list<game_object * > drawlist;

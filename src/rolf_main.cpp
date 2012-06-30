@@ -10,7 +10,6 @@
 #include "texture.h"
 #include "GLProgram.h"
 #include "buffer_objects.h"
-#include "frame_buffer.h"
 
 #include "event_handling.h"
 #include "input_events.h"
@@ -117,14 +116,14 @@ int main(){
     }
     //std::cout << (int)a->x << " " << (int)a->y << "\n";
       
-    bind_framebuffer(fb);
-    clear_bound_framebuffer();
+ //   bind_framebuffer(fb);
+//    clear_bound_framebuffer();
 
     //** Go gameloop!
     object_handler.gameloop();
     //
     
-    unbind_framebuffer();
+/*    unbind_framebuffer();
     bind_shader(screen_drawer);
     bind_buffer_object(bobj3,1);
     bind_buffer_object(bobj,0);
@@ -137,6 +136,7 @@ int main(){
     draw_buffers_triangle_fan(4);
     
     swapbuffers();
+*/
 
   }
   

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <math.h>
 #include <stdlib.h>
+#include "gfx_basics.h"
 
 Tile::Tile(bool passable, SpriteSheetDrawable *  ssd){
   this->passable = passable;
@@ -28,6 +29,8 @@ void ObjectHandler::UpdateAI(){
 
 ObjectHandler::ObjectHandler(){
 
+	
+  sprite_rendering_buffer=new FrameBuffer(global_screen_width,global_screen_height,4);
 
   Texture tex = make_texture("grass_tiles.png");
   SpriteSheetDrawable * ssd = new SpriteSheetDrawable(tex);
@@ -224,7 +227,8 @@ void ObjectHandler::UpdatePhysics(){
 
 void ObjectHandler::DoRendering(){
 
-  
+  bind_framebuffer(*sprite_rendering_buffer);
+  clear_bound_framebuffer();
   
   std::list< SpriteSheetDrawable *> render_list;
   for(std::list<game_object *>::iterator it = drawlist.begin(); it != drawlist.end(); it++){
@@ -262,9 +266,21 @@ void ObjectHandler::DoRendering(){
     texture_shader.uniformf("uv_scale",dr.uv_scale_x,dr.uv_scale_y);
     texture_shader.uniformf("uv_offset",dr.uv_off_x, dr.uv_off_y);
     draw_buffers_triangle_fan(4);
-  
 
   }
+  unbind_framebuffer();
+
+  bind_shader(screen_drawer);
+  bind_buffer_object(unit_rectangle_inverse_uvs,1);
+  screen_drawer.uniformf("camera",0,0);
+  screen_drawer.uniformf("scale",1.0,1.0);
+  screen_drawer.uniformf("object_scale",1.0,1.0);
+  screen_drawer.uniformf("off",0,0);
+  bind_texture(sprite_rendering_buffer->textures[0],0);
+
+  draw_buffers_triangle_fan(4);
+    
+  swapbuffers();
 
 }
 
