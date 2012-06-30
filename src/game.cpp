@@ -2,7 +2,7 @@
 #include "game_super.h"
 #include <iostream>
 #include <math.h>
-
+#include <stdlib.h>
 
 
 void ObjectHandler::UpdateAI(){
@@ -19,9 +19,30 @@ void ObjectHandler::UpdateAI(){
 ObjectHandler::ObjectHandler(){
   Texture tex = make_texture("grass_tiles.png");
   SpriteSheetDrawable * ssd = new SpriteSheetDrawable(tex);
-  ssd->load_animation_frame("1",20,10,0,10,0.2);
+  SpriteSheetDrawable * ssd2 = new SpriteSheetDrawable(tex);
+  SpriteSheetDrawable * ssd3 = new SpriteSheetDrawable(tex);
+  SpriteSheetDrawable * ssd4 = new SpriteSheetDrawable(tex);
+  SpriteSheetDrawable * ssds[4];
+  ssds[0] = ssd;
+  ssds[1] = ssd2;
+  ssds[2] = ssd3;
+  ssds[3] = ssd4;
+  ssd->load_animation_frame("1",20,10,20,0,0.2);
   ssd->set_animation("1");
-  tile_map = tilemap<SpriteSheetDrawable*>(10,10,ssd);
+  ssd3->load_animation_frame("1",20,10,20,10,0.2);
+  ssd3->set_animation("1");
+  ssd4->load_animation_frame("1",20,10,0,10,0.2);
+  ssd4->set_animation("1");
+
+  ssd2->load_animation_frame("1",20,10,0,0,0.2);
+  ssd2->set_animation("1");
+  tile_map = tilemap<SpriteSheetDrawable*>(1000,1000,ssd);
+  tile_map.set_tile(0,0,ssd2);
+  for(int i = 0; i < 1000;i++){
+    for(int j = 0; j < 1000;j++){
+      tile_map.set_tile(i,j,ssds[rand()%4]);
+    }
+  }
 }
 
 struct collision_pair{
