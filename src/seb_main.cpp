@@ -46,6 +46,18 @@ float uv2[8] = {
 extern int global_screen_width;
 extern int global_screen_height;
 
+float axis[2]={0,-1};
+
+bool compare_sprite_axis(SpriteSheetDrawable * first,SpriteSheetDrawable * second){
+	float first_projection=axis[0]*first->x+axis[1]*first->y;
+	float second_projection=axis[0]*second->x+axis[1]*second->y;
+	if(first_projection<second_projection)
+		return true;
+	else
+		return false;
+}
+
+
 int main(){
   global_screen_width = 128;
   global_screen_height = 128;
@@ -54,7 +66,7 @@ int main(){
   init_ogl(512,512);
   
 
-  set_clearcolor(0.0f, 1.0f, 0.0f, 1.0f);
+ 
 
 
   GLProgram ptest=make_program("test.vert","test.frag");
@@ -77,6 +89,11 @@ int main(){
   pshade.bind_attr(0,"Pos");
   pshade.bind_attr(1,"UV_coord");
   pshade.link();
+  
+  GLProgram pshadowOnObject=make_program("shading.vert","shading.frag");
+  pshadowOnObject.bind_attr(0,"Pos");
+  pshadowOnObject.bind_attr(1,"UV_coord");
+  pshadowOnObject.link();
   
   Texture dormir = make_texture("DormusSheet.png");
 
@@ -110,44 +127,101 @@ int main(){
   
   
   dorm.set_animation("walk");
+    	  
+  dorm.x=50;	
+  dorm.y=-10;
+  SpriteSheetDrawable dorm2(dorm);
   
-    Texture fb_tex = make_texture((void *) 0,global_screen_width,global_screen_height,3);  
-  FrameBuffer fb(fb_tex);
-  int i = 0;
+ dorm2.x=40;
+  dorm2.y=20;
+  
+  Texture cow_tex = make_texture("cow.png");
+  
+  SpriteSheetDrawable cow(bobj,bobj2,cow_tex);
+  
+  std::list<SpriteSheetDrawable *> sprites;
+  sprites.push_back(&dorm);
+  sprites.push_back(&dorm2);
+  
+   // Texture fb_tex = make_texture((void *) 0,global_screen_width,global_screen_height,3);  
+  //FrameBuffer fb(fb_tex);
+  FrameBuffer shadowbuffer(global_screen_width,global_screen_height,4);
+    FrameBuffer rendertarget(global_screen_width,global_screen_height,4);
   
     while(true){
     	if(glfwGetKey(GLFW_KEY_UP))
-    		dorm.set_animation("dwalk");
+    		dorm.y-=2;
          if(glfwGetKey(GLFW_KEY_RIGHT))
-    		dorm.set_animation("walk");
-        bind_framebuffer(fb);
-  	  clear_bound_framebuffer();
-  	  
-  	/*  dorm.x=70;	
-    	  dorm.y=0;
-  	  
-  	  dorm.draw(pshade);
-
-    	
-    	
- 	dorm.x=40;
-    	  dorm.y=20;
-  	  
+    		dorm.x-=2;
+    		
+    	 if(glfwGetKey(GLFW_KEY_DOWN))
+    		dorm.y+=2;
+         if(glfwGetKey(GLFW_KEY_LEFT))
+    		dorm.x+=2;
+        bind_framebuffer(rendertarget);
+         set_clearcolor(0.0f, 0.0f, 0.0f, 0.0f);
+          clear_bound_framebuffer();
+        
+        
+        glClear(GL_STENCIL_BUFFER_BIT);
+        glEnable(GL_STENCIL_TEST);
+        glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE);
   	
-  	  dorm.draw(pshade);
-  	  */
-  	  
-  	  dorm.x=70;
-    	  dorm.y=0;
-
-	dorm.draw(psprite);
-	dorm.x=40;
-    	  dorm.y=20;
+  	
+  	axis[0]=0;
+  	axis[1]=-1;
+  	sprites.sort(compare_sprite_axis);
+  	int i=0;
+	for(std::list<SpriteSheetDrawable *>::iterator it=sprites.begin();it!=sprites.end();it++){
+		(*it)->ID=sprites.size()-i;
+		glStencilFunc(GL_GREATER,(*it)->ID,0xFF);
+		(*it)->draw(psprite);
+		i++;
+	}
   	
 	
-    	dorm.draw(psprite);
+//    	dorm2.draw(psprite);
     	
+    	
+    	 bind_framebuffer(shadowbuffer);
+    	  set_clearcolor(0.0f, 1.0f, 0.0f, 1.0f);
+         clear_bound_framebuffer();
+  	
+  	axis[0]=0.5;
+  	axis[1]=-1.5;
+  	sprites.sort(compare_sprite_axis); 	
+    	pshade.uniformf("lDirection",axis[0],axis[1]);
+    	pshadowOnObject.uniformf("lDirection",axis[0],axis[1]);
+    	pshadowOnObject.uniform("shadowTexture",1);
+    	bind_texture(shadowbuffer.textures[0],1);
+    	
+    	for(std::list<SpriteSheetDrawable *>::iterator it=sprites.begin();it!=sprites.end();it++){
+    		bind_framebuffer(rendertarget);
+    		glStencilFunc(GL_EQUAL,(*it)->ID,0xFF);
+    		
+    		(*it)->draw(pshadowOnObject);
+    		
+    		bind_framebuffer(shadowbuffer);
+    		glStencilFunc(GL_ALWAYS,1,0xFF);
+    		(*it)->draw(pshade);
+    	
+    	}
+
+    	
+    	//bind_shader(pshadowOnObject);
+    	//draw_buffers_triangle_fan(4);
+    	
+    	 glDisable(GL_STENCIL_TEST);
+    	 
+    	 
+    	 
+    	 
+    	 
+    	 
+    	 
         unbind_framebuffer();
+         set_clearcolor(0.0f, 1.0f, 0.0f, 1.0f);
+        clear_bound_framebuffer();
     	      bind_shader(ptest);  
     bind_buffer_object(bobj3,1);
     bind_buffer_object(bobj,0);
@@ -155,8 +229,16 @@ int main(){
     set_camera_position(0,0);
       setup_shader_uniforms(ptest);
     ptest.uniformf("off",0.0,0.0);
-    bind_texture(fb.textures[0],0);
-
+  /*  if(glfwGetKey(GLFW_KEY_LEFT)){
+   	 bind_texture(shadowbuffer.textures[0],0);
+    }
+    else{
+	    bind_texture(rendertarget.textures[0],0);
+	}
+	*/
+	 bind_texture(shadowbuffer.textures[0],0);
+    draw_buffers_triangle_fan(4);
+    	 bind_texture(rendertarget.textures[0],0);
     draw_buffers_triangle_fan(4);
     
     swapbuffers();

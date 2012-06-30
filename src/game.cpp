@@ -27,6 +27,8 @@ void ObjectHandler::UpdateAI(){
 }
 
 ObjectHandler::ObjectHandler(){
+
+
   Texture tex = make_texture("grass_tiles.png");
   SpriteSheetDrawable * ssd = new SpriteSheetDrawable(tex);
   SpriteSheetDrawable * ssd2 = new SpriteSheetDrawable(tex);
@@ -223,7 +225,7 @@ void ObjectHandler::UpdatePhysics(){
 void ObjectHandler::DoRendering(){
 
   
-
+  
   std::list< SpriteSheetDrawable *> render_list;
   for(std::list<game_object *>::iterator it = drawlist.begin(); it != drawlist.end(); it++){
     render_list.push_back((*it)->draw());

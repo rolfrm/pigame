@@ -5,6 +5,9 @@
 extern int global_screen_width;
 extern int global_screen_height;
 
+extern unsigned int global_width;
+extern unsigned int global_height;
+
 extern float camera_x;
 extern float camera_y;
 

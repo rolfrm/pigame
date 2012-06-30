@@ -8,7 +8,6 @@
 #include <list>
 
 
-unsigned int global_width, global_height;
 
 EventSpawner<KeyEvent> key_event_handler;
 EventSpawner<MouseClick> mouse_click_handler;
@@ -36,12 +35,9 @@ void GLFWCALL mouse_move_callback(int x, int y){
 
 void init_ogl(int width, int height)
 {
-
-  global_width = width;
-  global_height = height;
   ilInit();
   glfwInit();
-  glfwOpenWindow(global_width,global_height,8,8,8,8,8,8,GLFW_WINDOW);
+  glfwOpenWindow(width,height,8,8,8,8,8,8,GLFW_WINDOW);
 	
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
