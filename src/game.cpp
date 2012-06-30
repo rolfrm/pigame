@@ -16,6 +16,14 @@ void ObjectHandler::UpdateAI(){
   
 }
 
+ObjectHandler::ObjectHandler(){
+  Texture tex = make_texture("grass_tiles.png");
+  SpriteSheetDrawable * ssd = new SpriteSheetDrawable(tex);
+  ssd->load_animation_frame("1",20,10,0,10,0.2);
+  ssd->set_animation("1");
+  tile_map = tilemap<SpriteSheetDrawable*>(10,10,ssd);
+}
+
 struct collision_pair{
   physical_game_object * pgo1, * pgo2;
 };
@@ -78,6 +86,9 @@ void ObjectHandler::UpdatePhysics(){
 }
 
 void ObjectHandler::DoRendering(){
+
+  
+
   std::list< SpriteSheetDrawable *> render_list;
   for(std::list<game_object *>::iterator it = drawlist.begin(); it != drawlist.end(); it++){
     render_list.push_back((*it)->draw());
@@ -88,15 +99,33 @@ void ObjectHandler::DoRendering(){
   setup_shader_uniforms(texture_shader);
   bind_buffer_object(unit_rectangle_verts,0);
   bind_buffer_object(unit_rectangle_uvs,1);
+
+  std::list<DrawRequest> drs;
+
+  for(float x = camera_x-100; x < camera_x + 100;x+=20){
+    for(float y = camera_y-100; y < camera_y + 100;y+=10){
+      SpriteSheetDrawable * ssd = tile_map.get_tile(x/20, y/10); 
+      DrawRequest dr = ssd->MakeDrawRequest();
+      dr.x = x - (int)x%20;
+      dr.y = y - (int)y%10;
+      drs.push_back(dr);
+    }
+  }
+
   
   for(std::list<SpriteSheetDrawable *>::iterator it = render_list.begin();it != render_list.end(); it++){
     DrawRequest dr = (*it)->MakeDrawRequest();
+    drs.push_back(dr);
+  }
+  for(std::list<DrawRequest>::iterator it = drs.begin();it != drs.end();it++){
+    DrawRequest dr = *it;
     bind_texture(dr.tex,0);
     texture_shader.uniformf("object_scale",dr.vert_scale_x,dr.vert_scale_y);
     texture_shader.uniformf("off",dr.x,dr.y);
     texture_shader.uniformf("uv_scale",dr.uv_scale_x,dr.uv_scale_y);
     texture_shader.uniformf("uv_offset",dr.uv_off_x, dr.uv_off_y);
     draw_buffers_triangle_fan(4);
+  
 
   }
 
