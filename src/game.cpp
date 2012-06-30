@@ -276,6 +276,7 @@ void ObjectHandler::DoRendering(){
   shadow_drawer.uniformf("lDirection",-0.5,-0.5);
   for(std::list<DrawRequest>::iterator it = drs.begin();it != drs.end();it++){
     DrawRequest dr = *it;
+    bind_texture(dr.tex,0);	
     shadow_drawer.uniformf("object_scale",dr.vert_scale_x,dr.vert_scale_y);
     shadow_drawer.uniformf("off",dr.x,dr.y);
     shadow_drawer.uniformf("uv_scale",dr.uv_scale_x,dr.uv_scale_y);
