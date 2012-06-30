@@ -58,6 +58,7 @@ BufferObject unit_rectangle_inverse_uvs;
 
 GLProgram screen_drawer;
 GLProgram texture_shader;
+GLProgram shadow_drawer;
 void init_game(int window_width, int window_height, int width_pixels, int height_pixels){
   global_screen_width = width_pixels;
   global_screen_height = height_pixels;
@@ -81,6 +82,12 @@ void init_game(int window_width, int window_height, int width_pixels, int height
   screen_drawer.bind_attr(1,"UV_coord");
   screen_drawer.link();
   screen_drawer.uniformf("scale", (float)1.0/global_screen_width, (float) 1.0/global_screen_height);
+
+  shadow_drawer = make_program("shadow.vert","shadow.frag");
+  shadow_drawer.bind_attr(0,"Pos");
+  shadow_drawer.bind_attr(1,"UV_coord");
+  shadow_drawer.link();
+  shadow_drawer.uniformf("scale", (float)1.0/global_screen_width, (float) 1.0/global_screen_height);
   
   unit_rectangle_verts= make_buffer_object((void *)vertex,4,2,FLOAT);
   unit_rectangle_uvs = make_buffer_object((void *)uv,4,2,FLOAT);

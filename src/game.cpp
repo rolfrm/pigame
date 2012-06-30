@@ -241,15 +241,15 @@ void ObjectHandler::DoRendering(){
   bind_buffer_object(unit_rectangle_verts,0);
   bind_buffer_object(unit_rectangle_uvs,1);
 
-  std::list<DrawRequest> drs;
+  std::list<DrawRequest> drs,tile_drs;
   std::cout << camera_x << "\n";
-  for(float x = camera_x-100; x < camera_x + 100;x+=18){
-    for(float y = camera_y-100; y < camera_y + 100;y+=10){
+  for(float x = camera_x-200; x < camera_x + 200;x+=18){
+    for(float y = camera_y-200; y < camera_y + 200;y+=10){
       SpriteSheetDrawable * ssd = tile_map.get_tile(x/18 , y/10).sprite_sheet; 
       DrawRequest dr = ssd->MakeDrawRequest();
       dr.x = x - (int)x%18;
       dr.y = y - (int)y%10;
-      drs.push_back(dr);
+      tile_drs.push_back(dr);
     }
     }
 
@@ -258,6 +258,32 @@ void ObjectHandler::DoRendering(){
     DrawRequest dr = (*it)->MakeDrawRequest();
     drs.push_back(dr);
   }
+
+
+  for(std::list<DrawRequest>::iterator it = tile_drs.begin();it != tile_drs.end();it++){
+    DrawRequest dr = *it;
+    bind_texture(dr.tex,0);
+    texture_shader.uniformf("object_scale",dr.vert_scale_x,dr.vert_scale_y);
+    texture_shader.uniformf("off",dr.x,dr.y);
+    texture_shader.uniformf("uv_scale",dr.uv_scale_x,dr.uv_scale_y);
+    texture_shader.uniformf("uv_offset",dr.uv_off_x, dr.uv_off_y);
+    draw_buffers_triangle_fan(4);
+
+  }
+
+  bind_shader(shadow_drawer);
+  setup_shader_uniforms(shadow_drawer);
+  shadow_drawer.uniformf("lDirection",-0.5,-0.5);
+  for(std::list<DrawRequest>::iterator it = drs.begin();it != drs.end();it++){
+    DrawRequest dr = *it;
+    shadow_drawer.uniformf("object_scale",dr.vert_scale_x,dr.vert_scale_y);
+    shadow_drawer.uniformf("off",dr.x,dr.y);
+    shadow_drawer.uniformf("uv_scale",dr.uv_scale_x,dr.uv_scale_y);
+    shadow_drawer.uniformf("uv_offset",dr.uv_off_x, dr.uv_off_y);
+    draw_buffers_triangle_fan(4);
+
+  }
+  bind_shader(texture_shader);
   for(std::list<DrawRequest>::iterator it = drs.begin();it != drs.end();it++){
     DrawRequest dr = *it;
     bind_texture(dr.tex,0);

@@ -54,7 +54,7 @@ class key_ev: public EventListener<KeyEvent>{
 };
 
 int main(){
-  init_game(512,512,128,128);
+  init_game(512,512,256,256);
   set_clearcolor(0.1,0.5,0.0,1.0);
   GLProgram ptest = texture_shader;
   

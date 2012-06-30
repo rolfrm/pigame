@@ -14,6 +14,7 @@ extern float camera_y;
 extern GLProgram texture_shader;
 extern GLProgram color_shader;
 extern GLProgram screen_drawer;
+extern GLProgram shadow_drawer;
 
 extern BufferObject unit_rectangle_verts;
 extern BufferObject unit_rectangle_uvs;
