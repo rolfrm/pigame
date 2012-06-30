@@ -34,25 +34,25 @@ player_object::player_object(float x,float y,float sx, float sy, float off_x, fl
  // bullet_tex=make_texture("bullet.png");
 
   tex_draw=SpriteSheetDrawable(sheet); 
-  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.2);
-  tex_draw.load_animation_frame("rwalk",20,20,20,0,0.2);
-  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.2);
-  tex_draw.load_animation_frame("rwalk",20,20,40,0,0.2);
+  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,20,0,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,40,0,0.1);
 
-  tex_draw.load_animation_frame("dwalk",20,20,0,20,0.2);
-  tex_draw.load_animation_frame("dwalk",20,20,40,20,0.2);
-  tex_draw.load_animation_frame("dwalk",20,20,20,20,0.2);
-  tex_draw.load_animation_frame("dwalk",20,20,40,20,0.2);
+  tex_draw.load_animation_frame("dwalk",20,20,0,20,0.1);
+  tex_draw.load_animation_frame("dwalk",20,20,40,20,0.1);
+  tex_draw.load_animation_frame("dwalk",20,20,20,20,0.1);
+  tex_draw.load_animation_frame("dwalk",20,20,40,20,0.1);
 
-  tex_draw.load_animation_frame("uwalk",20,20,0,40,0.2);
-  tex_draw.load_animation_frame("uwalk",20,20,40,40,0.2);
-  tex_draw.load_animation_frame("uwalk",20,20,20,40,0.2);
-  tex_draw.load_animation_frame("uwalk",20,20,40,40,0.2);
+  tex_draw.load_animation_frame("uwalk",20,20,0,40,0.1);
+  tex_draw.load_animation_frame("uwalk",20,20,40,40,0.1);
+  tex_draw.load_animation_frame("uwalk",20,20,20,40,0.1);
+  tex_draw.load_animation_frame("uwalk",20,20,40,40,0.1);
 
-  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.2);
-  tex_draw.load_animation_frame("lwalk",20,20,20,60,0.2);
-  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.2);
-  tex_draw.load_animation_frame("lwalk",20,20,40,60,0.2);
+  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,20,60,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,40,60,0.1);
   tex_draw.set_animation("lwalk");
 
   this->x=x;
@@ -94,6 +94,7 @@ void player_object::handle_collision(physical_game_object * pgo){
 }
 
 void player_object::do_ai( WorldObject & wo){
+  std::cout << x << " " << y << "\n";
   if(collider != NULL){
     wo.remove_object(collider);
     collider = NULL;
@@ -120,9 +121,6 @@ void player_object::do_ai( WorldObject & wo){
 			tex_draw.set_animation("dwalk");
 	}
 
-  if(down){
-    std::cout << wo.get_near_physical_objects(this,180.0).size() << "\n";
-  }
 
   if(spawn_bullet){
 	spawn_bullet=false;

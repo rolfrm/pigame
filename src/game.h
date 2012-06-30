@@ -5,9 +5,18 @@
 #include "world_object.h"
 #include "tilemap.h"
 
+class Tile{
+ public:
+  Tile(bool passable,SpriteSheetDrawable * ss);
+  Tile();
+  virtual void handle_collision(physical_game_object * obj);
+  SpriteSheetDrawable * sprite_sheet;
+  bool passable;
+};
+
 class ObjectHandler{
   friend class WorldObject;
-  tilemap <SpriteSheetDrawable*> tile_map;
+  tilemap <Tile> tile_map;
  public:
   ObjectHandler();
   std::list<game_object * > drawlist;

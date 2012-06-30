@@ -75,40 +75,17 @@ int main(){
   BufferObject bobj = unit_rectangle_verts;
   BufferObject bobj2 = unit_rectangle_uvs;
   BufferObject bobj3 = unit_rectangle_inverse_uvs;
- /* SpriteSheetDrawable guyss = SpriteSheetDrawable(guy_tex); 
-  guyss.load_animation_frame("rwalk",20,20,0,0,0.2);
-  guyss.load_animation_frame("rwalk",20,20,20,0,0.2);
-  guyss.load_animation_frame("rwalk",20,20,0,0,0.2);
-  guyss.load_animation_frame("rwalk",20,20,40,0,0.2);
-
-  guyss.load_animation_frame("dwalk",20,20,0,20,0.2);
-  guyss.load_animation_frame("dwalk",20,20,40,20,0.2);
-  guyss.load_animation_frame("dwalk",20,20,20,20,0.2);
-  guyss.load_animation_frame("dwalk",20,20,40,20,0.2);
-
-  guyss.load_animation_frame("uwalk",20,20,0,40,0.2);
-  guyss.load_animation_frame("uwalk",20,20,40,40,0.2);
-  guyss.load_animation_frame("uwalk",20,20,20,40,0.2);
-  guyss.load_animation_frame("uwalk",20,20,40,40,0.2);
-
-  guyss.load_animation_frame("lwalk",20,20,0,60,0.2);
-  guyss.load_animation_frame("lwalk",20,20,20,60,0.2);
-  guyss.load_animation_frame("lwalk",20,20,0,60,0.2);
-  guyss.load_animation_frame("lwalk",20,20,40,60,0.2);
-  guyss.set_animation("lwalk");
-*/
-  
-  
-  SpriteSheetDrawable treeTD= SpriteSheetDrawable(treetex); 
+ 
+ SpriteSheetDrawable treeTD= SpriteSheetDrawable(treetex); 
   treeTD.load_animation_frame("test",48,30,0,0,0.2);
   treeTD.load_animation_frame("test",48,30,48,0,0.2);
   treeTD.set_animation("test");
 
   for(int i = 0; i < 15;i++){
-    object_handler.load_object(make_pgo(- (rand()% 128)*4 + 128, - (rand()% 128)*2 + 200, 20,5,0,5,true,false,treeTD));
+    object_handler.load_object(make_pgo( (rand() % 50) + 50,  (rand() % 50) + 50, 20,5,0,5,true,false,treeTD));
   }  
 
-  player_object dormus(10,5,5,5,0,5,true,false,guy_tex);
+  player_object dormus(14,10,10,10,0,7,true,false,guy_tex);
   player_object * a=&dormus; //= make_player_obj(10,5,5,5,0,5,true,false,treeTD);
   //a->tex_draw = guyss;
   key_ev k1;

@@ -20,10 +20,10 @@ class tilemap{
     
   }
   T get_tile(int x, int y){
-    if(x + size_x*y >= data.size()){
+    if(x >= size_x || y >= size_y){
       return def;
     }
-    if(x + size_x*y < 0){
+    if(x < 0 || y < 0){
       return def;
     }
     return data[x + size_x*y];
