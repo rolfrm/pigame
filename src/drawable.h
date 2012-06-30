@@ -15,8 +15,6 @@ struct DrawRequest{
   Texture tex;
 };
 
-
-
 class frame{
 public:
 	frame(int scalex,int scaley,int offx,int offy,double n_duration);

@@ -4,6 +4,16 @@
 #include <math.h>
 #include <stdlib.h>
 
+Tile::Tile(bool passable, SpriteSheetDrawable *  ssd){
+  this->passable = passable;
+  sprite_sheet = ssd;
+}
+Tile::Tile(){
+  sprite_sheet = NULL;
+}
+void Tile::handle_collision(physical_game_object * obj){
+
+}
 
 void ObjectHandler::UpdateAI(){
   WorldObject wo(this);
@@ -17,7 +27,7 @@ void ObjectHandler::UpdateAI(){
 }
 
 ObjectHandler::ObjectHandler(){
-  Texture tex = make_texture("circuit_tiles.png");
+  Texture tex = make_texture("grass_tiles.png");
   SpriteSheetDrawable * ssd = new SpriteSheetDrawable(tex);
   SpriteSheetDrawable * ssd2 = new SpriteSheetDrawable(tex);
   SpriteSheetDrawable * ssd3 = new SpriteSheetDrawable(tex);
@@ -28,38 +38,101 @@ ObjectHandler::ObjectHandler(){
   ssds[2] = ssd3;
   ssds[3] = ssd4;
   ssd->load_animation_frame("1",18,10,0,0,0.2);
+  ssd2->load_animation_frame("1",18,10,18,0,0.2);
+  ssd3->load_animation_frame("1",18,10,0,10,0.2);
+  ssd4->load_animation_frame("1",18,10,18,10,0.2);
+  
+  SpriteSheetDrawable * water = new SpriteSheetDrawable(tex);
+  water->load_animation_frame("1",18,10,0,20,0.2);
+  water->load_animation_frame("1",18,10,18,20,0.2);
+  water->set_animation("1");
+
+  
+  SpriteSheetDrawable * wood = new SpriteSheetDrawable(tex);
+  wood->load_animation_frame("1",18,10,18,30,0.2);
+  wood->set_animation("1"); 
+  
+  SpriteSheetDrawable * wood2 = new SpriteSheetDrawable(tex);
+  wood2->load_animation_frame("1",18,10,0,30,0.2);
+  wood2->set_animation("1"); 
+  
+  SpriteSheetDrawable * sand = new SpriteSheetDrawable(tex);
+  sand->load_animation_frame("1",18,10,36,30,0.2);
+  sand->set_animation("1"); 
+  
+
+
+  /*
+  ssd->load_animation_frame("1",18,10,0,0,0.2);
   ssd->load_animation_frame("1",18,10,18,0,0.2);
   ssd->load_animation_frame("1",18,10,36,0,0.2);
   ssd->load_animation_frame("1",18,10,54,0,0.2);
-  ssd->set_animation("1");
-
+  
   ssd2->load_animation_frame("1",18,10,0,10,0.2);
   ssd2->load_animation_frame("1",18,10,18,10,0.2);
   ssd2->load_animation_frame("1",18,10,36,10,0.2);
   ssd2->load_animation_frame("1",18,10,54,10,0.2);
-  ssd2->set_animation("1");
 
   ssd3->load_animation_frame("1",18,10,0,20,0.2);
   ssd3->load_animation_frame("1",18,10,18,20,0.2);
   ssd3->load_animation_frame("1",18,10,36,20,0.2);
   ssd3->load_animation_frame("1",18,10,54,20,0.2);
-  ssd3->set_animation("1");
 
   ssd4->load_animation_frame("1",18,10,0,30,0.2);
   ssd4->load_animation_frame("1",18,10,18,30,0.2);
   ssd4->load_animation_frame("1",18,10,36,30,0.2);
   ssd4->load_animation_frame("1",18,10,54,30,0.2);
+  */
+  ssd->set_animation("1");
+  ssd2->set_animation("1");
+  ssd3->set_animation("1");
   ssd4->set_animation("1");
 
-
   
-  tile_map = tilemap<SpriteSheetDrawable*>(1000,1000,ssd);
-  tile_map.set_tile(0,0,ssd2);
-  for(int i = 0; i < 1000;i++){
-    for(int j = 0; j < 1000;j++){
-      tile_map.set_tile(i,j,ssds[rand()%4]);
+  tile_map = tilemap<Tile>(20,20,Tile(false,water));
+  
+  for(int i = 0; i < 20;i++){
+    for(int j = 0; j < 20;j++){
+      tile_map.set_tile(i,j,Tile(true,ssds[1 + rand()%3]));
     }
   }
+
+  
+  for(int i = 0; i < 20;i++){
+    tile_map.set_tile(i,0,Tile(true,sand));
+    tile_map.set_tile(i,1,Tile(true,sand));
+    tile_map.set_tile(i,2,Tile(true,sand));
+    //tile_map.set_tile(i,3,Tile(true,sand));
+    
+    tile_map.set_tile(0,i,Tile(true,sand));
+    tile_map.set_tile(19,i,Tile(true,sand));
+    tile_map.set_tile(i,19,Tile(true,sand));
+  
+    }
+
+  for(int i = 0; i < 10;i++){
+    tile_map.set_tile(i,0,Tile(false,water));
+    tile_map.set_tile(i,1,Tile(false,water));
+  }
+
+  tile_map.set_tile(2,0,Tile(true,wood));
+  tile_map.set_tile(2,1,Tile(true,wood));
+
+  for(int i = 0; i < 6; i++){
+    tile_map.set_tile(10 + i,10,Tile(false,wood));
+    tile_map.set_tile(10 + i,15,Tile(false,wood));
+    tile_map.set_tile(10,10+i,Tile(false,wood));
+    tile_map.set_tile(15,10+i,Tile(false,wood));
+    
+  }
+  for(int i = 0; i < 4;i++){
+    for(int j = 0; j < 4;j++){
+      tile_map.set_tile(11 + i,11 + j,Tile(true,wood2));
+    
+    }
+  }
+  tile_map.set_tile(14,15,Tile(true,wood2));
+    
 }
 
 struct collision_pair{
@@ -72,6 +145,30 @@ void ObjectHandler::UpdatePhysics(){
     for(std::list<physical_game_object *>::iterator it = physical_sim.begin(); it !=physical_sim.end();it++){
       physical_game_object * p1 = *it;
       AABB aabb1 = p1->get_aabb(); 
+      for(int i = -aabb1.size_x/18 - 1;i < aabb1.size_x/18+1;i++){
+	for(int j = -aabb1.size_y/10-1;j < aabb1.size_y/10+1;j++){
+
+	  Tile tile = tile_map.get_tile(aabb1.x/18 + i, aabb1.y/10 + j);
+	  if(tile.passable == false){
+	    
+	    AABB ab2;
+	    ab2.x = aabb1.x - (int) aabb1.x%18 + i*18;
+	    ab2.y = aabb1.y - (int) aabb1.y%10 + j*10;
+	    ab2.size_x = 18/2*0.9;
+	    ab2.size_y = 10/2*0.9;
+	    float overlap;
+	    int result = AABB_collision_detection2(&aabb1, &ab2, overlap);
+	    if(result >= 0){
+	      if(result == 0){
+		aabb1.x += overlap*0.5;
+	      }else{
+		aabb1.y += overlap*0.5;
+	      }
+	    }
+	  }
+	}
+      }
+      //std::cout << tile.passable << "\n";
       std::list<physical_game_object *>::iterator it2 = it;
       it2++;
       for(; it2 != physical_sim.end();it2++){
@@ -139,16 +236,16 @@ void ObjectHandler::DoRendering(){
   bind_buffer_object(unit_rectangle_uvs,1);
 
   std::list<DrawRequest> drs;
-
+  std::cout << camera_x << "\n";
   for(float x = camera_x-100; x < camera_x + 100;x+=18){
     for(float y = camera_y-100; y < camera_y + 100;y+=10){
-      SpriteSheetDrawable * ssd = tile_map.get_tile(x/18, y/10); 
+      SpriteSheetDrawable * ssd = tile_map.get_tile(x/18 , y/10).sprite_sheet; 
       DrawRequest dr = ssd->MakeDrawRequest();
       dr.x = x - (int)x%18;
       dr.y = y - (int)y%10;
       drs.push_back(dr);
     }
-  }
+    }
 
   
   for(std::list<SpriteSheetDrawable *>::iterator it = render_list.begin();it != render_list.end(); it++){
