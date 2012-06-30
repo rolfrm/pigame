@@ -83,6 +83,14 @@ int main(){
   for(int i = 0; i < 15;i++){
     object_handler.load_object(make_pgo( (rand() % 50) + 50,  (rand() % 50) + 50, 20,5,0,5,true,false,treeTD));
   }  
+  Texture tree= make_texture("tree123.png");
+  SpriteSheetDrawable tree_sprite(tree);
+  tree_sprite.load_animation_frame("def",tree.width,tree.height,0,0,1000);
+  tree_sprite.set_animation("def");
+  object_handler.load_object(make_pgo(200,0,20,5,0,5,true,true,tree_sprite));
+  object_handler.load_object(make_pgo(300,0,20,5,0,5,true,true,tree_sprite));
+  object_handler.load_object(make_pgo(200,50,20,5,0,5,true,true,tree_sprite));
+  object_handler.load_object(make_pgo(300,50,20,5,0,5,true,true,tree_sprite));
 
   player_object dormus(14,10,10,10,0,7,true,false,guy_tex);
   player_object * a=&dormus; //= make_player_obj(10,5,5,5,0,5,true,false,treeTD);
