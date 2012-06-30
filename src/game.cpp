@@ -17,7 +17,7 @@ void ObjectHandler::UpdateAI(){
 }
 
 ObjectHandler::ObjectHandler(){
-  Texture tex = make_texture("grass_tiles.png");
+  Texture tex = make_texture("circuit_tiles.png");
   SpriteSheetDrawable * ssd = new SpriteSheetDrawable(tex);
   SpriteSheetDrawable * ssd2 = new SpriteSheetDrawable(tex);
   SpriteSheetDrawable * ssd3 = new SpriteSheetDrawable(tex);
@@ -27,15 +27,32 @@ ObjectHandler::ObjectHandler(){
   ssds[1] = ssd2;
   ssds[2] = ssd3;
   ssds[3] = ssd4;
-  ssd->load_animation_frame("1",20,10,20,0,0.2);
+  ssd->load_animation_frame("1",18,10,0,0,0.2);
+  ssd->load_animation_frame("1",18,10,18,0,0.2);
+  ssd->load_animation_frame("1",18,10,36,0,0.2);
+  ssd->load_animation_frame("1",18,10,54,0,0.2);
   ssd->set_animation("1");
-  ssd3->load_animation_frame("1",20,10,20,10,0.2);
+
+  ssd2->load_animation_frame("1",18,10,0,10,0.2);
+  ssd2->load_animation_frame("1",18,10,18,10,0.2);
+  ssd2->load_animation_frame("1",18,10,36,10,0.2);
+  ssd2->load_animation_frame("1",18,10,54,10,0.2);
+  ssd2->set_animation("1");
+
+  ssd3->load_animation_frame("1",18,10,0,20,0.2);
+  ssd3->load_animation_frame("1",18,10,18,20,0.2);
+  ssd3->load_animation_frame("1",18,10,36,20,0.2);
+  ssd3->load_animation_frame("1",18,10,54,20,0.2);
   ssd3->set_animation("1");
-  ssd4->load_animation_frame("1",20,10,0,10,0.2);
+
+  ssd4->load_animation_frame("1",18,10,0,30,0.2);
+  ssd4->load_animation_frame("1",18,10,18,30,0.2);
+  ssd4->load_animation_frame("1",18,10,36,30,0.2);
+  ssd4->load_animation_frame("1",18,10,54,30,0.2);
   ssd4->set_animation("1");
 
-  ssd2->load_animation_frame("1",20,10,0,0,0.2);
-  ssd2->set_animation("1");
+
+  
   tile_map = tilemap<SpriteSheetDrawable*>(1000,1000,ssd);
   tile_map.set_tile(0,0,ssd2);
   for(int i = 0; i < 1000;i++){
@@ -123,11 +140,11 @@ void ObjectHandler::DoRendering(){
 
   std::list<DrawRequest> drs;
 
-  for(float x = camera_x-100; x < camera_x + 100;x+=20){
+  for(float x = camera_x-100; x < camera_x + 100;x+=18){
     for(float y = camera_y-100; y < camera_y + 100;y+=10){
-      SpriteSheetDrawable * ssd = tile_map.get_tile(x/20, y/10); 
+      SpriteSheetDrawable * ssd = tile_map.get_tile(x/18, y/10); 
       DrawRequest dr = ssd->MakeDrawRequest();
-      dr.x = x - (int)x%20;
+      dr.x = x - (int)x%18;
       dr.y = y - (int)y%10;
       drs.push_back(dr);
     }

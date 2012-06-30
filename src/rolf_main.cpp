@@ -65,7 +65,7 @@ int main(){
   Music m1("ko-ko.ogg");
   Music m2(m1);
   AudioSample boom("boom.ogg");
-  play_music(m2);
+  //play_music(m2);
   
   Texture fb_tex = make_texture((void *) NULL,global_screen_width,global_screen_height,3);  
   FrameBuffer fb(fb_tex);
