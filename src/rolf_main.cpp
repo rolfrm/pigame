@@ -120,7 +120,18 @@ int main(){
 
   int i = 0;
   int channel = 0;
+  double mean[10];
+
+  double start_t = get_time();
   while(true){
+    double next_t = get_time();
+    double dt = next_t - start_t;
+    double dt_sleep = 1.0/60.0 - dt;
+    start_t = next_t;
+    if(dt_sleep > 0){
+      sleep_sec(dt_sleep);
+      start_t += dt_sleep;
+    }
     i++;
     bind_shader(texture_shader);
     if(i%100 == 0){
@@ -150,7 +161,6 @@ int main(){
     
     swapbuffers();
 
-    std::cout<<get_time()<<"\n";
   }
   
   return 0;

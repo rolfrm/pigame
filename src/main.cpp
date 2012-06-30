@@ -16,6 +16,7 @@
 #include "GLProgram.h"
 #include "buffer_objects.h"
 #include "frame_buffer.h"
+#include "misc.h"
 
 //static OpenGLContextInfo _state, *state=&_state;
 
@@ -130,7 +131,11 @@ int main(){
   timespec ts;
   float t = 0;
   game_object player;
+  double dt = get_time();
   while(true){
+    double ndt = get_time();
+    std::cout << "DT:" << ndt - dt << "\n";
+    dt = ndt;
     bind_buffer_object(bobj2,1);
   
     glUniform1f(glGetUniformLocation(ptest.gl_ref,"scale"),1.0);

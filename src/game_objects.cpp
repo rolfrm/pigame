@@ -14,7 +14,7 @@ void player_object::handle_event(mouse_position mpos){
   mpos = screen_pos_to_world_pos(mpos);
   x = (x*4 + mpos.x)/5;
   y = (y*4 + mpos.y)/5;
-  collider = NULL;
+  
 }
 
 player_object::player_object(){
@@ -22,6 +22,7 @@ player_object::player_object(){
   up = 0;
   left = 0;
   right = 0;
+  collider = NULL;
 }
 
 player_object::player_object(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost,Texture sheet){
