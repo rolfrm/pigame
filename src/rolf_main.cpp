@@ -54,7 +54,7 @@ class key_ev: public EventListener<KeyEvent>{
 };
 
 int main(){
-  init_game(512,512,256,256);
+  init_game(512,512,128,128);
   set_clearcolor(0.1,0.5,0.0,1.0);
   GLProgram ptest = texture_shader;
   
@@ -93,11 +93,7 @@ int main(){
   object_handler.load_object(make_pgo(300,50,20,5,0,5,true,true,tree_sprite));
 
   player_object dormus(14,10,10,10,0,7,true,false,guy_tex);
-  player_object * a=&dormus; //= make_player_obj(10,5,5,5,0,5,true,false,treeTD);
-  //a->tex_draw = guyss;
-  key_ev k1;
-  //mouse_move_spawner.register_listener(a); 
-  //mouse_click_handler.register_listener(a);
+  player_object * a=&dormus; 
   key_event_handler.register_listener(a);
   object_handler.load_object(a);
   
@@ -116,35 +112,10 @@ int main(){
       sleep_sec(dt_sleep);
       start_t += dt_sleep;
     }
-    i++;
-    bind_shader(texture_shader);
-    if(i%100 == 0){
-      channel++;
-      //play_audio_sample(&boom,channel%8);
-    }
-    //std::cout << (int)a->x << " " << (int)a->y << "\n";
-      
- //   bind_framebuffer(fb);
-//    clear_bound_framebuffer();
-
     //** Go gameloop!
     object_handler.gameloop();
     //
     
-/*    unbind_framebuffer();
-    bind_shader(screen_drawer);
-    bind_buffer_object(bobj3,1);
-    bind_buffer_object(bobj,0);
-    screen_drawer.uniformf("camera",0,0);
-    screen_drawer.uniformf("scale",1.0,1.0);
-    screen_drawer.uniformf("object_scale",1.0,1.0);
-    screen_drawer.uniformf("off",0,0);
-    bind_texture(fb.textures[0],0);
-
-    draw_buffers_triangle_fan(4);
-    
-    swapbuffers();
-*/
 
   }
   

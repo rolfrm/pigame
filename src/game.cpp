@@ -29,7 +29,6 @@ void ObjectHandler::UpdateAI(){
 
 ObjectHandler::ObjectHandler(){
 
-	
   sprite_rendering_buffer=new FrameBuffer(global_screen_width,global_screen_height,4);
 
   Texture tex = make_texture("grass_tiles.png");
