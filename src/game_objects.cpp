@@ -45,10 +45,10 @@ player_object::player_object(float x,float y,float sx, float sy, float off_x, fl
   tex_draw.load_animation_frame("dwalk",20,20,40,20,0.2);
   tex_draw.load_animation_frame("dwalk",20,20,0,20,0.2);
 
+  tex_draw.load_animation_frame("uwalk",20,20,20,40,0.2);
   tex_draw.load_animation_frame("uwalk",20,20,0,40,0.2);
   tex_draw.load_animation_frame("uwalk",20,20,40,40,0.2);
-  tex_draw.load_animation_frame("uwalk",20,20,20,40,0.2);
-  tex_draw.load_animation_frame("uwalk",20,20,40,40,0.2);
+  tex_draw.load_animation_frame("uwalk",20,20,0,40,0.2);
 
   tex_draw.load_animation_frame("lwalk",20,20,0,60,0.2);
   tex_draw.load_animation_frame("lwalk",20,20,20,60,0.2);
