@@ -1,5 +1,6 @@
 #include "game_objects.h"
 #include "game_super.h"
+#include "misc.h"
 #include <iostream>
 #include <math.h>
 AABB game_object::get_aabb(){
@@ -34,25 +35,25 @@ player_object::player_object(float x,float y,float sx, float sy, float off_x, fl
  // bullet_tex=make_texture("bullet.png");
 
   tex_draw=SpriteSheetDrawable(sheet); 
-  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.1);
-  tex_draw.load_animation_frame("rwalk",20,20,20,0,0.1);
-  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.1);
-  tex_draw.load_animation_frame("rwalk",20,20,40,0,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.2);
+  tex_draw.load_animation_frame("rwalk",20,20,20,0,0.2);
+  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.2);
+  tex_draw.load_animation_frame("rwalk",20,20,40,0,0.2);
 
-  tex_draw.load_animation_frame("dwalk",20,20,0,20,0.1);
-  tex_draw.load_animation_frame("dwalk",20,20,40,20,0.1);
-  tex_draw.load_animation_frame("dwalk",20,20,20,20,0.1);
-  tex_draw.load_animation_frame("dwalk",20,20,40,20,0.1);
+  tex_draw.load_animation_frame("dwalk",20,20,20,20,0.2);
+  tex_draw.load_animation_frame("dwalk",20,20,0,20,0.2);
+  tex_draw.load_animation_frame("dwalk",20,20,40,20,0.2);
+  tex_draw.load_animation_frame("dwalk",20,20,0,20,0.2);
 
-  tex_draw.load_animation_frame("uwalk",20,20,0,40,0.1);
-  tex_draw.load_animation_frame("uwalk",20,20,40,40,0.1);
-  tex_draw.load_animation_frame("uwalk",20,20,20,40,0.1);
-  tex_draw.load_animation_frame("uwalk",20,20,40,40,0.1);
+  tex_draw.load_animation_frame("uwalk",20,20,0,40,0.2);
+  tex_draw.load_animation_frame("uwalk",20,20,40,40,0.2);
+  tex_draw.load_animation_frame("uwalk",20,20,20,40,0.2);
+  tex_draw.load_animation_frame("uwalk",20,20,40,40,0.2);
 
-  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.1);
-  tex_draw.load_animation_frame("lwalk",20,20,20,60,0.1);
-  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.1);
-  tex_draw.load_animation_frame("lwalk",20,20,40,60,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.2);
+  tex_draw.load_animation_frame("lwalk",20,20,20,60,0.2);
+  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.2);
+  tex_draw.load_animation_frame("lwalk",20,20,40,60,0.2);
   tex_draw.set_animation("lwalk");
 
   this->x=x;
@@ -189,10 +190,16 @@ Bullet::Bullet(int x,int y,float co_x,float co_y,int vel_x,int vel_y,Texture tex
 	tex_draw.set_animation("static");
 	vel[0]=vel_x;
 	vel[1]=vel_y;
+	start_time=get_time();
 	
 }
 
 void Bullet::do_ai(WorldObject & wo){
+	if(get_time()-start_time>5){
+		dead=true;
+	}
+	
+
 	if(dead){
 		wo.remove_object(this);
 	}
@@ -205,8 +212,9 @@ void Bullet::do_ai(WorldObject & wo){
 }
 
 void Bullet::handle_collision(physical_game_object * other){
-	//other->x+=vel[0]*10,other->y+=vel[1]*10;
-	dead=true;
+	other->x+=vel[0]*10,other->y+=vel[1]*10;
+	vel[0]=-vel[0];
+	//dead=true;
 
 }
 

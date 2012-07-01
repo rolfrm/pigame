@@ -10,239 +10,250 @@
 #include "texture.h"
 #include "GLProgram.h"
 #include "buffer_objects.h"
-#include "frame_buffer.h"
 
 #include "event_handling.h"
 #include "input_events.h"
 #include "game_objects.h"
 #include "game.h"
+#include "game_super.h"
 #include "audio.h"
 #include "gfx_basics.h"
-#include "game_super.h"
+#include "misc.h"
 
-#include <GL/glfw.h>
-
-float vertex[8] = {
-	-1.0f,1.0f,
-	1.0f,1.0f,
-	1.0f,-1.0f,
-	-1.0f,-1.0f,
-};
-
-float uv[8] = {
-	1.0f,1.0f,
-	0.0f,1.0f,
-	0.0f,0.0f,
-	1.0f,0.0f,
-};
-
-float uv2[8] = {
-	1.0f,0.0f,
-	0.0f,0.0f,
-	0.0f,1.0f,
-	1.0f,1.0f,
-};
 
 extern int global_screen_width;
 extern int global_screen_height;
 
-float axis[2]={0,-1};
+class Cow: public physical_game_object{
+public:
+  static SpriteSheetDrawable ssd;
+  static int inited;
+  Cow(){
+    if(inited == -1){
+      ssd = SpriteSheetDrawable(make_texture("cow.png"));
+      ssd.load_animation_frame("test",48,30,0,0,0.2);
+      ssd.load_animation_frame("test",48,30,48,0,0.2);
+      ssd.set_animation("test");
+      inited = 1;
+    }
+    tex_draw = ssd;
+    set_aabb_data(20,10,0,5,true,false);
+  }
+};
+SpriteSheetDrawable Cow::ssd;
+int Cow::inited = -1;
 
-bool compare_sprite_axis(SpriteSheetDrawable * first,SpriteSheetDrawable * second){
-	float first_projection=axis[0]*first->x+axis[1]*first->y;
-	float second_projection=axis[0]*second->x+axis[1]*second->y;
-	if(first_projection<second_projection)
-		return true;
-	else
-		return false;
+
+
+
+player_object * make_player_obj(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost, SpriteSheetDrawable tex_draw ){
+  player_object * out = new player_object();
+  out->x = x;
+  out->y = y;
+  out->set_aabb_data(sx,sy,off_x,off_y,movable,ghost);
+  out->tex_draw = tex_draw;
+  return out;
+} 
+
+physical_game_object * make_pgo(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost, SpriteSheetDrawable tex_draw ){
+  physical_game_object * out = new physical_game_object();
+  out->x = x;
+  out->y = y;
+  out->set_aabb_data(sx,sy,off_x,off_y,movable,ghost);
+  out->tex_draw = tex_draw;
+  return out;
+} 
+
+class key_ev: public EventListener<KeyEvent>{
+  void handle_event(KeyEvent kev){
+    switch(kev.key){
+    case 283:set_camera_position(camera_x,camera_y - 1);break; //Up
+    case 285:set_camera_position(camera_x + 1,camera_y );break; //left
+    case 284:set_camera_position(camera_x,camera_y + 1 );break; //down
+    case 286:set_camera_position(camera_x - 1,camera_y );break; //right
+    }
+  }
+};
+
+#define DOTILE(x,y,z) Tile(z,tsf.make_animated_tile(x,y))
+class TileCreator{
+public:
+  Tile tileset[100];
+  TileCreator(){
+    TileSpriteFactory tsf("grass_tiles.png", 18,10);
+
+    tileset[0] = DOTILE(0,{0.2},true);
+    tileset[1] = DOTILE(1,{0.2},true);
+    tileset[2] = DOTILE(2,{0.2},false);
+    tileset[3] = DOTILE(3,{0.2},false);
+    tileset[4] = DOTILE(4,{0.2},true);
+    tileset[5] = DOTILE(5,{0.2},true);
+    tileset[6] = DOTILE(6,{0.2},true);
+    tileset[7] = DOTILE(7,{0.2},true);
+    tileset[8] = DOTILE(8,{0.2},false);
+    tileset[9] = DOTILE(9,{0.2},true);
 }
+  Tile create_tile(int tilenr,float time_offset = -1){
+    Tile out = tileset[tilenr];
+    if(time_offset > 0){
+      out.time_offset = time_offset;
+    }else{
+      out.time_offset = (float)(rand() % 100) / 10.0;
+    }
+    return out;
+  }
+
+};
+
+class ObjectCreator{
+public:
+  game_object game_objects[100];
+  ObjectCreator(){
+
+  }
+
+  game_object * create_game_object(int game_object_number,bool & physical){
+    if(game_object_number == 0){
+      physical = true;
+      return new Cow();
+    }
+  }
+  
+};
+
+
+
+
+
+
+class game_editor:public EventListener<KeyEvent>, public EventListener<MouseClick>,public EventListener<mouse_position>{
+public:
+  TileCreator tc;
+  ObjectCreator oc;
+  ObjectHandler * object_handler;
+  game_editor(ObjectHandler * objh){
+    object_handler = objh;
+  }
+
+  void handle_event(MouseClick mc){
+    if(mc.pressed == true && mc.button == 0){
+      mouse_position mpos = get_mouse_position();
+      mouse_position world_pos = screen_pos_to_world_pos(mpos);
+      create_tile(0,world_pos.x,world_pos.y);
+    }
+    if(mc.pressed == true && mc.button == 1){
+      mouse_position mpos = get_mouse_position();
+      mouse_position world_pos = screen_pos_to_world_pos(mpos);
+      create_object(0,world_pos.x,world_pos.y);
+    } 
+  }
+
+  void  handle_event(mouse_position mp){
+
+  }
+
+  void handle_event(KeyEvent kev){
+
+  }
+
+  void create_object(int object_nr,float x, float y){
+    bool physical;
+    game_object * ngo = oc.create_game_object(0,physical);
+    ngo->x = x;
+    ngo->y = y;
+    if(physical){
+      object_handler->load_object((physical_game_object *) ngo);
+    }else{
+      object_handler->load_object(ngo);
+    }
+  }
+
+  void create_tile(int tile_nr, float x, float y){
+    object_handler->tile_map.set_tile((x + (int) x%18)/18,(y + (int)y%10)/10,tc.create_tile(4));
+  }
+
+};
 
 
 int main(){
-  global_screen_width = 128;
-  global_screen_height = 128;
-
-  init_audio(44100, 16, 2);
-  init_ogl(512,512);
-  
-
- 
 
 
-  GLProgram ptest=make_program("test.vert","test.frag");
-  ptest.bind_attr(0,"Pos");
-  ptest.bind_attr(1,"UV_coord");
-  ptest.link();
-  bind_shader(ptest);  
-  ptest.uniformf("scale",(float)1.0/global_screen_width, 1.0/global_screen_height);
+  init_game(1024,1024,256,256);
   
+  set_clearcolor(0.1,0.5,0.0,1.0);
+  GLProgram ptest = texture_shader;
   
-  
- GLProgram psprite=make_program("sprite.vert","sprite.frag");
-  psprite.bind_attr(0,"Pos");
-  psprite.bind_attr(1,"UV_coord");
-  psprite.link();
-  bind_shader(psprite);  
-  
+  ObjectHandler object_handler;
+  game_editor ge(&object_handler);
+  object_handler.current_shader = ptest;
 
-   GLProgram pshade=make_program("shadow.vert","shadow.frag");
-  pshade.bind_attr(0,"Pos");
-  pshade.bind_attr(1,"UV_coord");
-  pshade.link();
-  
-  GLProgram pshadowOnObject=make_program("shading.vert","shading.frag");
-  pshadowOnObject.bind_attr(0,"Pos");
-  pshadowOnObject.bind_attr(1,"UV_coord");
-  pshadowOnObject.link();
-  
-  Texture dormir = make_texture("DormusSheet.png");
-
-
-  
-   Music m1("ko-ko.ogg");
+  Music m1("ko-ko.ogg");
   Music m2(m1);
   AudioSample boom("boom.ogg");
   play_music(m2);
+  
+  Texture fb_tex = make_texture((void *) NULL,global_screen_width,global_screen_height,3);  
+  FrameBuffer fb(fb_tex);
+  
+  Texture treetex = make_texture("cow.png");
+  Texture guy_tex  = make_texture("DormusSheet.png");
+  BufferObject bobj = unit_rectangle_verts;
+  BufferObject bobj2 = unit_rectangle_uvs;
+  BufferObject bobj3 = unit_rectangle_inverse_uvs;
+ 
+ SpriteSheetDrawable treeTD= SpriteSheetDrawable(treetex); 
+  treeTD.load_animation_frame("test",48,30,0,0,0.2);
+  treeTD.load_animation_frame("test",48,30,48,0,2.0);
+  treeTD.set_animation("test");
+
+  Texture tree= make_texture("tree123.png");
+  SpriteSheetDrawable tree_sprite(tree);
+  tree_sprite.load_animation_frame("def",tree.width,tree.height,0,0,1000);
+  tree_sprite.set_animation("def");
+
+  object_handler.load_object(make_pgo(200,0,10,0,0,20,false,false,tree_sprite));
+  object_handler.load_object(make_pgo(300,0,10,0,0,20,false,false,tree_sprite));
+  object_handler.load_object(make_pgo(200,50,10,0,0,20,false,false,tree_sprite));
+  object_handler.load_object(make_pgo(300,50,10,0,0,20,false,false,tree_sprite));
 
 
-  BufferObject bobj = make_buffer_object((void *)vertex,4,2,FLOAT);
-  BufferObject bobj2 = make_buffer_object((void *)uv,4,2,FLOAT);
-    BufferObject bobj3 = make_buffer_object((void *)uv2,4,2,FLOAT);
-  
-  SpriteSheetDrawable dorm(bobj,bobj2,dormir);
-  
-  
-  dorm.load_animation_frame("walk",20,20,20,0,0.2);
-  dorm.load_animation_frame("walk",20,20,0,0,0.2);
-  dorm.load_animation_frame("walk",20,20,40,0,0.2);
-  dorm.load_animation_frame("walk",20,20,0,0,0.2);
-  
-  dorm.load_animation_frame("dwalk",20,20,20,20,0.2);
-    dorm.load_animation_frame("dwalk",20,20,40,20,0.2);
-  dorm.load_animation_frame("dwalk",20,20,0,20,0.2);
-    dorm.load_animation_frame("dwalk",20,20,40,20,0.2);
-  
-  dorm.load_animation_frame("uwalk",20,20,20,40,0.2);
-  dorm.load_animation_frame("uwalk",20,20,0,40,0.2);
-  
-  
-  dorm.set_animation("walk");
-    	  
-  dorm.x=50;	
-  dorm.y=-10;
-  SpriteSheetDrawable dorm2(dorm);
-  
- dorm2.x=40;
-  dorm2.y=20;
-  
-  Texture cow_tex = make_texture("cow.png");
-  
-  SpriteSheetDrawable cow(bobj,bobj2,cow_tex);
-  
-  std::list<SpriteSheetDrawable *> sprites;
-  sprites.push_back(&dorm);
-  sprites.push_back(&dorm2);
-  
-   // Texture fb_tex = make_texture((void *) 0,global_screen_width,global_screen_height,3);  
-  //FrameBuffer fb(fb_tex);
-  FrameBuffer shadowbuffer(global_screen_width,global_screen_height,4);
-    FrameBuffer rendertarget(global_screen_width,global_screen_height,4);
-  
-    while(true){
-    	if(glfwGetKey(GLFW_KEY_UP))
-    		dorm.y-=2;
-         if(glfwGetKey(GLFW_KEY_RIGHT))
-    		dorm.x-=2;
-    		
-    	 if(glfwGetKey(GLFW_KEY_DOWN))
-    		dorm.y+=2;
-         if(glfwGetKey(GLFW_KEY_LEFT))
-    		dorm.x+=2;
-        bind_framebuffer(rendertarget);
-         set_clearcolor(0.0f, 0.0f, 0.0f, 0.0f);
-          clear_bound_framebuffer();
-        
-        
-        glClear(GL_STENCIL_BUFFER_BIT);
-        glEnable(GL_STENCIL_TEST);
-        glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE);
-  	
-  	
-  	axis[0]=0;
-  	axis[1]=-1;
-  	sprites.sort(compare_sprite_axis);
-  	int i=0;
-	for(std::list<SpriteSheetDrawable *>::iterator it=sprites.begin();it!=sprites.end();it++){
-		(*it)->ID=sprites.size()-i;
-		glStencilFunc(GL_GREATER,(*it)->ID,0xFF);
-		(*it)->draw(psprite);
-		i++;
-	}
-  	
-	
-//    	dorm2.draw(psprite);
-    	
-    	
-    	 bind_framebuffer(shadowbuffer);
-    	  set_clearcolor(0.0f, 1.0f, 0.0f, 1.0f);
-         clear_bound_framebuffer();
-  	
-  	axis[0]=0.5;
-  	axis[1]=-1.5;
-  	sprites.sort(compare_sprite_axis); 	
-    	pshade.uniformf("lDirection",axis[0],axis[1]);
-    	pshadowOnObject.uniformf("lDirection",axis[0],axis[1]);
-    	pshadowOnObject.uniform("shadowTexture",1);
-    	bind_texture(shadowbuffer.textures[0],1);
-    	
-    	for(std::list<SpriteSheetDrawable *>::iterator it=sprites.begin();it!=sprites.end();it++){
-    		bind_framebuffer(rendertarget);
-    		glStencilFunc(GL_EQUAL,(*it)->ID,0xFF);
-    		
-    		(*it)->draw(pshadowOnObject);
-    		
-    		bind_framebuffer(shadowbuffer);
-    		glStencilFunc(GL_ALWAYS,1,0xFF);
-    		(*it)->draw(pshade);
-    	
-    	}
+  Texture air=make_texture("air_elemental.png");
 
-    	
-    	//bind_shader(pshadowOnObject);
-    	//draw_buffers_triangle_fan(4);
-    	
-    	 glDisable(GL_STENCIL_TEST);
-    	 
-    	 
-    	 
-    	 
-    	 
-    	 
-    	 
-        unbind_framebuffer();
-         set_clearcolor(0.0f, 1.0f, 0.0f, 1.0f);
-        clear_bound_framebuffer();
-    	      bind_shader(ptest);  
-    bind_buffer_object(bobj3,1);
-    bind_buffer_object(bobj,0);
-    	    ptest.uniformf("object_scale",global_screen_width,global_screen_height);
-    set_camera_position(0,0);
-      setup_shader_uniforms(ptest);
-    ptest.uniformf("off",0.0,0.0);
-  /*  if(glfwGetKey(GLFW_KEY_LEFT)){
-   	 bind_texture(shadowbuffer.textures[0],0);
+  SpriteSheetDrawable air_sprite(air);
+  air_sprite.load_animation_frame("idle",20,20,0,0,0.2);
+  air_sprite.load_animation_frame("idle",20,20,20,0,0.2);
+  air_sprite.load_animation_frame("idle",20,20,40,0,0.2);
+  air_sprite.load_animation_frame("idle",20,20,60,0,0.2);
+  air_sprite.set_animation("idle");
+  object_handler.load_object(make_pgo(100,100,20,5,0,5,true,true,air_sprite));
+
+  player_object dormus(14,10,10,10,0,7,true,false,guy_tex);
+  player_object * a=&dormus; 
+  key_event_handler.register_listener(a);
+  mouse_click_handler.register_listener(&ge);
+  object_handler.load_object(a);
+  
+
+  int i = 0;
+  int channel = 0;
+  double mean[10];
+
+  double start_t = get_time();
+  while(true){
+    double next_t = get_time();
+    double dt = next_t - start_t;
+    double dt_sleep = 1.0/60.0 - dt;
+    start_t = next_t;
+    if(dt_sleep > 0){
+      sleep_sec(dt_sleep);
+      start_t += dt_sleep;
     }
-    else{
-	    bind_texture(rendertarget.textures[0],0);
-	}
-	*/
-	 bind_texture(shadowbuffer.textures[0],0);
-    draw_buffers_triangle_fan(4);
-    	 bind_texture(rendertarget.textures[0],0);
-    draw_buffers_triangle_fan(4);
+    //** Go gameloop!
+    object_handler.gameloop();
+    //
     
-    swapbuffers();
-     }
-	
-	return 0;
+
+  }
+  
+  return 0;
 }
