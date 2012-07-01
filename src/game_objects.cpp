@@ -80,21 +80,29 @@ void player_object::handle_event(MouseClick mc){
 
 void player_object::handle_event(KeyEvent kev){
   int active = kev.pressed;
-  switch(kev.key){
+  int button = kev.key;
+  std::cout << "event :" << button << " " << active << "\n";
+  switch(button){
   case 283:up=active;break; //Up
-    case 285:left=active;break; //left
-    case 284:down=active;break; //down
-    case 286:right=active;break; //right
-    case 32:spawn_bullet=kev.pressed;break; //space
+  case 285:left=active;break; //left
+  case 284:down=active;break; //down
+  case 286:right=active;break; //right
+  case 'W':up=active;break;
+  case 'A':left=active;break; //left
+  case 'S':down=active;break; //down
+  case 'D':right=active;break; //right
+  
+  case 32:spawn_bullet=kev.pressed;break; //space
+  case 294:if(active){aabb.ghost = !aabb.ghost;}break;
     }
 }
 
 void player_object::handle_collision(physical_game_object * pgo){
-  collider = pgo;
+  //collider = pgo;
 }
 
 void player_object::do_ai( WorldObject & wo){
-  std::cout << x << " " << y << "\n";
+  //std::cout << x << " " << y << "\n";
   if(collider != NULL){
     wo.remove_object(collider);
     collider = NULL;
@@ -165,11 +173,10 @@ Person::Person(){
 }
 
 
-SpriteSheetDrawable * game_object::draw(){
-  tex_draw.x = x;
-  tex_draw.y = y;
-  tex_draw.z = -y;
-  return &tex_draw;
+DrawRequest game_object::draw(){
+ 
+  DrawRequest dr = tex_draw.make_draw_request(x,y);
+  return dr;
 }
 
 Bullet::Bullet(int x,int y,float co_x,float co_y,int vel_x,int vel_y,Texture tex){

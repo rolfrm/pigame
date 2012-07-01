@@ -15,7 +15,8 @@ else:
     blacklist = {"egl_init.c":True}
     includes = "-g3"
     link = "-lIL -lGL -lglfw -lGLEW -g3 -lsfml-audio"
-    
+
+cc += " -std=c++0x"    
 
 output = "start"
 endings = [".c",".cpp"]

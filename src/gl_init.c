@@ -49,6 +49,7 @@ void init_ogl(int width, int height)
 }
 
 void swapbuffers(){
+  glFlush();
 	glfwSwapBuffers();
 }
 

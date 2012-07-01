@@ -16,7 +16,7 @@ public:
    
   SpriteSheetDrawable tex_draw;
  
-  SpriteSheetDrawable * draw();
+  DrawRequest draw();
   virtual void do_ai(WorldObject& wo){
 
   }
@@ -26,8 +26,9 @@ public:
 
 class physical_game_object: public game_object{
   float co_x, co_y;
+  public:
   AABB aabb;
- public:
+ 
   void set_aabb_data(float size_x, float size_y, float co_x, float co_y, bool movable,bool ghost = false);
   AABB get_aabb();
   void set_aabb(AABB naabb);

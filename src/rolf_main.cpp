@@ -24,6 +24,28 @@
 extern int global_screen_width;
 extern int global_screen_height;
 
+class Cow: public physical_game_object{
+public:
+  static SpriteSheetDrawable ssd;
+  static int inited;
+  Cow(){
+    if(inited == -1){
+      ssd = SpriteSheetDrawable(make_texture("cow.png"));
+      ssd.load_animation_frame("test",48,30,0,0,0.2);
+      ssd.load_animation_frame("test",48,30,48,0,0.2);
+      ssd.set_animation("test");
+      inited = 1;
+    }
+    tex_draw = ssd;
+    set_aabb_data(20,10,0,5,true,false);
+  }
+};
+SpriteSheetDrawable Cow::ssd;
+int Cow::inited = -1;
+
+
+
+
 player_object * make_player_obj(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost, SpriteSheetDrawable tex_draw ){
   player_object * out = new player_object();
   out->x = x;
@@ -53,12 +75,116 @@ class key_ev: public EventListener<KeyEvent>{
   }
 };
 
+#define DOTILE(x,y,z) Tile(z,tsf.make_animated_tile(x,y))
+class TileCreator{
+public:
+  Tile tileset[100];
+  TileCreator(){
+    TileSpriteFactory tsf("grass_tiles.png", 18,10);
+
+    tileset[0] = DOTILE(0,{0.2},true);
+    tileset[1] = DOTILE(1,{0.2},true);
+    tileset[2] = DOTILE(2,{0.2},false);
+    tileset[3] = DOTILE(3,{0.2},false);
+    tileset[4] = DOTILE(4,{0.2},true);
+    tileset[5] = DOTILE(5,{0.2},true);
+    tileset[6] = DOTILE(6,{0.2},true);
+    tileset[7] = DOTILE(7,{0.2},true);
+    tileset[8] = DOTILE(8,{0.2},false);
+    tileset[9] = DOTILE(9,{0.2},true);
+}
+  Tile create_tile(int tilenr,float time_offset = -1){
+    Tile out = tileset[tilenr];
+    if(time_offset > 0){
+      out.time_offset = time_offset;
+    }else{
+      out.time_offset = (float)(rand() % 100) / 10.0;
+    }
+    return out;
+  }
+
+};
+
+class ObjectCreator{
+public:
+  game_object game_objects[100];
+  ObjectCreator(){
+
+  }
+
+  game_object * create_game_object(int game_object_number,bool & physical){
+    if(game_object_number == 0){
+      physical = true;
+      return new Cow();
+    }
+  }
+  
+};
+
+
+
+
+
+
+class game_editor:public EventListener<KeyEvent>, public EventListener<MouseClick>,public EventListener<mouse_position>{
+public:
+  TileCreator tc;
+  ObjectCreator oc;
+  ObjectHandler * object_handler;
+  game_editor(ObjectHandler * objh){
+    object_handler = objh;
+  }
+
+  void handle_event(MouseClick mc){
+    if(mc.pressed == true && mc.button == 0){
+      mouse_position mpos = get_mouse_position();
+      mouse_position world_pos = screen_pos_to_world_pos(mpos);
+      create_tile(0,world_pos.x,world_pos.y);
+    }
+    if(mc.pressed == true && mc.button == 1){
+      mouse_position mpos = get_mouse_position();
+      mouse_position world_pos = screen_pos_to_world_pos(mpos);
+      create_object(0,world_pos.x,world_pos.y);
+    } 
+  }
+
+  void  handle_event(mouse_position mp){
+
+  }
+
+  void handle_event(KeyEvent kev){
+
+  }
+
+  void create_object(int object_nr,float x, float y){
+    bool physical;
+    game_object * ngo = oc.create_game_object(0,physical);
+    ngo->x = x;
+    ngo->y = y;
+    if(physical){
+      object_handler->load_object((physical_game_object *) ngo);
+    }else{
+      object_handler->load_object(ngo);
+    }
+  }
+
+  void create_tile(int tile_nr, float x, float y){
+    object_handler->tile_map.set_tile((x + (int) x%18)/18,(y + (int)y%10)/10,tc.create_tile(4));
+  }
+
+};
+
+
 int main(){
-  init_game(512,512,128,128);
+
+
+  init_game(1024,1024,256,256);
+  
   set_clearcolor(0.1,0.5,0.0,1.0);
   GLProgram ptest = texture_shader;
   
   ObjectHandler object_handler;
+  game_editor ge(&object_handler);
   object_handler.current_shader = ptest;
 
   Music m1("ko-ko.ogg");
@@ -77,12 +203,9 @@ int main(){
  
  SpriteSheetDrawable treeTD= SpriteSheetDrawable(treetex); 
   treeTD.load_animation_frame("test",48,30,0,0,0.2);
-  treeTD.load_animation_frame("test",48,30,48,0,0.2);
+  treeTD.load_animation_frame("test",48,30,48,0,2.0);
   treeTD.set_animation("test");
 
-  for(int i = 0; i < 15;i++){
-    object_handler.load_object(make_pgo( (rand() % 50) + 50,  (rand() % 50) + 50, 20,5,0,5,true,false,treeTD));
-  }  
   Texture tree= make_texture("tree123.png");
   SpriteSheetDrawable tree_sprite(tree);
   tree_sprite.load_animation_frame("def",tree.width,tree.height,0,0,1000);
@@ -95,6 +218,7 @@ int main(){
   player_object dormus(14,10,10,10,0,7,true,false,guy_tex);
   player_object * a=&dormus; 
   key_event_handler.register_listener(a);
+  mouse_click_handler.register_listener(&ge);
   object_handler.load_object(a);
   
 
