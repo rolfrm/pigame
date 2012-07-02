@@ -43,6 +43,7 @@ public:
 	void handle_collision(physical_game_object * other);
 
 	int vel[2];
+	double start_time;
 	bool dead;
 };
 
