@@ -31,8 +31,7 @@ public:
   Cow(){
     if(inited == -1){
       ssd = SpriteSheetDrawable(make_texture("cow.png"));
-      ssd.load_animation_frame("test",48,30,0,0,0.2);
-      ssd.load_animation_frame("test",48,30,48,0,0.2);
+      ssd.load_animation_frames("test",{frame(48,30,0,0,0.2),frame(48,30,48,0,0.2)});
       ssd.set_animation("test");
       inited = 1;
     }
@@ -43,20 +42,85 @@ public:
 SpriteSheetDrawable Cow::ssd;
 int Cow::inited = -1;
 
+class Tree: public physical_game_object{
+public:
+  static SpriteSheetDrawable ssd;
+  static int inited;
+  Tree(){ 
+    if(inited == -1){
+      Texture tex = make_texture("sprites/tree1.png");
+      ssd = SpriteSheetDrawable(tex);
+      ssd.load_animation_frames("test",{frame(tex.width,tex.height,0,0,0.9)});
+      ssd.set_animation("test");
+      inited = 1;
+    }
+    tex_draw = ssd;
+    set_aabb_data(10,10,0,5,false,false);
+  }
+};
+SpriteSheetDrawable Tree::ssd;
+int Tree::inited = -1;
 
+class Well: public physical_game_object{
+public:
+  static SpriteSheetDrawable ssd;
+  static int inited;
+  Well(){ 
+    if(inited == -1){
+      Texture tex = make_texture("sprites/well.png");
+      ssd = SpriteSheetDrawable(tex);
+      ssd.load_animation_frames("test",{frame(tex.width,tex.height,0,0,0.9)});
+      ssd.set_animation("test");
+      inited = 1;
+    }
+    tex_draw = ssd;
+    set_aabb_data(11,5,0,8,false,false);
+  }
+};
+SpriteSheetDrawable Well::ssd;
+int Well::inited = -1;
+
+class Bug: public physical_game_object{
+public:
+  static SpriteSheetDrawable ssd;
+  static int inited;
+  Bug(){ 
+    if(inited == -1){
+      Texture tex = make_texture("sprites/sprites1.png");
+      ssd = SpriteSheetDrawable(tex);
+      ssd.load_animation_frames("walk",{frame(10,8,0,0,0.1),frame(10,8,20,0,0.1)});
+      ssd.set_animation("walk");
+      inited = 1;
+    }
+    tex_draw = ssd;
+    set_aabb_data(3,3,0,3,true,false);
+  }
+};
+SpriteSheetDrawable Bug::ssd;
+int Bug::inited = -1;
+
+class Scroll: public physical_game_object{
+public:
+  static SpriteSheetDrawable ssd;
+  static int inited;
+  Scroll(){ 
+    if(inited == -1){
+      Texture tex = make_texture("sprites/scroll.png");
+      ssd = SpriteSheetDrawable(tex);
+      ssd.load_animation_frames("walk",{frame(23,27,0,0,0.2),frame(23,27,23,0,0.2),frame(23,27,46,0,0.2)});
+      ssd.set_animation("walk");
+      inited = 1;
+    }
+    tex_draw = ssd;
+    set_aabb_data(3,3,0,3,true,false);
+  }
+};
+SpriteSheetDrawable Scroll::ssd;
+int Scroll::inited = -1;
 
 
 player_object * make_player_obj(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost, SpriteSheetDrawable tex_draw ){
   player_object * out = new player_object();
-  out->x = x;
-  out->y = y;
-  out->set_aabb_data(sx,sy,off_x,off_y,movable,ghost);
-  out->tex_draw = tex_draw;
-  return out;
-} 
-
-physical_game_object * make_pgo(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost, SpriteSheetDrawable tex_draw ){
-  physical_game_object * out = new physical_game_object();
   out->x = x;
   out->y = y;
   out->set_aabb_data(sx,sy,off_x,off_y,movable,ghost);
@@ -114,8 +178,19 @@ public:
 
   game_object * create_game_object(int game_object_number,bool & physical){
     if(game_object_number == 0){
-      physical = true;
       return new Cow();
+    }else if(game_object_number == 1){
+      physical = true;
+      return new Tree();
+    }else if(game_object_number == 2){
+      physical = true;
+      return new Well();
+    }else if(game_object_number == 3){
+      physical = true;
+      return new Bug();
+    }else if(game_object_number == 4){
+      physical = true;
+      return new Scroll();
     }
   }
   
@@ -139,12 +214,12 @@ public:
     if(mc.pressed == true && mc.button == 0){
       mouse_position mpos = get_mouse_position();
       mouse_position world_pos = screen_pos_to_world_pos(mpos);
-      create_tile(0,world_pos.x,world_pos.y);
+      create_tile(3,world_pos.x,world_pos.y);
     }
     if(mc.pressed == true && mc.button == 1){
       mouse_position mpos = get_mouse_position();
       mouse_position world_pos = screen_pos_to_world_pos(mpos);
-      create_object(0,world_pos.x,world_pos.y);
+      create_object(rand()%5,world_pos.x,world_pos.y);
     } 
   }
 
@@ -158,7 +233,7 @@ public:
 
   void create_object(int object_nr,float x, float y){
     bool physical;
-    game_object * ngo = oc.create_game_object(0,physical);
+    game_object * ngo = oc.create_game_object(object_nr,physical);
     ngo->x = x;
     ngo->y = y;
     if(physical){
@@ -169,16 +244,16 @@ public:
   }
 
   void create_tile(int tile_nr, float x, float y){
-    object_handler->tile_map.set_tile((x + (int) x%18)/18,(y + (int)y%10)/10,tc.create_tile(4));
+    object_handler->tile_map.set_tile((x + (int) x%18)/18,(y + (int)y%10)/10,tc.create_tile(tile_nr));
   }
 
 };
 
 
 int main(){
+  
 
-
-  init_game(1024,1024,256,256);
+  init_game(512,512,128,128);
   
   set_clearcolor(0.1,0.5,0.0,1.0);
   GLProgram ptest = texture_shader;
@@ -190,41 +265,13 @@ int main(){
   Music m1("ko-ko.ogg");
   Music m2(m1);
   AudioSample boom("boom.ogg");
-  //play_music(m2);
-  
-  Texture fb_tex = make_texture((void *) NULL,global_screen_width,global_screen_height,3);  
-  FrameBuffer fb(fb_tex);
-  
-  Texture treetex = make_texture("cow.png");
-  Texture guy_tex  = make_texture("DormusSheet.png");
-  BufferObject bobj = unit_rectangle_verts;
-  BufferObject bobj2 = unit_rectangle_uvs;
-  BufferObject bobj3 = unit_rectangle_inverse_uvs;
- 
- SpriteSheetDrawable treeTD= SpriteSheetDrawable(treetex); 
-  treeTD.load_animation_frame("test",48,30,0,0,0.2);
-  treeTD.load_animation_frame("test",48,30,48,0,2.0);
-  treeTD.set_animation("test");
 
-  Texture tree= make_texture("tree123.png");
-  SpriteSheetDrawable tree_sprite(tree);
-  tree_sprite.load_animation_frame("def",tree.width,tree.height,0,0,1000);
-  tree_sprite.set_animation("def");
-  object_handler.load_object(make_pgo(200,0,20,5,0,5,true,true,tree_sprite));
-  object_handler.load_object(make_pgo(300,0,20,5,0,5,true,true,tree_sprite));
-  object_handler.load_object(make_pgo(200,50,20,5,0,5,true,true,tree_sprite));
-  object_handler.load_object(make_pgo(300,50,20,5,0,5,true,true,tree_sprite));
-
-  player_object dormus(14,10,10,10,0,7,true,false,guy_tex);
+  player_object dormus(7,15,8,5,0,7,true,false);
   player_object * a=&dormus; 
   key_event_handler.register_listener(a);
   mouse_click_handler.register_listener(&ge);
   object_handler.load_object(a);
   
-
-  int i = 0;
-  int channel = 0;
-  double mean[10];
 
   double start_t = get_time();
   while(true){
@@ -236,10 +283,7 @@ int main(){
       sleep_sec(dt_sleep);
       start_t += dt_sleep;
     }
-    //** Go gameloop!
     object_handler.gameloop();
-    //
-    
 
   }
   

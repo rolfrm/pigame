@@ -79,6 +79,6 @@ public:
   void handle_collision(physical_game_object * other);
   void do_ai(WorldObject & wo);
   player_object();
-  player_object(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost,Texture sheet);
+  player_object(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost);
   
 };

@@ -25,19 +25,19 @@ player_object::player_object(){
   collider = NULL;
 }
 
-player_object::player_object(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost,Texture sheet){
+player_object::player_object(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost){
   down = 0;
   up = 0;
   left = 0;
   right = 0;	
 
- // bullet_tex=make_texture("bullet.png");
+  Texture sheet=make_texture("DormusSheet.png");
 
   tex_draw=SpriteSheetDrawable(sheet); 
-  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.1);
-  tex_draw.load_animation_frame("rwalk",20,20,20,0,0.1);
-  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.1);
-  tex_draw.load_animation_frame("rwalk",20,20,40,0,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,0,80,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,20,80,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,0,80,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,40,80,0.1);
 
   tex_draw.load_animation_frame("dwalk",20,20,0,20,0.1);
   tex_draw.load_animation_frame("dwalk",20,20,40,20,0.1);
@@ -49,10 +49,10 @@ player_object::player_object(float x,float y,float sx, float sy, float off_x, fl
   tex_draw.load_animation_frame("uwalk",20,20,20,40,0.1);
   tex_draw.load_animation_frame("uwalk",20,20,40,40,0.1);
 
-  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.1);
-  tex_draw.load_animation_frame("lwalk",20,20,20,60,0.1);
-  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.1);
-  tex_draw.load_animation_frame("lwalk",20,20,40,60,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,0,100,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,20,100,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,0,100,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,40,100,0.1);
   tex_draw.set_animation("lwalk");
 
   this->x=x;
@@ -98,16 +98,11 @@ void player_object::handle_event(KeyEvent kev){
 }
 
 void player_object::handle_collision(physical_game_object * pgo){
-  //collider = pgo;
+  
 }
 
 void player_object::do_ai( WorldObject & wo){
-  //std::cout << x << " " << y << "\n";
-  if(collider != NULL){
-    wo.remove_object(collider);
-    collider = NULL;
-    
-  }
+  
   x += left*1 + right*-1;
   y += up*-1 + down;
   set_camera_position(x,y);
