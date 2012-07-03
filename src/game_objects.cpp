@@ -35,10 +35,10 @@ player_object::player_object(float x,float y,float sx, float sy, float off_x, fl
   Texture sheet=make_texture("DormusSheet.png");
 
   tex_draw=SpriteSheetDrawable(sheet); 
-  tex_draw.load_animation_frame("rwalk",20,20,0,80,0.1);
-  tex_draw.load_animation_frame("rwalk",20,20,20,80,0.1);
-  tex_draw.load_animation_frame("rwalk",20,20,0,80,0.1);
-  tex_draw.load_animation_frame("rwalk",20,20,40,80,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,20,0,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,40,0,0.1);
 
   tex_draw.load_animation_frame("dwalk",20,20,0,20,0.1);
   tex_draw.load_animation_frame("dwalk",20,20,40,20,0.1);
@@ -50,10 +50,10 @@ player_object::player_object(float x,float y,float sx, float sy, float off_x, fl
   tex_draw.load_animation_frame("uwalk",20,20,20,40,0.1);
   tex_draw.load_animation_frame("uwalk",20,20,40,40,0.1);
 
-  tex_draw.load_animation_frame("lwalk",20,20,0,100,0.1);
-  tex_draw.load_animation_frame("lwalk",20,20,20,100,0.1);
-  tex_draw.load_animation_frame("lwalk",20,20,0,100,0.1);
-  tex_draw.load_animation_frame("lwalk",20,20,40,100,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,20,60,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,40,60,0.1);
   tex_draw.set_animation("lwalk");
 
   this->x=x;

@@ -264,7 +264,7 @@ public:
     tw->set_tile(tc.create_tile(current_tile));
     object_handler->load_ui_element(tw);
     object_handler->load_ui_element(ow);
-    load_game("test.map");
+    load_game("test.map","test.objects");
   }
   bool handle_event(MouseClick mc){
     if(mc.pressed == true && mc.button == 0){
@@ -303,6 +303,9 @@ public:
   }
 
   void create_object(int object_nr,float x, float y){
+    object_event oe = {(unsigned char) object_nr, (unsigned short) x, (unsigned short) y};
+    object_events.push_back(oe);
+
     bool physical;
     game_object * ngo = oc.create_game_object(object_nr,physical);
     ngo->x = x;
@@ -319,26 +322,41 @@ public:
     tile_events.push_back(te);
     object_handler->tile_map.set_tile((x + (int) x%18)/18,(y + (int)y%10)/10,tc.create_tile(tile_nr));
   }
-  void save_game(std::string tile_path){
+  void save_game(std::string tile_path,std::string object_path){
     char * write_from = (char *) &(tile_events[0]);
     std::ofstream file;
     file.open(tile_path,std::ios::binary | std::ios::out);
     if(file.good()){
       file.write(write_from,sizeof(tile_event)*tile_events.size());
     }
+    
     file.close();
-
+    write_from =(char *) &(object_events[0]);
+    file.open(object_path,std::ios::binary | std::ios::out);
+    if(file.good()){
+      file.write(write_from,sizeof(object_event)*object_events.size());
+    }
+    file.close();
   }
 
-  void load_game(std::string tile_path){
+  void load_game(std::string tile_path, std::string object_path){
     std::ifstream file;
     tile_event te;
     file.open(tile_path,std::ios::binary | std::ios::in);
     while(file.good()){
-      file.read((char *)&te,sizeof(te));
+      file.read((char *)&te,sizeof(tile_event));
       create_tile(te.tile,te.x,te.y);
     }
     file.close();
+
+    object_event oe;
+    file.open(object_path,std::ios::binary | std::ios::in);
+    while(file.good()){
+      file.read((char *)&oe,sizeof(object_event));
+      create_object(oe.object,oe.x,oe.y);
+    }
+    file.close();
+
 
   }
 
@@ -382,7 +400,7 @@ int main(){
     ge.object_handler->gameloop();
 
   }
-  ge.save_game("test.map");
+  ge.save_game("test.map","test.objects");
   
   return 0;
 }
