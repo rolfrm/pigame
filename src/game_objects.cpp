@@ -11,11 +11,11 @@ AABB game_object::get_aabb(){
   out.size_y = 1;
 }
 
-void player_object::handle_event(mouse_position mpos){
+bool player_object::handle_event(mouse_position mpos){
   mpos = screen_pos_to_world_pos(mpos);
   x = (x*4 + mpos.x)/5;
   y = (y*4 + mpos.y)/5;
-  
+  return true;
 }
 
 player_object::player_object(){
@@ -35,7 +35,6 @@ player_object::player_object(float x,float y,float sx, float sy, float off_x, fl
   Texture sheet=make_texture("DormusSheet.png");
 
   tex_draw=SpriteSheetDrawable(sheet); 
-<<<<<<< HEAD
   tex_draw.load_animation_frame("rwalk",20,20,0,80,0.1);
   tex_draw.load_animation_frame("rwalk",20,20,20,80,0.1);
   tex_draw.load_animation_frame("rwalk",20,20,0,80,0.1);
@@ -66,7 +65,7 @@ player_object::player_object(float x,float y,float sx, float sy, float off_x, fl
 }
 
 
-void player_object::handle_event(MouseClick mc){
+bool player_object::handle_event(MouseClick mc){
   if(mc.pressed){
     down = true;
 
@@ -78,9 +77,10 @@ void player_object::handle_event(MouseClick mc){
   }else{
     down = false;
   }
+  return true;
 }
 
-void player_object::handle_event(KeyEvent kev){
+bool player_object::handle_event(KeyEvent kev){
   int active = kev.pressed;
   int button = kev.key;
   std::cout << "event :" << button << " " << active << "\n";
@@ -97,6 +97,7 @@ void player_object::handle_event(KeyEvent kev){
   case 32:spawn_bullet=kev.pressed;break; //space
   case 294:if(active){aabb.ghost = !aabb.ghost;}break;
     }
+  return true;
 }
 
 void player_object::handle_collision(physical_game_object * pgo){

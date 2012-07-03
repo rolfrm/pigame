@@ -17,75 +17,13 @@ void ObjectHandler::update_ai(){
 }
 
 
-ObjectHandler::ObjectHandler(){
+ObjectHandler::ObjectHandler(Tile default_tile){
 
   sprite_rendering_buffer=new FrameBuffer(global_screen_width,global_screen_height,4);
 
-  Texture tex = make_texture("grass_tiles.png");
-  TileSpriteFactory tsf("grass_tiles.png",18,10);
-  SpriteSheetDrawable * ssdtest1 = tsf.make_animated_tile(0,{0.2,0.2}); 
-  SpriteSheetDrawable * ssd = tsf.make_animated_tile(0,{0.2}); 
   
-  SpriteSheetDrawable * ssd2 = tsf.make_animated_tile(1,{1.0,2.0});
-  SpriteSheetDrawable * ssd3 = tsf.make_animated_tile(6,{0.2});
-  SpriteSheetDrawable * ssd4 = tsf.make_animated_tile(7,{0.2});
-  SpriteSheetDrawable * ssds[4];
-  ssds[0] = ssd;
-  ssds[1] = ssd2;
-  ssds[2] = ssd3;
-  ssds[3] = ssd4;
-  
-  SpriteSheetDrawable * water = tsf.make_animated_tile(2,{0.2,0.2});
-  SpriteSheetDrawable * water2 = tsf.make_animated_tile(8,{1.0,1.0});
-  SpriteSheetDrawable * wood = tsf.make_animated_tile(3,{0.2});
-  SpriteSheetDrawable * wood2 = tsf.make_animated_tile(4,{0.2});
-  SpriteSheetDrawable * sand = tsf.make_animated_tile(5,{3.0,3.0,3.0});
-  
-  
-  tile_map = tilemap(20,20,Tile(false,water));
-  
-  for(int i = 0; i < 20;i++){
-    for(int j = 0; j < 20;j++){
-      tile_map.set_tile(i,j,Tile(true,ssds[1 + rand()%3],(float)i / 10.0));
-    }
-  }
-
-  
-  for(int i = 0; i < 20;i++){
-    tile_map.set_tile(i,0,Tile(true,sand,rand()%100));
-    tile_map.set_tile(i,1,Tile(true,sand,rand()%100));
-    tile_map.set_tile(i,2,Tile(true,sand,rand()%100));
-    //tile_map.set_tile(i,3,Tile(true,sand));
-    
-    tile_map.set_tile(0,i,Tile(true,sand,rand()%100));
-    tile_map.set_tile(19,i,Tile(true,sand,rand()%100));
-    tile_map.set_tile(i,19,Tile(true,sand,rand()%100));
-  
-    }
-
-  for(int i = 0; i < 10;i++){
-    tile_map.set_tile(i,0,Tile(false,water,(float)i/20.0));
-    tile_map.set_tile(i,1,Tile(false,water,(float)i/20.0));
-  }
-
-  tile_map.set_tile(2,0,Tile(true,wood));
-  tile_map.set_tile(2,1,Tile(true,wood));
-
-  for(int i = 0; i < 6; i++){
-    tile_map.set_tile(10 + i,10,Tile(false,wood));
-    tile_map.set_tile(10 + i,15,Tile(false,wood));
-    tile_map.set_tile(10,10+i,Tile(false,wood));
-    tile_map.set_tile(15,10+i,Tile(false,wood));
-    
-  }
-  for(int i = 0; i < 4;i++){
-    for(int j = 0; j < 4;j++){
-      tile_map.set_tile(11 + i,11 + j,Tile(true,wood2));
-    
-    }
-  }
-  tile_map.set_tile(14,15,Tile(true,wood2));
-    
+  tile_map = tilemap(2000,2000,default_tile);
+      
 }
 
 struct collision_pair{
@@ -236,6 +174,7 @@ void ObjectHandler::do_rendering(){
 
   }
   bind_shader(texture_shader);
+
   for(std::list<DrawRequest>::iterator it = drs.begin();it != drs.end();it++){
     DrawRequest dr = *it;
     bind_texture(dr.tex,0);
@@ -257,6 +196,22 @@ void ObjectHandler::do_rendering(){
   bind_texture(sprite_rendering_buffer->textures[0],0);
 
   draw_buffers_triangle_fan(4);
+
+  texture_shader.uniformf("camera",256,-256);
+  texture_shader.uniformf("scale",2.0/global_width,2.0/global_height);
+  bind_shader(texture_shader);
+  for(std::list<UIElement *>::iterator it = uilist.begin();it != uilist.end();it++){
+    DrawRequest dr = (*it)->draw();
+    bind_texture(dr.tex,0);
+    texture_shader.uniformf("object_scale",dr.vert_scale_x,dr.vert_scale_y);
+    texture_shader.uniformf("off",dr.x - dr.vert_scale_x,dr.y - dr.vert_scale_y);
+    texture_shader.uniformf("uv_scale",dr.uv_scale_x,dr.uv_scale_y);
+    texture_shader.uniformf("uv_offset",dr.uv_off_x, dr.uv_off_y);
+    draw_buffers_triangle_fan(4);
+
+  }
+
+
     
   swapbuffers();
 
@@ -276,4 +231,7 @@ void ObjectHandler::load_object(physical_game_object * pobj){
 
 void ObjectHandler::load_object(game_object * gobj){
   drawlist.push_back(gobj);
+}
+void ObjectHandler::load_ui_element(UIElement * ui_el){
+  uilist.push_back(ui_el);
 }

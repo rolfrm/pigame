@@ -74,9 +74,9 @@ class player_object: public Person, public EventListener<mouse_position>, public
   bool spawn_bullet;
   Texture bullet_tex;
 public:
-  void handle_event(mouse_position mpos);
-  void handle_event(MouseClick mc);
-  void handle_event(KeyEvent ke);
+  bool handle_event(mouse_position mpos);
+  bool handle_event(MouseClick mc);
+  bool handle_event(KeyEvent ke);
   void handle_collision(physical_game_object * other);
   void do_ai(WorldObject & wo);
   player_object();
