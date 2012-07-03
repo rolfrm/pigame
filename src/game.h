@@ -29,17 +29,34 @@ public:
 
 };
 
+class UIElement:public Drawer, public EventListener<MouseClick>{
+ public:
+  float x, y;
+  SpriteSheetDrawable drawable;
+  UIElement(float _x, float _y){
+    x = _x;
+    y = _y;
+  }
+  DrawRequest draw(){
+    return drawable.make_draw_request(x,y);
+  }
+  bool handle_event(MouseClick){ return true;}
+
+};
+
 
 class ObjectHandler{
   friend class WorldObject;
   
   FrameBuffer * sprite_rendering_buffer;
  public:
+  std::list<UIElement *> uilist;
   tilemap tile_map;
-  ObjectHandler();
+  ObjectHandler(Tile default_tile);
   std::list<game_object * > drawlist;
   std::list<physical_game_object *> physical_sim;
   GLProgram current_shader;
+  void load_ui_element(UIElement * ui_el);
   void load_object(game_object * gobj);
   void load_object(physical_game_object * pobj);
   void update_ai();

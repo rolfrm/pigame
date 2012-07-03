@@ -56,6 +56,11 @@ void SpriteSheetDrawable::load_animation_frame(std::string name,int scalex,int s
 	anim->second.push_back(frame(scalex,scaley,offx,offy,duration));
 }
 
+void SpriteSheetDrawable::load_animation_frames(std::string name,std::vector<frame> frames){
+  animations.insert(std::pair<std::string, std::vector<frame> >(name,frames));
+}
+
+
 void SpriteSheetDrawable::set_animation(std::string new_animation){	
 	current_animation=animations.find(new_animation);
 	current_frame=0;

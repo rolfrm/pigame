@@ -37,7 +37,7 @@ public:
   DrawRequest get_draw_request(frame current_frame);
   void set_animation(std::string new_animation);
   void load_animation_frame(std::string name,int scalex,int scaley,int offx,int offy,double duration);
-  
+  void load_animation_frames(std::string name,std::vector<frame> frames);
   int current_frame;
   double start_time;
   double current_animation_length;
@@ -45,8 +45,6 @@ public:
   std::map< std::string, std::vector<frame> > animations;
 
 };
-	
-bool z_compare(SpriteSheetDrawable * d1, SpriteSheetDrawable * d2);
 
 /*Stuff that wants to draw implements this.*/
 class Drawer{

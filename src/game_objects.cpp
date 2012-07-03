@@ -11,11 +11,11 @@ AABB game_object::get_aabb(){
   out.size_y = 1;
 }
 
-void player_object::handle_event(mouse_position mpos){
+bool player_object::handle_event(mouse_position mpos){
   mpos = screen_pos_to_world_pos(mpos);
   x = (x*4 + mpos.x)/5;
   y = (y*4 + mpos.y)/5;
-  
+  return true;
 }
 
 player_object::player_object(){
@@ -26,34 +26,34 @@ player_object::player_object(){
   collider = NULL;
 }
 
-player_object::player_object(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost,Texture sheet){
+player_object::player_object(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost){
   down = 0;
   up = 0;
   left = 0;
   right = 0;	
 
- // bullet_tex=make_texture("bullet.png");
+  Texture sheet=make_texture("DormusSheet.png");
 
   tex_draw=SpriteSheetDrawable(sheet); 
-  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.2);
-  tex_draw.load_animation_frame("rwalk",20,20,20,0,0.2);
-  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.2);
-  tex_draw.load_animation_frame("rwalk",20,20,40,0,0.2);
+  tex_draw.load_animation_frame("rwalk",20,20,0,80,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,20,80,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,0,80,0.1);
+  tex_draw.load_animation_frame("rwalk",20,20,40,80,0.1);
 
-  tex_draw.load_animation_frame("dwalk",20,20,20,20,0.2);
-  tex_draw.load_animation_frame("dwalk",20,20,0,20,0.2);
-  tex_draw.load_animation_frame("dwalk",20,20,40,20,0.2);
-  tex_draw.load_animation_frame("dwalk",20,20,0,20,0.2);
+  tex_draw.load_animation_frame("dwalk",20,20,0,20,0.1);
+  tex_draw.load_animation_frame("dwalk",20,20,40,20,0.1);
+  tex_draw.load_animation_frame("dwalk",20,20,20,20,0.1);
+  tex_draw.load_animation_frame("dwalk",20,20,40,20,0.1);
 
-  tex_draw.load_animation_frame("uwalk",20,20,20,40,0.2);
-  tex_draw.load_animation_frame("uwalk",20,20,0,40,0.2);
-  tex_draw.load_animation_frame("uwalk",20,20,40,40,0.2);
-  tex_draw.load_animation_frame("uwalk",20,20,0,40,0.2);
+  tex_draw.load_animation_frame("uwalk",20,20,0,40,0.1);
+  tex_draw.load_animation_frame("uwalk",20,20,40,40,0.1);
+  tex_draw.load_animation_frame("uwalk",20,20,20,40,0.1);
+  tex_draw.load_animation_frame("uwalk",20,20,40,40,0.1);
 
-  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.2);
-  tex_draw.load_animation_frame("lwalk",20,20,20,60,0.2);
-  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.2);
-  tex_draw.load_animation_frame("lwalk",20,20,40,60,0.2);
+  tex_draw.load_animation_frame("lwalk",20,20,0,100,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,20,100,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,0,100,0.1);
+  tex_draw.load_animation_frame("lwalk",20,20,40,100,0.1);
   tex_draw.set_animation("lwalk");
 
   this->x=x;
@@ -65,7 +65,7 @@ player_object::player_object(float x,float y,float sx, float sy, float off_x, fl
 }
 
 
-void player_object::handle_event(MouseClick mc){
+bool player_object::handle_event(MouseClick mc){
   if(mc.pressed){
     down = true;
 
@@ -77,9 +77,10 @@ void player_object::handle_event(MouseClick mc){
   }else{
     down = false;
   }
+  return true;
 }
 
-void player_object::handle_event(KeyEvent kev){
+bool player_object::handle_event(KeyEvent kev){
   int active = kev.pressed;
   int button = kev.key;
   std::cout << "event :" << button << " " << active << "\n";
@@ -96,19 +97,15 @@ void player_object::handle_event(KeyEvent kev){
   case 32:spawn_bullet=kev.pressed;break; //space
   case 294:if(active){aabb.ghost = !aabb.ghost;}break;
     }
+  return true;
 }
 
 void player_object::handle_collision(physical_game_object * pgo){
-  //collider = pgo;
+  
 }
 
 void player_object::do_ai( WorldObject & wo){
-  //std::cout << x << " " << y << "\n";
-  if(collider != NULL){
-    wo.remove_object(collider);
-    collider = NULL;
-    
-  }
+  
   x += left*1 + right*-1;
   y += up*-1 + down;
   set_camera_position(x,y);
