@@ -65,14 +65,16 @@ physical_game_object * make_pgo(float x,float y,float sx, float sy, float off_x,
 } 
 
 class key_ev: public EventListener<KeyEvent>{
-  void handle_event(KeyEvent kev){
+  bool handle_event(KeyEvent kev){
     switch(kev.key){
     case 283:set_camera_position(camera_x,camera_y - 1);break; //Up
     case 285:set_camera_position(camera_x + 1,camera_y );break; //left
     case 284:set_camera_position(camera_x,camera_y + 1 );break; //down
     case 286:set_camera_position(camera_x - 1,camera_y );break; //right
-    }
-  }
+    }  
+
+   return true;
+}
 };
 
 #define DOTILE(x,y,z) Tile(z,tsf.make_animated_tile(x,y))
