@@ -75,6 +75,8 @@ class player_object: public Person, public EventListener<mouse_position>, public
   int up;
   int left;
   int right;
+  int latest_key;
+  int orientation[2];
   game_object * collider;
   bool spawn_bullet;
   Texture bullet_tex;
