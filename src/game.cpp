@@ -22,7 +22,7 @@ ObjectHandler::ObjectHandler(Tile default_tile){
   sprite_rendering_buffer=new FrameBuffer(global_screen_width,global_screen_height,4);
 
   
-  tile_map = tilemap(2000,2000,default_tile);
+  tile_map = tilemap(500,500,default_tile);
       
 }
 

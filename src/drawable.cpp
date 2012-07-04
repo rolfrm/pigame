@@ -113,4 +113,96 @@ DrawRequest SpriteSheetDrawable::make_draw_request(float x, float y){
   return out;
   
 }
+#include <fstream>
+#include <string>
+
+int get_str_type(std::string str){
+  int number_found = 0;
+  for(int i=0; i < str.size();i++){
+    if(isalpha(str[i])){
+      return 2;
+    }
+    if(isdigit(str[i])){
+      number_found = 1;
+    }
+  }
+  return number_found; //0 or 1
+}
+
+std::string trim(const std::string& str) {
+  size_t start = str.find_first_not_of(" \t\n\r");
+  if(start == std::string::npos) return "";
+ return str.substr(start, str.find_last_not_of(" \t\n\r") - start + 1);
+}
+
+float take_float(std::string *str){
+  size_t start = str->find_first_of(" \t\n\r");
+  float f =std::atof(str->c_str()); 
+  *str = str->erase(0,start+1);
+  return f;
+}
+frame string_to_frame(std::string str){
+  
+  float sx = take_float(&str);
+  float sy = take_float(&str);
+  float x = take_float(&str);
+  float y = take_float(&str);
+  float dt = take_float(&str);
+  return frame(sx,sy,x,y,dt);
+}
+
+SpriteSheetDrawable SpriteSheetDrawable::from_ilist(std::string tex_path, std::vector<animation_line> alines){
+  SpriteSheetDrawable ssd(get_texture(tex_path));
+  for(int i = 0; i < alines.size();i++){
+    ssd.load_animation_frames(alines[i].name,alines[i].frames);
+  }
+  return ssd;
+
+}
 	
+SpriteSheetDrawable SpriteSheetDrawable::from_file(std::string path){
+  std::ifstream file;
+  file.open(path);
+  if( !file.good() ){
+    std::cout << "SpriteSheetDrawable::from_file: File not found\n";
+    return SpriteSheetDrawable();
+  }
+  
+  std::string texture_file;
+  getline(file,texture_file);
+  SpriteSheetDrawable ssd(get_texture(texture_file));
+  std::vector<frame> animation_line;
+  std::string animation_name = "";
+  std::cout << "..\n";
+  while(file.good()){
+    std::string line;
+    getline(file,line);
+    int str_type = get_str_type(line);
+    if(str_type == 0){
+      continue;
+    }
+    line = trim(line);
+    if(str_type == 1){
+      frame f = string_to_frame(line);
+      animation_line.push_back(f);
+    }
+    if(str_type == 2){
+      if(animation_name != ""){
+	ssd.load_animation_frames(animation_name,animation_line);
+	animation_line.clear();
+	std::cout << "Loading " << animation_name << "\n";
+      }
+      animation_name = line;
+    }
+    
+
+  }
+  if(animation_name != ""){
+    ssd.load_animation_frames(animation_name,animation_line);
+    ssd.set_animation(animation_name);
+  }
+  file.close();
+
+  return ssd;
+  
+}

@@ -22,6 +22,12 @@ Tile tilemap::get_tile(int x, int y){
   return data[x + size_x*y];
 }
 void tilemap::set_tile(int x, int y, Tile value){
+  if(x >= size_x || y >= size_y){
+    return;
+  }
+  if(x < 0 || y < 0){
+    return;
+  }
   data[x + size_x*y] = value;
 }
 Tile& tilemap::tile(int x, int y){
@@ -31,8 +37,9 @@ void tilemap::get_tilechunk(int from_x, float to_x, float from_y, float to_y, Ti
   
 }
 
-Tile::Tile(bool passable, SpriteSheetDrawable *  ssd,float time){
+Tile::Tile(bool passable, SpriteSheetDrawable *  ssd,int tile_nr,float time){
   this->passable = passable;
+  this->tile_nr = tile_nr;
   sprite_sheet = ssd;
   if(time >= 0){
     time_offset = time;

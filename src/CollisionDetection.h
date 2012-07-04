@@ -11,7 +11,6 @@ struct AABB{
   bool ghost;
 };
 
-
 int AABB_collision_detection2(AABB * a, AABB * b,float & overlap); //returns -1(no collision), 0(x-collision), 1(y-collision)
 
 bool AABB_collision_detection(float * aabb1,float * aabb2);

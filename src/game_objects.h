@@ -21,6 +21,8 @@ public:
 
   }
 
+  virtual game_object * clone()=0;
+
   virtual AABB get_aabb();
 };
 
@@ -45,6 +47,9 @@ public:
 	int vel[2];
 	double start_time;
 	bool dead;
+	game_object * clone(){
+	  return new Bullet(*this);
+	};
 };
 
 class Creature: public physical_game_object{
@@ -81,5 +86,8 @@ public:
   void do_ai(WorldObject & wo);
   player_object();
   player_object(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost);
+  game_object * clone(){
+    return new player_object(*this);
+  };
   
 };

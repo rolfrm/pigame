@@ -43,6 +43,17 @@ public:
   double current_animation_length;
   std::map< std::string, std::vector<frame> >::iterator current_animation;
   std::map< std::string, std::vector<frame> > animations;
+  static SpriteSheetDrawable from_file(std::string path);
+  class animation_line{
+  public:
+    animation_line(std::string _name, std::vector<frame> _frames){
+      name = _name;
+      frames = _frames;
+    }
+    std::string name;
+    std::vector<frame> frames;
+  };
+  static SpriteSheetDrawable from_ilist(std::string tex_path, std::vector<animation_line> alines);
 
 };
 

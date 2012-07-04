@@ -25,99 +25,80 @@
 extern int global_screen_width;
 extern int global_screen_height;
 
-class Cow: public physical_game_object{
+class NoAIGameObject: public physical_game_object{
 public:
-  static SpriteSheetDrawable ssd;
-  static int inited;
-  Cow(){
-    if(inited == -1){
-      ssd = SpriteSheetDrawable(make_texture("cow.png"));
-      ssd.load_animation_frames("test",{frame(48,30,0,0,0.2),frame(48,30,48,0,0.2)});
-      ssd.set_animation("test");
-      inited = 1;
-    }
-    tex_draw = ssd;
-    set_aabb_data(20,10,0,5,true,false);
+  NoAIGameObject(Texture tex, std::vector<frame> animation_frames, float width, float height, float offset_x, float offset_y, bool movable, bool ghost){
+    tex_draw = SpriteSheetDrawable(tex);
+    tex_draw.load_animation_frames("main_animation", animation_frames);
+    tex_draw.set_animation("main_animation");
+    set_aabb_data(width,height,offset_x, offset_y, movable,ghost);
   }
-};
-SpriteSheetDrawable Cow::ssd;
-int Cow::inited = -1;
 
-class Tree: public physical_game_object{
-public:
-  static SpriteSheetDrawable ssd;
-  static int inited;
-  Tree(){ 
-    if(inited == -1){
-      Texture tex = make_texture("sprites/tree1.png");
-      ssd = SpriteSheetDrawable(tex);
-      ssd.load_animation_frames("test",{frame(tex.width,tex.height,0,0,0.9)});
-      ssd.set_animation("test");
-      inited = 1;
-    }
+  NoAIGameObject(SpriteSheetDrawable ssd, float width, float height, float offset_x, float offset_y, bool movable, bool ghost){
     tex_draw = ssd;
-    set_aabb_data(10,10,0,5,false,false);
+    set_aabb_data(width,height,offset_x, offset_y, movable,ghost);
+  }
+  game_object * clone(){
+    return new NoAIGameObject(*this);
   }
 };
-SpriteSheetDrawable Tree::ssd;
-int Tree::inited = -1;
 
-class Well: public physical_game_object{
+/*class SimpleAIGameObject: public physical_game_object{
 public:
-  static SpriteSheetDrawable ssd;
-  static int inited;
-  Well(){ 
-    if(inited == -1){
-      Texture tex = make_texture("sprites/well.png");
-      ssd = SpriteSheetDrawable(tex);
-      ssd.load_animation_frames("test",{frame(tex.width,tex.height,0,0,0.9)});
-      ssd.set_animation("test");
-      inited = 1;
-    }
+  SimpleAIGameObject(SpriteSheetDrawable ssd, float width, float height, float offset_x, float offset_y, bool movable, bool ghost){
     tex_draw = ssd;
-    set_aabb_data(11,5,0,8,false,false);
+    tex_draw.load_animation_frames("main_animation", animation_frames);
+    tex_draw.set_animation("main_animation");
+    set_aabb_data(width,height,offset_x, offset_y, movable,ghost);
   }
-};
-SpriteSheetDrawable Well::ssd;
-int Well::inited = -1;
+  game_object * clone(){
+    return new SimpleAIGameObject(*this);
+  }
+  };*/
 
-class Bug: public physical_game_object{
-public:
-  static SpriteSheetDrawable ssd;
-  static int inited;
-  Bug(){ 
-    if(inited == -1){
-      Texture tex = make_texture("sprites/sprites1.png");
-      ssd = SpriteSheetDrawable(tex);
-      ssd.load_animation_frames("walk",{frame(10,8,0,0,0.1),frame(10,8,20,0,0.1)});
-      ssd.set_animation("walk");
-      inited = 1;
-    }
-    tex_draw = ssd;
-    set_aabb_data(3,3,0,3,true,false);
-  }
-};
-SpriteSheetDrawable Bug::ssd;
-int Bug::inited = -1;
 
-class Scroll: public physical_game_object{
-public:
-  static SpriteSheetDrawable ssd;
-  static int inited;
-  Scroll(){ 
-    if(inited == -1){
-      Texture tex = make_texture("sprites/scroll.png");
-      ssd = SpriteSheetDrawable(tex);
-      ssd.load_animation_frames("walk",{frame(23,27,0,0,0.2),frame(23,27,23,0,0.2),frame(23,27,46,0,0.2)});
-      ssd.set_animation("walk");
-      inited = 1;
-    }
-    tex_draw = ssd;
-    set_aabb_data(3,3,0,3,true,false);
-  }
-};
-SpriteSheetDrawable Scroll::ssd;
-int Scroll::inited = -1;
+AABB make_aabb(float x, float y, float size_x, float size_y,bool movable, bool ghost){
+  AABB out = {x,y,size_x,size_y,movable,ghost};
+  return out;
+	
+}
+
+NoAIGameObject * Cow(){
+  return new NoAIGameObject(make_texture("cow.png"),
+			{frame(48,30,0,0,0.2),frame(48,30,48,0,0.2)},
+			20,10,0,5,true,false);			
+}
+
+NoAIGameObject * Tree(){
+  Texture tex = make_texture("sprites/tree1.png");
+  return new NoAIGameObject(tex,
+			{frame(tex.width,tex.height,0,0,0.2)},
+			10,10,0,5,false,false);			
+}
+
+NoAIGameObject * Well(){
+  Texture tex = make_texture("sprites/well.png");
+  return new NoAIGameObject(tex,
+			{frame(tex.width,tex.height,0,0,0.2)},
+			11,5,0,8,false,false);	
+}
+
+NoAIGameObject * Bug(){
+  return new NoAIGameObject(make_texture("sprites/sprites1.png"),
+			{frame(10,8,0,0,0.1),frame(10,8,20,0,0.1)},
+			3,3,0,3,true,false);			
+}
+
+NoAIGameObject * Scroll(){
+  return new NoAIGameObject(SpriteSheetDrawable::from_file("ssd_test"),
+			3,3,0,3,true,false);
+  /*
+  return new NoAIGameObject(make_texture("sprites/scroll.png"),
+			{frame(23,27,0,0,0.2),frame(23,27,23,0,0.2),frame(23,27,46,0,0.2)},
+			3,3,0,3,true,false);			*/
+}
+
+
 
 
 class key_ev: public EventListener<KeyEvent>{
@@ -132,34 +113,42 @@ class key_ev: public EventListener<KeyEvent>{
   }
 };
 
-#define DOTILE(x,y,z) Tile(z,tsf.make_animated_tile(x,y))
 class TileCreator{
 public:
   Tile tileset[100];
   TileCreator(){
     TileSpriteFactory tsf("grass_tiles.png", 18,10);
-    tileset[0] = DOTILE(0,{0.2},false);
+
+    //my first c++ lambda function :p
+    auto DOTILE = [this,&tsf](int nr, std::vector<float> timings, bool passable){
+      tileset[nr] = Tile(passable,tsf.make_animated_tile(nr,timings),nr);
+    };
+    DOTILE(0,{0.2},false);
     
-    tileset[1] = DOTILE(1,{0.2},true);
-    tileset[2] = DOTILE(2,{0.2},true);
-    tileset[3] = DOTILE(3,{0.2},false);
-    tileset[4] = DOTILE(4,{0.2},false);
-    tileset[5] = DOTILE(5,{0.2},true);
-    tileset[6] = DOTILE(6,{0.2},true);
-    tileset[7] = DOTILE(7,{0.2},true);
-    tileset[8] = DOTILE(8,{0.2},true);
-    tileset[9] = DOTILE(9,{0.2},false);
-    tileset[10] = DOTILE(10,{0.2},true);
-    tileset[11] = DOTILE(11,{0.2},true);
-    tileset[12] = DOTILE(12,{0.2},true);
-    tileset[13] = DOTILE(13,{0.2},true);
-    tileset[14] = DOTILE(14,{0.2},true);
-    tileset[15] = DOTILE(15,{0.2},true);
-    tileset[16] = DOTILE(16,{0.2},true);
-    tileset[17] = DOTILE(17,{0.2},true);
-    tileset[18] = DOTILE(18,{0.2},true);
-    tileset[19] = DOTILE(19,{0.2},true);
-}
+    DOTILE(1,{0.2},true);
+    DOTILE(2,{0.2,0.2},true);
+    DOTILE(3,{0.2,0.2,0.2,0.2},false);
+    DOTILE(4,{0.2},false);
+    DOTILE(5,{0.2},true);
+    DOTILE(6,{0.2},true);
+    DOTILE(7,{0.2},true);
+    DOTILE(8,{0.2},true);
+    DOTILE(9,{0.2},false);
+    DOTILE(10,{0.2},true);
+    DOTILE(11,{0.2},true);
+    DOTILE(12,{0.2},true);
+    DOTILE(13,{0.2},true);
+    DOTILE(14,{0.2},true);
+    DOTILE(15,{0.2},true);
+    DOTILE(16,{0.2},true);
+    DOTILE(17,{0.2},true);
+    DOTILE(18,{0.2},true);
+    DOTILE(19,{0.2},true);
+    
+    tileset[20] = Tile(true,tsf.make_animated_tile(20,{0.2,0.2,0.2,0.2,0.2,0.2,0.2}),20);
+    DOTILE(21,{0.2},true);
+    DOTILE(22,{0.2},true);
+  }
   Tile create_tile(int tilenr,float time_offset = -1){
     Tile out = tileset[tilenr];
     if(time_offset > 0){
@@ -174,27 +163,29 @@ public:
 
 class ObjectCreator{
 public:
-  game_object game_objects[100];
+  struct object_container{
+    game_object * go;
+    bool physical;
+  };
+  std::vector<object_container> prototypes;
+  
   ObjectCreator(){
+    
+#define PROTO(_type,physical) prototypes.push_back(object_container({_type(), physical}))
 
+    PROTO(Cow,true);
+    PROTO(Tree,true);
+    PROTO(Well,true);
+    PROTO(Bug,true);
+    PROTO(Scroll,true);
+#undef PROTO
   }
 
   game_object * create_game_object(int game_object_number,bool & physical){
-    if(game_object_number == 0){
-      return new Cow();
-    }else if(game_object_number == 1){
-      physical = true;
-      return new Tree();
-    }else if(game_object_number == 2){
-      physical = true;
-      return new Well();
-    }else if(game_object_number == 3){
-      physical = true;
-      return new Bug();
-    }else if(game_object_number == 4){
-      physical = true;
-      return new Scroll();
-    }
+    
+    object_container oc = prototypes[game_object_number];
+    physical = oc.physical;
+    return oc.go->clone();
   }
   
 };
@@ -291,12 +282,12 @@ public:
     std::cout << kev.key << "\n";
     if(kev.key == 289 && kev.pressed){
       current_tile++;
-      current_tile = current_tile % 20;
+      current_tile = current_tile % 23;
       tw->set_tile(tc.create_tile(current_tile));
     }else if(kev.key == 287 && kev.pressed){
-      current_game_object = (current_game_object + 1)%5;
+      current_game_object = (current_game_object + 1)%oc.prototypes.size();
       bool physical;
-      ow->set_object(oc.create_game_object(current_game_object,physical));
+      ow->set_object(oc.prototypes[current_game_object].go);
     
     }
     return true;
@@ -367,7 +358,8 @@ int main(){
   
 
   init_game(512,512,128,128);
-  
+  /*SpriteSheetDrawable::from_file("ssd_test");
+    return 0;*/
   set_clearcolor(0.1,0.5,0.0,1.0);
   GLProgram ptest = texture_shader;
   
