@@ -85,10 +85,34 @@ bool player_object::handle_event(KeyEvent kev){
   int button = kev.key;
   std::cout << "event :" << button << " " << active << "\n";
   switch(button){
-  case 283:up=active;break; //Up
-  case 285:left=active;break; //left
-  case 284:down=active;break; //down
-  case 286:right=active;break; //right
+  case 283:
+	if(active){
+		orientation[0]=0;
+		orientation[1]=-1;
+	}
+	up=active;
+	break; //Up
+  case 285:
+	if(active){
+		orientation[0]=1;
+		orientation[1]=0;
+	}
+	left=active;
+	break; //left
+  case 284:
+	if(active){
+		orientation[0]=0;
+		orientation[1]=1;
+	}
+	down=active;
+	break; //down
+  case 286:
+	if(active){
+		orientation[0]=-1;
+		orientation[1]=0;
+	}
+	right=active;
+	break; //right
   case 'W':up=active;break;
   case 'A':left=active;break; //left
   case 'S':down=active;break; //down
@@ -105,11 +129,32 @@ void player_object::handle_collision(physical_game_object * pgo){
 }
 
 void player_object::do_ai( WorldObject & wo){
-  
   x += left*1 + right*-1;
+
   y += up*-1 + down;
+
+
   set_camera_position(x,y);
 
+  
+  if(orientation[0]){
+	if(orientation[0]==1 && tex_draw.current_animation->first!="lwalk"){
+		tex_draw.set_animation("lwalk");
+	}
+	else if(orientation[0]==-1 && tex_draw.current_animation->first!="rwalk"){
+		tex_draw.set_animation("rwalk");
+	}
+  }
+  else{
+	if(orientation[1]==-1 && tex_draw.current_animation->first!="uwalk"){
+		tex_draw.set_animation("uwalk");
+	}
+	else if(orientation[1]==1 && tex_draw.current_animation->first!="dwalk"){
+		tex_draw.set_animation("dwalk");
+	}	
+  }
+
+/*
 	if(right){
 		if(tex_draw.current_animation->first!="rwalk")
 			tex_draw.set_animation("rwalk");
@@ -126,11 +171,11 @@ void player_object::do_ai( WorldObject & wo){
 		if(tex_draw.current_animation->first!="dwalk")
 			tex_draw.set_animation("dwalk");
 	}
-
-
+*/
   if(spawn_bullet){
+    	std::cout<<"SPPPPPACE\n";	
 	spawn_bullet=false;
-	wo.insert_object(new Bullet(x+20,y,0,0,1,0,get_texture("bullet.png")));
+	wo.insert_object(new Bullet(x+20*orientation[0],y+20*orientation[1],0,0,orientation[0],orientation[1],get_texture("bullet.png")));
 	
   }
 
