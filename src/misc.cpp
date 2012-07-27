@@ -1,6 +1,7 @@
 #include "misc.h"
 #include <time.h>
 #include <stdlib.h>
+#include <math.h>
 timespec start = {0,-1};;
 double get_time(){
 	timespec time;
@@ -16,7 +17,7 @@ double get_time(){
 
 
 void sleep_sec(double t){
-  timespec time = {0, (long) (t*1000000000.0)};
+  timespec time = {(long)t, (long) (fmod(t,1.0)*1000000000.0)};
   timespec out;
   nanosleep(&time,&out);
 }

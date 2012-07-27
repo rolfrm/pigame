@@ -28,33 +28,46 @@ extern int global_screen_height;
 class NoAIGameObject: public physical_game_object{
 public:
   NoAIGameObject(Texture tex, std::vector<frame> animation_frames, float width, float height, float offset_x, float offset_y, bool movable, bool ghost){
-    tex_draw = SpriteSheetDrawable(tex);
-    tex_draw.load_animation_frames("main_animation", animation_frames);
-    tex_draw.set_animation("main_animation");
+    this->tex = tex;
+    this->current_animation = Animation(animation_frames);
+    
     set_aabb_data(width,height,offset_x, offset_y, movable,ghost);
   }
 
-  NoAIGameObject(SpriteSheetDrawable ssd, float width, float height, float offset_x, float offset_y, bool movable, bool ghost){
-    tex_draw = ssd;
-    set_aabb_data(width,height,offset_x, offset_y, movable,ghost);
-  }
   game_object * clone(){
     return new NoAIGameObject(*this);
   }
 };
 
-/*class SimpleAIGameObject: public physical_game_object{
+#include <functional>
+class SimpleAIGameObject: public physical_game_object{
 public:
-  SimpleAIGameObject(SpriteSheetDrawable ssd, float width, float height, float offset_x, float offset_y, bool movable, bool ghost){
-    tex_draw = ssd;
-    tex_draw.load_animation_frames("main_animation", animation_frames);
-    tex_draw.set_animation("main_animation");
+  std::function<void (physical_game_object*, WorldObject & wo)> ai_func;
+  std::function<void (physical_game_object*, physical_game_object *)> collision_func;
+ 
+  SimpleAIGameObject(Texture tex, std::vector<frame> animation_frames, float width, float height, float offset_x, float offset_y, bool movable, bool ghost){
+    this->tex = tex;
+    this->current_animation = Animation(animation_frames);
+    
     set_aabb_data(width,height,offset_x, offset_y, movable,ghost);
   }
+
+  
   game_object * clone(){
     return new SimpleAIGameObject(*this);
   }
-  };*/
+  void do_ai(WorldObject & wo){
+    if(ai_func){
+      ai_func(this,wo);
+    }
+  }
+  void handle_collision(physical_game_object * other){
+    if(collision_func){
+      collision_func(this,other);
+    }
+  }
+  
+};
 
 
 AABB make_aabb(float x, float y, float size_x, float size_y,bool movable, bool ghost){
@@ -82,20 +95,43 @@ NoAIGameObject * Well(){
 			{frame(tex.width,tex.height,0,0,0.2)},
 			11,5,0,8,false,false);	
 }
+#include<algorithm>
 
-NoAIGameObject * Bug(){
-  return new NoAIGameObject(make_texture("sprites/sprites1.png"),
+bool isPlayer(physical_game_object * pg){
+  return pg->id == 2;
+}
+physical_game_object * Bug(){
+  SimpleAIGameObject * nago;
+  nago = new SimpleAIGameObject(make_texture("sprites/sprites1.png"),
 			{frame(10,8,0,0,0.1),frame(10,8,20,0,0.1)},
 			3,3,0,3,true,false);			
+  nago->ai_func = [](physical_game_object * self, WorldObject wo){
+    std::list<physical_game_object *> plist= wo.get_near_physical_objects(self,25.0);
+    auto it = find_if(plist.begin(), plist.end(), isPlayer);
+    if(it == plist.end()){
+      return;
+    }
+    physical_game_object * player = *it;
+    
+    float dx = (player->x - self->x);
+    float dy = (player->y - self->y);
+    float lx = fabs(dx);
+    float ly = fabs(dy);
+    if(lx > 10.0){
+      self->x +=dx/lx;
+    }
+
+    if(ly > 10.0){
+      self->y +=dy/ly;
+    }
+  };
+  return nago;
 }
 
 NoAIGameObject * Scroll(){
-  return new NoAIGameObject(SpriteSheetDrawable::from_file("ssd_test"),
-			3,3,0,3,true,false);
-  /*
-  return new NoAIGameObject(make_texture("sprites/scroll.png"),
-			{frame(23,27,0,0,0.2),frame(23,27,23,0,0.2),frame(23,27,46,0,0.2)},
-			3,3,0,3,true,false);			*/
+  Texture tex = make_texture("sprites/scroll.png");
+  return new NoAIGameObject(tex,{frame(23,27,0,0,0.2),frame(23,27,23,0,0.2),frame(23,27,46,0,0.2)},3,3,0,3,true,false);
+  
 }
 
 
@@ -115,13 +151,19 @@ class key_ev: public EventListener<KeyEvent>{
 
 class TileCreator{
 public:
-  Tile tileset[100];
+  std::vector<MasterTile> tileset;
   TileCreator(){
-    TileSpriteFactory tsf("grass_tiles.png", 18,10);
-
+    
     //my first c++ lambda function :p
-    auto DOTILE = [this,&tsf](int nr, std::vector<float> timings, bool passable){
-      tileset[nr] = Tile(passable,tsf.make_animated_tile(nr,timings),nr);
+    Texture tex = get_texture("grass_tiles.png");
+    auto DOTILE = [&tileset,&tex](int nr, std::vector<float> timings, bool passable){
+      std::vector<frame> frames;
+      for(int i = 0; i < timings.size();i++){
+	frames.push_back(frame(18,10,i*18,10*nr,timings[i]));
+      }
+
+
+      tileset.push_back(MasterTile(Animation(frames),tex,passable));
     };
     DOTILE(0,{0.2},false);
     
@@ -144,15 +186,18 @@ public:
     DOTILE(17,{0.2},true);
     DOTILE(18,{0.2},true);
     DOTILE(19,{0.2},true);
-    
-    tileset[20] = Tile(true,tsf.make_animated_tile(20,{0.2,0.2,0.2,0.2,0.2,0.2,0.2}),20);
+    DOTILE(20,{0.2,0.2,0.2,0.2,0.2,0.2,0.2},true);
     DOTILE(21,{0.2},true);
     DOTILE(22,{0.2},true);
+    DOTILE(23,{0.2,0.2,0.2,0.2,0.2,0.2,0.2},false);
+    DOTILE(24,{0.2,0.2,0.2,0.2},true);
+    DOTILE(25,{0.2,0.2,0.2,0.2},true);
+    DOTILE(26,{0.2,0.2,0.2,0.2},true);
   }
   Tile create_tile(int tilenr,float time_offset = -1){
-    Tile out = tileset[tilenr];
+    Tile out(tileset[tilenr].passable,tilenr,time_offset);
     if(time_offset > 0){
-      out.time_offset = time_offset;
+      out.time_offset = 0;//time_offset;
     }else{
       out.time_offset = (float)(rand() % 100) / 10.0;
     }
@@ -191,12 +236,12 @@ public:
 };
 
 class tile_view: public UIElement{
-  Tile current_tile;
+  
 public:
   tile_view():UIElement(20,-10){}
-  void set_tile(Tile t){
-    current_tile = t;
-    drawable = *t.sprite_sheet;
+  void set_tile(MasterTile mt){
+    anim = mt.animation;
+    tex = mt.texture;
   }
   
 };
@@ -207,7 +252,8 @@ public:
   object_view():UIElement(512,-5){}
   void set_object(game_object * ngo){
     go = ngo;
-    drawable = go->tex_draw;
+    anim = ngo->current_animation;
+    tex = ngo->tex;
   }
 };
 
@@ -246,13 +292,14 @@ public:
   game_editor(){
     running = true;
     object_handler = new ObjectHandler(tc.create_tile(0));
+    object_handler->master_tiles = tc.tileset;
     current_tile = 0;
     current_game_object = 0;
     tw = new tile_view();
     ow = new object_view();
     bool physical;
     ow->set_object(oc.create_game_object(current_game_object,physical));
-    tw->set_tile(tc.create_tile(current_tile));
+    tw->set_tile(tc.tileset[current_tile]);
     object_handler->load_ui_element(tw);
     object_handler->load_ui_element(ow);
     load_game("test.map","test.objects");
@@ -279,11 +326,9 @@ public:
   }
 
   bool handle_event(KeyEvent kev){
-    std::cout << kev.key << "\n";
     if(kev.key == 289 && kev.pressed){
-      current_tile++;
-      current_tile = current_tile % 23;
-      tw->set_tile(tc.create_tile(current_tile));
+      current_tile = (current_tile+1) % tc.tileset.size();
+      tw->set_tile(tc.tileset[current_tile]);
     }else if(kev.key == 287 && kev.pressed){
       current_game_object = (current_game_object + 1)%oc.prototypes.size();
       bool physical;
@@ -355,11 +400,7 @@ public:
 
 
 int main(){
-  
-
   init_game(512,512,128,128);
-  /*SpriteSheetDrawable::from_file("ssd_test");
-    return 0;*/
   set_clearcolor(0.1,0.5,0.0,1.0);
   GLProgram ptest = texture_shader;
   

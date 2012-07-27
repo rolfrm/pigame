@@ -37,10 +37,9 @@ void tilemap::get_tilechunk(int from_x, float to_x, float from_y, float to_y, Ti
   
 }
 
-Tile::Tile(bool passable, SpriteSheetDrawable *  ssd,int tile_nr,float time){
+Tile::Tile(bool passable,int tile_nr,float time){
   this->passable = passable;
   this->tile_nr = tile_nr;
-  sprite_sheet = ssd;
   if(time >= 0){
     time_offset = time;
   }else{
@@ -48,7 +47,6 @@ Tile::Tile(bool passable, SpriteSheetDrawable *  ssd,int tile_nr,float time){
   }
 }
 Tile::Tile(){
-  sprite_sheet = NULL;
 }
 void Tile::handle_collision(physical_game_object * obj){
 

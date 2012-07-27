@@ -22,6 +22,9 @@ BufferObject make_buffer_object(void * data, int n_vertexes, int vertex_dim, int
   return out;
 } 
 
+
+
+
 void bind_buffer_object(BufferObject bobj, unsigned int loc){
   glBindBuffer(bobj.storetype, bobj.gl_ref);
   glVertexAttribPointer(loc, bobj.dim, bobj.type, 0, 0, 0);
@@ -53,4 +56,8 @@ void buffer_object_test(){
 
 void draw_buffers_triangle_fan(int n_values){
   glDrawArrays(GL_TRIANGLE_FAN,0,n_values);
+}
+
+void draw_buffers_line_loop(int n_values){
+  glDrawArrays(GL_LINE_LOOP,0,n_values);
 }

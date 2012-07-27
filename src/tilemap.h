@@ -6,10 +6,9 @@
 
 class Tile{
  public:
-  Tile(bool passable,SpriteSheetDrawable * ss,int tile_nr,float time_offset = -1);
+  Tile(bool passable ,int tile_nr,float time_offset = -1);
   Tile();
-  virtual void handle_collision(physical_game_object * obj);
-  SpriteSheetDrawable * sprite_sheet;
+  virtual void handle_collision(physical_game_object * obj);  
   bool passable;
   float time_offset;
   int tile_nr;

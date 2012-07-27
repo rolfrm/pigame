@@ -34,15 +34,26 @@ float aabb_distance(AABB a, AABB b){
   
   return out;
 }
-
+struct _pgo_set{
+  physical_game_object * pgo;
+  float distance;
+};
+bool _pgo_set_comp(_pgo_set p1, _pgo_set p2){
+  return p1.distance > p2.distance;
+}
 std::list <physical_game_object *> get_pgo_from_aabb(AABB origin, std::list<physical_game_object *> * from, float distance){
+  std::list<_pgo_set> pre_sort;
   std::list<physical_game_object *> out;
   for(std::list<physical_game_object *>::iterator it = from->begin(); it != from->end(); it++){
     AABB b = (*it)->get_aabb();
     float d = aabb_distance(origin,b);
     if(d < distance){
-      out.push_back(*it);
+      pre_sort.push_back(_pgo_set({*it,d}));
     }
+  }
+  pre_sort.sort(_pgo_set_comp);
+  for(std::list<_pgo_set>::iterator it = pre_sort.begin(); it != pre_sort.end();it++){
+    out.push_back(it->pgo);
   }
   return out;
   

@@ -7,38 +7,27 @@
 #include "frame_buffer.h"
 #include "game_super.h"
 
-class TileSpriteFactory{
-public:
-  /*Assumes tiles are arrenged as rows*/
-  Texture tex;
-  int tile_width;
-  int tile_height;
-  TileSpriteFactory(std::string texture_path, int tile_width, int tile_height){
-    tex = make_texture(texture_path.c_str());
-    this->tile_width = tile_width;
-    this->tile_height = tile_height;
-  }
-  SpriteSheetDrawable * make_animated_tile(int row,std::vector<float> timings){
-    SpriteSheetDrawable * ssd = new SpriteSheetDrawable(tex);
-    for(int i = 0; i < timings.size();i++){
-      ssd->load_animation_frame("1",tile_width,tile_height,i*tile_width,tile_height*row,timings[i]);
-    }
-    ssd->set_animation("1");
-    return ssd;
-  }
+class MasterTile{
+ public:
+  Animation animation;
+  Texture texture;
+  bool passable;
+  MasterTile(Animation animation, Texture tex,bool passable);
+  MasterTile();
 
 };
 
 class UIElement:public Drawer, public EventListener<MouseClick>{
  public:
   float x, y;
-  SpriteSheetDrawable drawable;
+  Animation anim;
+  Texture tex;
   UIElement(float _x, float _y){
     x = _x;
     y = _y;
   }
   DrawRequest draw(){
-    return drawable.make_draw_request(x,y);
+    return anim.make_draw_request(tex,x,y);
   }
   bool handle_event(MouseClick){ return true;}
 
@@ -50,6 +39,7 @@ class ObjectHandler{
   
   FrameBuffer * sprite_rendering_buffer;
  public:
+  std::vector<MasterTile> master_tiles;
   std::list<UIElement *> uilist;
   tilemap tile_map;
   ObjectHandler(Tile default_tile);

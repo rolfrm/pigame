@@ -18,7 +18,7 @@ class frame{
 public:
 	frame(int scalex,int scaley,int offx,int offy,double n_duration);
 	
-	void operator = (frame in);	
+	//void operator = (frame in);	
 	int scale[2],offset[2];
 	double duration;
 };
@@ -56,6 +56,19 @@ public:
   static SpriteSheetDrawable from_ilist(std::string tex_path, std::vector<animation_line> alines);
 
 };
+
+class Animation{
+ public:
+  std::vector<frame> frames;
+  float last_time;
+  short current;
+  float animation_length;
+  Animation(std::vector<frame> frames);
+  Animation();
+  DrawRequest make_draw_request(Texture tex,float x, float y);
+  DrawRequest make_special_draw_request(Texture tex, float x, float y, float time);
+};
+
 
 /*Stuff that wants to draw implements this.*/
 class Drawer{

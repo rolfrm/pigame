@@ -12,11 +12,9 @@ void main(){
      int x=int(uv.x*512.0);
      int y=int(uv.y*512.0);
      if(mod(x,4)!=0.0 && mod(y,4)!=0.0){
-	gl_FragData[0]=texture2D(tex, uv)*1.2;
+	gl_FragData[0]=texture2D(tex, uv)*1.0;
 	}
 	else{
-	gl_FragData[0]=vec4(texture2D(tex, uv).xyz*0.80,1.0);
+	gl_FragData[0]=vec4(texture2D(tex, uv).xyz*0.95,1.0);
 	}
-	
-	
 }

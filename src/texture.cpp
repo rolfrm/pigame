@@ -28,26 +28,27 @@ Texture make_texture(void * data, int width, int height, int colorChannels, int 
 Texture make_texture(const char * _path, int interp_param, int wrap_param){
   std::string path(_path);
   ILuint ilid;
-	ilGenImages(1,&ilid);
-	ilBindImage(ilid);
+  ilGenImages(1,&ilid);
+  ilBindImage(ilid);
 
-	if(ilLoadImage(path.c_str())){
-			std::cout<<"texture "<<path<<" loaded\n";
-			ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-
-	}else{
-		std::cout << "Problems converting image" <<path<<"\n";
-	}
+  if(ilLoadImage(path.c_str())){
+    std::cout<<"texture "<<path<<" loaded\n";
+    ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+    
+  }else{
+    std::cout << "Problems converting image" <<path<<"\n";
+  }
 	
-	std::cout<<ilGetInteger(IL_IMAGE_WIDTH)<<" "<< ilGetInteger(IL_IMAGE_HEIGHT)
+  std::cout<<ilGetInteger(IL_IMAGE_WIDTH)<<" "<< ilGetInteger(IL_IMAGE_HEIGHT)
 <<" dimensions\n";	
-	Texture temp = make_texture((void *)ilGetData(),ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT),4,interp_param,wrap_param);
-	
-	std::cout<<glGetError()<<" with error\n";
-	
-	ilDeleteImage(ilid);
-	
-	return temp;
+  Texture temp = make_texture((void *)ilGetData(),ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT),4,interp_param,wrap_param);
+  int error = glGetError();
+  if(error != 0){
+    std::cout << "Error loading texture: " << error << "\n";
+  }
+  ilDeleteImage(ilid);
+ 
+  return temp;
 	
 }
 
@@ -83,14 +84,14 @@ void texture_test(){
 }	
 
 Texture get_texture(std::string path){
-	std::map<std::string,Texture>::iterator it=TextureMap.find(path);
-	if(it==TextureMap.end()){
-		Texture temptex=make_texture(path.c_str());
-		TextureMap.insert(std::pair<std::string,Texture>(path,temptex));
-		it=TextureMap.find(path);
-	}
+  std::map<std::string,Texture>::iterator it=TextureMap.find(path);
+  if(it==TextureMap.end()){
+    Texture temptex=make_texture(path.c_str());
+    TextureMap.insert(std::pair<std::string,Texture>(path,temptex));
+    it=TextureMap.find(path);
+  }
 
-	return it->second;
+  return it->second;
 	
 }
 

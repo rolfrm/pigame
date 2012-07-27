@@ -91,6 +91,7 @@ void bind_shader(GLProgram s){
   glUseProgram(s.gl_ref);
 }
 void unbind_shader(){
+  current_shader_ref = 0;
   glUseProgram(0);
 }
 
@@ -122,7 +123,7 @@ GLProgram make_program(const char * _vshader_path,const char * _fshader_path){
       fprintf(stderr, "Linker failure: %s\n", strInfoLog);
       delete[] strInfoLog;
     }		
-  
+  sprogram.link();
   return sprogram;
 }
 

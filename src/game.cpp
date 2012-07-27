@@ -6,6 +6,16 @@
 #include "gfx_basics.h"
 #include <initializer_list>
 
+MasterTile::MasterTile(Animation animation, Texture tex,bool passable){
+  this->animation = animation;
+  this->texture = tex;
+  this->passable = passable;
+}
+MasterTile::MasterTile(){
+
+}
+
+
 void ObjectHandler::update_ai(){
   WorldObject wo(this);
   std::list<game_object *> drawlist2 = drawlist;
@@ -136,13 +146,10 @@ void ObjectHandler::do_rendering(){
   for(float x = camera_x-200; x < camera_x + 200;x+=18){
     for(float y = camera_y-200; y < camera_y + 200;y+=10){
       Tile tile = tile_map.get_tile(x/18 , y/10);
-      SpriteSheetDrawable * ssd = tile.sprite_sheet; 
+      MasterTile t = master_tiles[tile.tile_nr];
       DrawRequest dr;
-      if(tile.time_offset > 0.01){
-	dr = ssd->special_draw_request(0,0,t+tile.time_offset);
-      }else{
-	dr = ssd->make_draw_request();
-      }
+      
+      dr = t.animation.make_special_draw_request(t.texture,x -(int) x%18, y - (int) y%10,get_time() + tile.time_offset);
       dr.x = x - (int)x%18;
       dr.y = y - (int)y%10;
       tile_drs.push_back(dr);
@@ -196,10 +203,10 @@ void ObjectHandler::do_rendering(){
   bind_texture(sprite_rendering_buffer->textures[0],0);
 
   draw_buffers_triangle_fan(4);
-
   texture_shader.uniformf("camera",256,-256);
   texture_shader.uniformf("scale",2.0/global_width,2.0/global_height);
   bind_shader(texture_shader);
+
   for(std::list<UIElement *>::iterator it = uilist.begin();it != uilist.end();it++){
     DrawRequest dr = (*it)->draw();
     bind_texture(dr.tex,0);
@@ -209,7 +216,7 @@ void ObjectHandler::do_rendering(){
     texture_shader.uniformf("uv_offset",dr.uv_off_x, dr.uv_off_y);
     draw_buffers_triangle_fan(4);
 
-  }
+    }
 
 
     

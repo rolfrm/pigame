@@ -2,6 +2,7 @@ import os
 import pickle
 import subprocess as sp
 cc = "g++"
+opt = ""
 if os.path.exists("pycompile.local.py"):
     execfile("pycompile.local.py")
 
@@ -13,8 +14,8 @@ elif os.path.exists("/opt/vc"):
 else:
     print "BUILDING X86"
     blacklist = {"egl_init.c":True}
-    includes = "-g3"
-    link = "-lIL -lGL -lglfw -lGLEW -g3 -lsfml-audio"
+    includes = "-g3 -I/usr/include/freetype2"
+    link = "-lIL -lGL -lglfw -lGLEW -g3 -lsfml-audio -lftgl" 
 
 cc += " -std=c++0x"    
 
@@ -66,7 +67,7 @@ for i in ftc:
     print chtime
     if i not in pycache.keys() or pycache[i] < chtime and not i in blacklist:
         
-        call = "{2} -c ./src/{0} {1} -O3 -o ./obj/{3}.o".format(i,includes,cc,i_stripped)
+        call = ("{2} -c ./src/{0} {1} "+opt+"-o ./obj/{3}.o").format(i,includes,cc,i_stripped)
         rmcall = "rm ./obj/{0}.o".format(i_stripped)
         print call
         #os.system(call)
@@ -93,7 +94,7 @@ for i in ftc:
 with open("pycache","w") as fptr:
     pickle.dump(pycache,fptr)
 
-acc_link = cc +" -o {0} -O3 ".format(output)
+acc_link = (cc +" -o {0} "+opt).format(output)
 print "WAT"
 for i in ftl:
     acc_link +=i + " "

@@ -12,14 +12,14 @@ frame::frame(int scalex,int scaley,int offx,int offy,double n_duration){
 	duration=n_duration;
 }
 
-void frame::operator=(frame in){
+/*void frame::operator=(frame in){
 		scale[0]=in.scale[0];
 		scale[1]=in.scale[1];
 		offset[0]=in.offset[0];
 		offset[1]=in.offset[1];
 		duration=in.duration;
 	}
-
+*/
 
 SpriteSheetDrawable::SpriteSheetDrawable(Texture tex)
 {
@@ -57,6 +57,7 @@ void SpriteSheetDrawable::load_animation_frame(std::string name,int scalex,int s
 }
 
 void SpriteSheetDrawable::load_animation_frames(std::string name,std::vector<frame> frames){
+  std::cout << name << "\n";
   animations.insert(std::pair<std::string, std::vector<frame> >(name,frames));
 }
 
@@ -66,7 +67,7 @@ void SpriteSheetDrawable::set_animation(std::string new_animation){
 	current_frame=0;
 	start_time = 0.0;
 	if(current_animation==animations.end()){
-		std::cout<<"Warning Animation not found!";
+		std::cout<<"Warning Animation not found!\n";
 	}
 	current_animation_length = 0.0;
 	int cal = current_animation->second.size();
@@ -104,6 +105,8 @@ DrawRequest SpriteSheetDrawable::special_draw_request(float x, float y, float ti
 
 
 DrawRequest SpriteSheetDrawable::make_draw_request(float x, float y){
+  std::cout << this << "\n";
+  //std::cout << current_animation->first << "\n";
   update();
   frame current_frame_i = current_animation->second[current_frame];
   
@@ -205,4 +208,70 @@ SpriteSheetDrawable SpriteSheetDrawable::from_file(std::string path){
 
   return ssd;
   
+}
+Animation::Animation(std::vector<frame> _frames){
+  frames = _frames;
+  last_time = get_time();
+  animation_length = 0.0;
+  current = 0;
+  for(int i = 0; i < _frames.size();i++){
+    animation_length += frames[i].duration;
+  }
+}
+
+DrawRequest Animation::make_draw_request(Texture tex,float x, float y){
+  if(frames.size() == 0){
+    return DrawRequest();
+  }
+  
+  float now = get_time();
+  float dt = now - last_time;
+  while(dt > frames[current].duration){
+    dt -= frames[current].duration;
+    current += 1;
+    if(current >= frames.size()){
+      current = 0;
+    }
+  }
+  last_time = now - dt;
+  DrawRequest out;
+  frame current_frame_i = frames[current];
+  out.x = x;
+  out.y = y;
+  out.uv_off_x = (float)current_frame_i.offset[0]/(float)tex.width;
+  out.uv_off_y = (float)current_frame_i.offset[1]/(float)tex.height;
+  out.uv_scale_x = (float)current_frame_i.scale[0]/(float)tex.width;
+  out.uv_scale_y = (float)current_frame_i.scale[1]/(float)tex.height;
+  out.vert_scale_x = current_frame_i.scale[0]/2;
+  out.vert_scale_y = current_frame_i.scale[1]/2;
+  out.tex = tex;
+
+  return out;
+  
+}
+
+DrawRequest Animation::make_special_draw_request(Texture tex, float x, float y, float time){
+  time = fmod(time,animation_length);
+  int it = 0;
+  while(time > frames[it].duration){
+    time -= frames[it].duration;
+    it += 1;
+  }
+  DrawRequest out;
+  frame current_frame_i = frames[it];
+  out.x = x;
+  out.y = y;
+  out.uv_off_x = (float)current_frame_i.offset[0]/(float)tex.width;
+  out.uv_off_y = (float)current_frame_i.offset[1]/(float)tex.height;
+  out.uv_scale_x = (float)current_frame_i.scale[0]/(float)tex.width;
+  out.uv_scale_y = (float)current_frame_i.scale[1]/(float)tex.height;
+  out.vert_scale_x = current_frame_i.scale[0]/2;
+  out.vert_scale_y = current_frame_i.scale[1]/2;
+  out.tex = tex;
+  return out;
+
+}
+
+Animation::Animation(){
+
 }

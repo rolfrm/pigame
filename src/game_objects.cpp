@@ -24,43 +24,47 @@ player_object::player_object(){
   left = 0;
   right = 0;
   collider = NULL;
+  id = 2;
+
+
+}
+
+void player_object::print_frames(){
+ frame f = rwalk.frames[0];
+ std::cout << "Animation\n";
+ std::cout << current_animation.current << " " << current_animation.last_time << " " << current_animation.animation_length << "\n";
+ std::cout << "Frames:\n";
+  std::cout << f.scale[0] << " " << f.scale[1] << " " << f.offset[0] << " " << f.offset[1];
+  std::cout << " " << f.duration << "\n";
+  f = dwalk.frames[0];
+  std::cout << f.scale[0] << " " << f.scale[1] << " " << f.offset[0] << " " << f.offset[1];
+  std::cout << " " << f.duration << "\n";
+  f = uwalk.frames[0];
+  std::cout << f.scale[0] << " " << f.scale[1] << " " << f.offset[0] << " " << f.offset[1];
+  std::cout << " " << f.duration << "\n";
+  f = lwalk.frames[0];
+    std::cout << f.scale[0] << " " << f.scale[1] << " " << f.offset[0] << " " << f.offset[1];
+  std::cout << " " << f.duration << "\n";
+ 
 }
 
 player_object::player_object(float x,float y,float sx, float sy, float off_x, float off_y,bool movable, bool ghost){
+  id = 2;
   down = 0;
   up = 0;
   left = 0;
   right = 0;	
 
-  //Texture sheet=make_texture("DormusSheet.png");
-
-  tex_draw=SpriteSheetDrawable::from_file("player_sprite");//SpriteSheetDrawable(sheet);
-  tex_draw = SpriteSheetDrawable::from_ilist(std::string("DormusSheet.png"),{
-      SpriteSheetDrawable::animation_line("rwalk",{frame(20,20,0,0,0.2)}),
-	SpriteSheetDrawable::animation_line("lwalk",{frame(20,20,0,0,0.2)}),
-	SpriteSheetDrawable::animation_line("dwalk",{frame(20,20,0,0,0.2)}),
-	SpriteSheetDrawable::animation_line("uwalk",{frame(20,20,0,0,0.2)})});
-  /*tex_draw.load_animation_frame("rwalk",20,20,0,0,0.2);
-  tex_draw.load_animation_frame("rwalk",20,20,20,0,0.2);
-  tex_draw.load_animation_frame("rwalk",20,20,0,0,0.2);
-  tex_draw.load_animation_frame("rwalk",20,20,40,0,0.2);
-
-  tex_draw.load_animation_frame("dwalk",20,20,20,20,0.2);
-  tex_draw.load_animation_frame("dwalk",20,20,0,20,0.2);
-  tex_draw.load_animation_frame("dwalk",20,20,40,20,0.2);
-  tex_draw.load_animation_frame("dwalk",20,20,0,20,0.2);
-
-  tex_draw.load_animation_frame("uwalk",20,20,20,40,0.2);
-  tex_draw.load_animation_frame("uwalk",20,20,0,40,0.2);
-  tex_draw.load_animation_frame("uwalk",20,20,40,40,0.2);
-  tex_draw.load_animation_frame("uwalk",20,20,0,40,0.2);
-
-  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.2);
-  tex_draw.load_animation_frame("lwalk",20,20,20,60,0.2);
-  tex_draw.load_animation_frame("lwalk",20,20,0,60,0.2);
-  tex_draw.load_animation_frame("lwalk",20,20,40,60,0.2);*/
-  tex_draw.set_animation("lwalk");
+  rwalk = Animation({frame(20,20,0,0,0.2),frame(20,20,20,0,0.2),frame(20,20,0,0,0.2),frame(20,20,40,0,0.2)});
+  dwalk= Animation({frame(20,20,0,20,0.2),frame(20,20,20,20,0.2),frame(20,20,0,20,0.2),frame(20,20,40,20,0.2)});
+  uwalk= Animation({frame(20,20,0,40,0.2),frame(20,20,20,40,0.2),frame(20,20,0,40,0.2),frame(20,20,40,40,0.2)});
+  lwalk= Animation({frame(20,20,0,60,0.2),frame(20,20,20,60,0.2),frame(20,20,0,60,0.2),frame(20,20,40,60,0.2)});
   
+  print_frames();
+    
+
+  current_animation = dwalk;
+  tex = get_texture("DormusSheet.png");
   this->x=x;
   this->y=y;
   set_aabb_data(sx,sy,off_x,off_y,movable,ghost);
@@ -71,6 +75,7 @@ player_object::player_object(float x,float y,float sx, float sy, float off_x, fl
 
 
 bool player_object::handle_event(MouseClick mc){
+  //print_frames();
   if(mc.pressed){
     down = true;
 
@@ -86,38 +91,11 @@ bool player_object::handle_event(MouseClick mc){
 }
 
 bool player_object::handle_event(KeyEvent kev){
+  print_frames();
   int active = kev.pressed;
   int button = kev.key;
   std::cout << "event :" << button << " " << active << "\n";
   switch(button){
-  case 283:
-	if(active){
-		orientation[0]=0;
-		orientation[1]=-1;
-	}
-	up=active;
-	break; //Up
-  case 285:
-	if(active){
-		orientation[0]=1;
-		orientation[1]=0;
-	}
-	left=active;
-	break; //left
-  case 284:
-	if(active){
-		orientation[0]=0;
-		orientation[1]=1;
-	}
-	down=active;
-	break; //down
-  case 286:
-	if(active){
-		orientation[0]=-1;
-		orientation[1]=0;
-	}
-	right=active;
-	break; //right
   case 'W':up=active;break;
   case 'A':left=active;break; //left
   case 'S':down=active;break; //down
@@ -140,51 +118,23 @@ void player_object::do_ai( WorldObject & wo){
 
 
   set_camera_position(x,y);
+  if(left){
+    current_animation = lwalk;
+  }else if(right){
+    current_animation = rwalk;
+  }
 
+  if(up){
+    current_animation = uwalk;
+  }else if(down){
+    current_animation = dwalk;
+  }
   
-  if(orientation[0]){
-	if(orientation[0]==1 && tex_draw.current_animation->first!="lwalk"){
-		tex_draw.set_animation("lwalk");
-	}
-	else if(orientation[0]==-1 && tex_draw.current_animation->first!="rwalk"){
-		tex_draw.set_animation("rwalk");
-	}
-  }
-  else{
-	if(orientation[1]==-1 && tex_draw.current_animation->first!="uwalk"){
-		tex_draw.set_animation("uwalk");
-	}
-	else if(orientation[1]==1 && tex_draw.current_animation->first!="dwalk"){
-		tex_draw.set_animation("dwalk");
-	}	
-  }
-
-/*
-	if(right){
-		if(tex_draw.current_animation->first!="rwalk")
-			tex_draw.set_animation("rwalk");
-	} 
-	else if(left){
-		if(tex_draw.current_animation->first!="lwalk")
-			tex_draw.set_animation("lwalk");
-	}
-	else if(up){
-		if(tex_draw.current_animation->first!="uwalk")
-			tex_draw.set_animation("uwalk");
-	}
-	else if(down){
-		if(tex_draw.current_animation->first!="dwalk")
-			tex_draw.set_animation("dwalk");
-	}
-*/
-  if(spawn_bullet){
-    	std::cout<<"SPPPPPACE\n";	
+  if(spawn_bullet){	
 	spawn_bullet=false;
-	wo.insert_object(new Bullet(x+20*orientation[0],y+20*orientation[1],0,0,orientation[0],orientation[1],get_texture("bullet.png")));
+	wo.insert_object(new Bullet(x+10,y+10,0,0,1,0.1));
 	
   }
-
-  
 }
 
 void physical_game_object::set_aabb_data(float size_x, float size_y, float co_x, float co_y, bool movable, bool ghost){
@@ -222,22 +172,28 @@ Person::Person(){
 
 
 DrawRequest game_object::draw(){
- 
-  DrawRequest dr = tex_draw.make_draw_request(x,y);
+  
+  DrawRequest dr = current_animation.make_draw_request(tex,x,y);
+  /*if(id == 2){
+    frame f = current_animation.frames[current_animation.current];
+    std::cout << f.scale[0] << " " << f.scale[1] << " " << f.offset[0] << " " << f.offset[1];
+    std::cout << " " << f.duration << "\n";
+    }*/
   return dr;
 }
 
-Bullet::Bullet(int x,int y,float co_x,float co_y,int vel_x,int vel_y,Texture tex){
-	set_aabb_data(tex.width/2,tex.height/2,co_x,co_y,true,true);
-	this->x=x;
-	this->y=y;
-	dead=false;
-	tex_draw=SpriteSheetDrawable(tex);
- 	tex_draw.load_animation_frame("static",tex.width,tex.height,0,0,200000);
-	tex_draw.set_animation("static");
-	vel[0]=vel_x;
-	vel[1]=vel_y;
-	start_time=get_time();
+Bullet::Bullet(int x,int y,float co_x,float co_y,int vel_x,int vel_y){
+  id = 1;
+  set_aabb_data(tex.width/2,tex.height/2,co_x,co_y,true,true);
+  this->x=x;
+  this->y=y;
+  dead=false;
+  tex = make_texture("bullet.png");
+  current_animation = Animation({frame(tex.width,tex.height,0,0,0.2)});
+  
+  vel[0]=vel_x;
+  vel[1]=vel_y;
+  start_time=get_time();
 	
 }
 

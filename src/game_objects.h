@@ -4,18 +4,21 @@
 #include "input_events.h"
 #include "CollisionDetection.h"
 #include "world_object.h"
+
 class game_object:public Drawer{
 public:
+  int id;
   float x,y,dx,dy;
  game_object(){
+   id = 0;
     x = 0;
     y = 0.0;
     dx = 0.15;
     dy = 0.15;
   }
    
-  SpriteSheetDrawable tex_draw;
- 
+  Animation current_animation;
+  Texture tex;
   DrawRequest draw();
   virtual void do_ai(WorldObject& wo){
 
@@ -39,12 +42,12 @@ class physical_game_object: public game_object{
 
 class Bullet:public physical_game_object{
 public:
-	Bullet(int x,int y,float co_x,float co_y,int vel_x,int vel_y,Texture tex);
+	Bullet(int x,int y,float co_x,float co_y,int vel_x,int vel_y);
 
 	void do_ai(WorldObject & wo);
 	void handle_collision(physical_game_object * other);
 
-	int vel[2];
+	float vel[2];
 	double start_time;
 	bool dead;
 	game_object * clone(){
@@ -71,6 +74,8 @@ class Npc: public Person{
 
 
 class player_object: public Person, public EventListener<mouse_position>, public EventListener<MouseClick>, public EventListener<KeyEvent>{
+  Animation uwalk,dwalk,rwalk,lwalk;
+  
   int down;
   int up;
   int left;
@@ -81,6 +86,7 @@ class player_object: public Person, public EventListener<mouse_position>, public
   bool spawn_bullet;
   Texture bullet_tex;
 public:
+  void print_frames();
   bool handle_event(mouse_position mpos);
   bool handle_event(MouseClick mc);
   bool handle_event(KeyEvent ke);
