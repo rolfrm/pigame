@@ -66,7 +66,7 @@ void init_game(int window_width, int window_height, int width_pixels, int height
   global_width=window_width;
   global_height=window_height;
   
-  init_audio(44100, 16, 2);
+  //init_audio(44100, 16, 2);
   init_ogl(window_width,window_height);
   set_clearcolor(0.0f, 0.0f, 0.0f, 0.1f);
 

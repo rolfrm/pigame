@@ -56,9 +56,13 @@ typedef struct mouse_position{
 
 #define CTRL 289
 #define ALT 291
+#define ARROW_LEFT 285
+#define ARROW_RIGHT 286
 #define ENTER 294
 #define BACKSPACE 295
 #define DELETE 297
+#define SHIFT 287
+#define TAB 293
 extern EventSpawner<KeyEvent> key_event_handler;
 extern EventSpawner<MouseClick> mouse_click_handler;
 extern EventSpawner<mouse_position> mouse_move_spawner;

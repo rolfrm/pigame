@@ -55,16 +55,20 @@ public:
   std::vector<int> input_types;
   std::vector<_input *> inputs;
   GROUP grp;
+
+  virtual ~Node(){
+
+  }
+
   Node(GROUP _grp){
     grp = _grp;
   }
 
   virtual void update(){
-    std::cout << "Not implemented: updating\n";
   }
 
   virtual void handle_click(float internal_x, float internal_y, bool keystate){
-
+    std::cout << "Click..\n";
   }
 
   virtual void handle_args(std::vector<std::string> args){
